@@ -67,7 +67,7 @@ ${markdownContext}
 
   const resultText = aiResponse.choices[0]?.message?.content;
   if (!resultText) {
-     throw new Error('No response from Nvidia NIM');
+     throw new Error('No response from glm 5.2');
   }
 
   const extractedData = JSON.parse(resultText);
@@ -153,7 +153,7 @@ You MUST output a strictly formatted JSON object matching the keys below. Do not
 
   const resultText = aiResponse.choices[0]?.message?.content;
   if (!resultText) {
-     throw new Error('No response from Nvidia NIM');
+     throw new Error('No response from glm 5.2');
   }
 
   const auditData = JSON.parse(resultText);
