@@ -61,12 +61,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           }
         ]
       };
-    } catch (e: any) {
+    } catch (e: unknown) {
       return {
         content: [
           {
             type: "text",
-            text: `Error evaluating startup: ${e.message}`
+            text: `Error evaluating startup: ${e instanceof Error ? e.message : String(e)}`
           }
         ],
         isError: true

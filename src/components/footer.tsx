@@ -9,7 +9,9 @@ export function Footer() {
   const { theme, setTheme } = useTheme();
 
   // useEffect only runs on the client, so now we can safely show the UI
+   
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -19,6 +21,7 @@ export function Footer() {
         
         <div className="flex items-center text-[13px] font-medium text-slate-500 dark:text-slate-400">
           <span>Built by</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img 
             src="https://eugenennamdi.com/favicon.png" 
             alt="Eugene Nnamdi" 

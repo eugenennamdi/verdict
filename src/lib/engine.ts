@@ -1,5 +1,4 @@
 import OpenAI from 'openai';
-import { supabase } from '@/lib/supabase';
 
 const openai = new OpenAI({
   baseURL: "https://integrate.api.nvidia.com/v1",
@@ -79,8 +78,10 @@ ${markdownContext}
   return extractedData;
 }
 
-export async function generateAudit(url: string, extractedContext: any) {
-  const { company_name, inferred_description, target_audience } = extractedContext;
+export async function generateAudit(url: string, extractedContext: Record<string, unknown>) {
+  const company_name = extractedContext.company_name as string;
+  const inferred_description = extractedContext.inferred_description as string;
+  const target_audience = extractedContext.target_audience as string;
 
   const prompt = `
 # ROLE & PERSONA

@@ -3,10 +3,11 @@ import { Footer } from "@/components/footer";
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, AlertTriangle, Target, TrendingUp, ArrowRight, ArrowUpRight, BarChart3, AlertCircle } from "lucide-react";
+import { Loader2, AlertTriangle, Target, TrendingUp, ArrowRight, ArrowUpRight, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
 const springTransition = { type: "spring" as const, stiffness: 200, damping: 20 };
@@ -17,7 +18,7 @@ export default function ReportPage() {
   const params = useParams();
   const id = params.id as string;
 
-  const [report, setReport] = useState<any>(null);
+  const [report, setReport] = useState<Record<string, unknown> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -50,9 +51,9 @@ export default function ReportPage() {
           <AlertCircle className="w-16 h-16 text-rose-600 dark:text-rose-400 mx-auto mb-6" />
           <h2 className="text-2xl font-black mb-3 text-slate-900 dark:text-white">Audit Not Found</h2>
           <p className="text-slate-500 dark:text-slate-400 mb-8 font-medium">{error || "This report does not exist or has been deleted."}</p>
-          <a href="/" className="inline-flex items-center gap-2 text-slate-900 dark:text-white bg-orange-500 hover:bg-orange-600 px-6 py-3 rounded-xl font-bold transition-all active:scale-95 shadow-md shadow-orange-500/20">
+          <Link href="/" className="inline-flex items-center gap-2 text-slate-900 dark:text-white bg-orange-500 hover:bg-orange-600 px-6 py-3 rounded-xl font-bold transition-all active:scale-95 shadow-md shadow-orange-500/20">
             Start New Audit <ArrowRight className="w-4 h-4" />
-          </a>
+          </Link>
         </div>
       </div>
     );
@@ -70,17 +71,17 @@ export default function ReportPage() {
     return "bg-rose-500";
   };
   
-  const pillars = report.growth_plan_30_day || {};
-  const verdict = report.key_risks || {};
-  const priorityMatrix = report.top_5_priorities || [];
+  const pillars = (report.growth_plan_30_day || {}) as Record<string, unknown>;
+  const verdict = (report.key_risks || {}) as Record<string, unknown>;
+  const priorityMatrix = (report.top_5_priorities || []) as Record<string, unknown>[];
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white p-4 md:p-8 lg:p-12 selection:bg-orange-500/20 selection:text-orange-900 overflow-hidden relative">
       {/* Topo Background with subtle pan animation */}
       <motion.div 
-        animate={{ backgroundPosition: ["0% 0%", "10% 10%", "0% 0%"] }}
+        animate={{ x: ["0%", "-5%", "0%"], y: ["0%", "-5%", "0%"] }}
         transition={{ duration: 60, ease: "linear", repeat: Infinity }}
-        className="fixed inset-[-50%] z-0 opacity-10 pointer-events-none" 
+        className="fixed inset-[-50%] z-0 opacity-10 pointer-events-none will-change-transform" 
         style={{ backgroundImage: 'url(/bg-topo.png)', backgroundSize: '600px' }} 
       />
 
@@ -95,24 +96,25 @@ export default function ReportPage() {
         >
           <div className="flex items-center gap-5 group">
             <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-100 dark:border-slate-800 transition-all duration-300 flex-shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
-                src={`https://www.google.com/s2/favicons?domain=${report.url}&sz=128`} 
-                alt={`${report.company_name} logo`} 
+                src={`https://www.google.com/s2/favicons?domain=${String(report.url)}&sz=128`} 
+                alt={`${String(report.company_name)} logo`} 
                 className="w-14 h-14 rounded-xl group-hover:scale-105 transition-transform" 
               />
             </div>
             <div className="flex flex-col justify-center pt-1">
               <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-none mb-2.5">
-                {report.company_name}
+                {String(report.company_name)}
               </h1>
               <a 
-                href={report.url.startsWith('http') ? report.url : `https://${report.url}`} 
+                href={String(report.url).startsWith('http') ? String(report.url) : `https://${String(report.url)}`} 
                 target="_blank" 
                 rel="noreferrer" 
                 className="inline-flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors font-semibold text-sm w-fit"
               >
                 <span className="underline decoration-slate-300 dark:decoration-slate-700 underline-offset-4 group-hover:decoration-slate-400 dark:group-hover:decoration-slate-500 transition-colors">
-                  {report.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                  {String(report.url).replace(/^https?:\/\//, '').replace(/\/$/, '')}
                 </span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </a>
@@ -124,7 +126,7 @@ export default function ReportPage() {
               <TrendingUp className="w-3.5 h-3.5" /> Growth Readiness
             </span>
             <div className="flex items-baseline gap-1">
-              <span className={`text-6xl font-black tracking-tighter ${getScoreColor(report.fdi_overall_score)}`}>{report.fdi_overall_score}</span>
+              <span className={`text-6xl font-black tracking-tighter ${getScoreColor(Number(report.fdi_overall_score))}`}>{String(report.fdi_overall_score)}</span>
               <span className="text-2xl font-bold text-slate-300 dark:text-slate-600">/100</span>
             </div>
           </div>
@@ -136,7 +138,7 @@ export default function ReportPage() {
           transition={{ delay: 0.2 }}
           className="text-lg text-slate-500 dark:text-slate-400 font-medium max-w-4xl leading-relaxed"
         >
-          {report.executive_summary}
+          {String(report.executive_summary)}
         </motion.p>
 
         {/* Highlighted Verdict Box */}
@@ -162,7 +164,7 @@ export default function ReportPage() {
                       <Target className="w-3 h-3 text-blue-600 dark:text-blue-400" /> Status
                     </p>
                     <p className="font-bold text-lg text-slate-900 dark:text-white tracking-tight leading-snug">
-                      {verdict.status}
+                      {String(verdict.status)}
                     </p>
                   </div>
                   
@@ -172,7 +174,7 @@ export default function ReportPage() {
                       <AlertTriangle className="w-3 h-3 text-rose-600 dark:text-rose-400" /> Primary Constraint
                     </p>
                     <p className="font-bold text-lg text-slate-900 dark:text-white tracking-tight leading-snug">
-                      {verdict.primary_constraint}
+                      {String(verdict.primary_constraint)}
                     </p>
                   </div>
                 </div>
@@ -183,10 +185,10 @@ export default function ReportPage() {
                     <TrendingUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> Highest Opportunity
                   </p>
                   <p className="font-black text-2xl text-slate-900 dark:text-white tracking-tight leading-snug">
-                    {verdict.highest_opportunity}
+                    {String(verdict.highest_opportunity)}
                   </p>
                   <p className="text-base font-medium text-slate-500 dark:text-slate-400 mt-4 leading-relaxed">
-                    {verdict.estimated_impact}
+                    {String(verdict.estimated_impact)}
                   </p>
                 </div>
               </div>
@@ -207,7 +209,8 @@ export default function ReportPage() {
           </div>
           
           <div className="grid md:grid-cols-2 gap-6">
-            {Object.entries(pillars).map(([key, pillar]: [string, any], i) => {
+            {Object.entries(pillars).map(([key, pillarRaw]: [string, unknown], i) => {
+              const pillar = pillarRaw as Record<string, unknown>;
               if (!pillar || typeof pillar !== 'object' || !pillar.score) return null;
               
               const formatKey = (k: string) => k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()).replace(/\bUx\b/g, 'UX');
@@ -224,22 +227,22 @@ export default function ReportPage() {
                       <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">{formatKey(key)}</CardTitle>
                       <div className="flex items-center gap-3">
                         <Badge variant="secondary" className="bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 font-bold shadow-sm">
-                          {pillar.confidence}
+                          {String(pillar.confidence)}
                         </Badge>
-                        <span className={`font-black text-2xl tracking-tighter ${getScoreColor(pillar.score)}`}>
-                          {pillar.score}
+                        <span className={`font-black text-2xl tracking-tighter ${getScoreColor(Number(pillar.score))}`}>
+                          {String(pillar.score)}
                         </span>
                       </div>
                     </div>
                     <Progress 
-                      value={pillar.score} 
+                      value={Number(pillar.score)} 
                       className="h-2 bg-slate-100 dark:bg-slate-800 mt-5"
-                      indicatorClassName={`${getScoreProgressColor(pillar.score)} rounded-full`}
+                      indicatorClassName={`${getScoreProgressColor(Number(pillar.score))} rounded-full`}
                     />
                   </CardHeader>
                   <CardContent className="p-8 space-y-8">
                     <div className="bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 p-5 rounded-2xl">
-                      <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">"{pillar.reason}"</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">&quot;{String(pillar.reason)}&quot;</p>
                     </div>
                     <div className="grid grid-cols-2 gap-8">
                       <div className="space-y-4">
@@ -247,7 +250,7 @@ export default function ReportPage() {
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Strengths
                         </h4>
                         <ul className="space-y-3">
-                          {pillar.strengths?.map((s: string, idx: number) => (
+                          {(pillar.strengths as string[] | undefined)?.map((s: string, idx: number) => (
                             <li key={idx} className="text-sm text-slate-500 dark:text-slate-400 font-medium flex items-start gap-2.5 leading-snug">
                               <span className="text-emerald-600 dark:text-emerald-400 font-bold mt-0.5">+</span> {s}
                             </li>
@@ -259,7 +262,7 @@ export default function ReportPage() {
                           <span className="w-1.5 h-1.5 rounded-full bg-rose-500" /> Weaknesses
                         </h4>
                         <ul className="space-y-2">
-                          {pillar.weaknesses?.map((w: string, idx: number) => (
+                          {(pillar.weaknesses as string[] | undefined)?.map((w: string, idx: number) => (
                             <li key={idx} className="text-sm text-slate-500 dark:text-slate-400 font-medium flex items-start gap-2 leading-tight">
                               <span className="text-rose-600 dark:text-rose-400 font-bold mt-0.5">-</span> {w}
                             </li>
@@ -299,16 +302,16 @@ export default function ReportPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {priorityMatrix.map((item: any, i: number) => (
+                  {priorityMatrix.map((item: Record<string, unknown>, i: number) => (
                     <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                      <td className="px-8 py-5 font-bold text-slate-900 dark:text-white">{item.task}</td>
+                      <td className="px-8 py-5 font-bold text-slate-900 dark:text-white">{String(item.task)}</td>
                       <td className="px-8 py-5">
                         <Badge variant="outline" className={`font-bold border-0 shadow-sm
                           ${item.impact === 'High' ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30' : ''}
                           ${item.impact === 'Medium' ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30' : ''}
                           ${item.impact === 'Low' ? 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800' : ''}
                         `}>
-                          {item.impact}
+                          {String(item.impact)}
                         </Badge>
                       </td>
                       <td className="px-8 py-5">
@@ -317,10 +320,10 @@ export default function ReportPage() {
                           ${item.effort === 'Medium' ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30' : ''}
                           ${item.effort === 'Low' ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30' : ''}
                         `}>
-                          {item.effort}
+                          {String(item.effort)}
                         </Badge>
                       </td>
-                      <td className="px-8 py-5 text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{item.why}</td>
+                      <td className="px-8 py-5 text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{String(item.why)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -335,9 +338,9 @@ export default function ReportPage() {
           viewport={{ once: true }}
           className="text-center pt-16 pb-20"
         >
-           <a href="/" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors font-bold uppercase tracking-widest text-xs">
+           <Link href="/" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors font-bold uppercase tracking-widest text-xs">
              Submit another startup <ArrowRight className="w-4 h-4" />
-           </a>
+           </Link>
         </motion.div>
       </div>
       <Footer />

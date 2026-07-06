@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Loader2, Target, ChevronRight, Check } from "lucide-react";
+import { Search, Loader2, ChevronRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -47,6 +47,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!isLoading) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoadingPhase(0);
       return;
     }
@@ -108,8 +109,8 @@ export default function Home() {
         primary_cta: data.primary_cta || '',
       });
       setIsAuditing(true);
-    } catch (error: any) {
-      alert(error.message || 'Something went wrong.');
+    } catch (error: unknown) {
+      alert(error instanceof Error ? error.message : 'Something went wrong.');
     } finally {
       setIsLoading(false);
     }
@@ -143,8 +144,8 @@ export default function Home() {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       router.push(`/report/${data.report_id}`);
-    } catch (error: any) {
-      alert(error.message || 'Something went wrong.');
+    } catch (error: unknown) {
+      alert(error instanceof Error ? error.message : 'Something went wrong.');
       setIsLoading(false);
     }
   };
@@ -154,9 +155,9 @@ export default function Home() {
       
       {/* Topo Background with subtle pan animation */}
       <motion.div 
-        animate={{ backgroundPosition: ["0% 0%", "10% 10%", "0% 0%"] }}
+        animate={{ x: ["0%", "-5%", "0%"], y: ["0%", "-5%", "0%"] }}
         transition={{ duration: 60, ease: "linear", repeat: Infinity }}
-        className="fixed inset-[-50%] z-0 opacity-10 pointer-events-none" 
+        className="fixed inset-[-50%] z-0 opacity-10 pointer-events-none will-change-transform" 
         style={{ backgroundImage: 'url(/bg-topo.png)', backgroundSize: '600px' }} 
       />
 
@@ -195,7 +196,7 @@ export default function Home() {
                     killing your growth in 60 seconds.
                   </h1>
                   <p className="text-xl text-slate-500 dark:text-slate-400 font-medium tracking-wide max-w-xl mx-auto leading-relaxed">
-                    Stop guessing why you aren't scaling. Drop your URL for a brutally honest, YC-grade audit.
+                    Stop guessing why you aren&apos;t scaling. Drop your URL for a brutally honest, YC-grade audit.
                   </p>
                 </div>
 
@@ -278,7 +279,7 @@ export default function Home() {
                   <CardHeader className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 pb-6">
                     <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white">Context Extracted</CardTitle>
                     <CardDescription className="text-slate-500 dark:text-slate-400">
-                      Here's what our engine found. Make edits if necessary to ensure the audit is perfectly calibrated.
+                      Here&apos;s what our engine found. Make edits if necessary to ensure the audit is perfectly calibrated.
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="pt-6">

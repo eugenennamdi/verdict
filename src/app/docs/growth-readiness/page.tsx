@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Rocket, AlertTriangle } from "lucide-react";
+import { ArrowLeft, ArrowRight, Rocket } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Growth Readiness Score | Documentation",
@@ -14,7 +14,7 @@ export default function GrowthReadinessPage() {
       </h1>
       
       <p className="text-xl text-slate-600 dark:text-slate-400 mb-12 leading-relaxed">
-        The ultimate metric in the VERDICT platform is your Growth Readiness Score. It determines whether your startup is actually ready to scale, or if you're about to burn your marketing budget.
+        The ultimate metric in the VERDICT platform is your Growth Readiness Score. It determines whether your startup is actually ready to scale, or if you&apos;re about to burn your marketing budget.
       </p>
 
       <div className="bg-orange-500/10 border border-orange-500/20 rounded-2xl p-6 mb-12 flex gap-4 items-center">

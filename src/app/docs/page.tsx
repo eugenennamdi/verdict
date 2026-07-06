@@ -12,7 +12,7 @@ export default function DocsIntroPage() {
       <h1 className="text-5xl font-black tracking-tight mb-6">Why VERDICT Exists</h1>
       
       <p className="text-xl text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
-        The startup ecosystem is plagued by "delusion by echo chamber." Founders spend months building products, wrapping them in generic marketing fluff, and wondering why they aren't scaling.
+        The startup ecosystem is plagued by &quot;delusion by echo chamber.&quot; Founders spend months building products, wrapping them in generic marketing fluff, and wondering why they aren&apos;t scaling.
       </p>
 
       <div className="bg-orange-500/10 border border-orange-500/20 rounded-2xl p-8 mb-12">
@@ -24,12 +24,12 @@ export default function DocsIntroPage() {
         </p>
       </div>
 
-      <h2>The Problem with "AI Wrappers"</h2>
+      <h2>The Problem with &quot;AI Wrappers&quot;</h2>
       <p>
         Most AI tools fail at business analysis because they suffer from <strong>Positivity Bias</strong>. Standard Large Language Models (LLMs) are RLHF-trained to be helpful, polite, and encouraging. If you feed an LLM your landing page and ask for a critique, it will actively search for nice things to say to cushion the blow.
       </p>
       <p>
-        In early-stage startups, polite feedback is fatal. You don't need a cheerleader; you need a diagnosis.
+        In early-stage startups, polite feedback is fatal. You don&apos;t need a cheerleader; you need a diagnosis.
       </p>
 
       <h2>Our Philosophy</h2>
@@ -38,7 +38,7 @@ export default function DocsIntroPage() {
       </p>
       
       <ul className="space-y-4 mb-12">
-        <li><strong>We don't just pass your URL to an LLM.</strong> We run a full headless browser to bypass bot protection, render your JavaScript, and extract your raw DOM.</li>
+        <li><strong>We don&apos;t just pass your URL to an LLM.</strong> We run a full headless browser to bypass bot protection, render your JavaScript, and extract your raw DOM.</li>
         <li><strong>We normalize the context.</strong> We force our proprietary reasoning engine to evaluate your company against the harsh reality of the B2B/B2C market.</li>
         <li><strong>Brutal Honesty.</strong> If your startup is a thin wrapper, we will tell you. If your value proposition is a word salad of buzzwords, we will rip it apart.</li>
       </ul>

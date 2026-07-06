@@ -22,14 +22,14 @@ export default function ScoringPage() {
 
       <ul>
         <li><strong>0-3 (Critical Failure):</strong> The startup completely lacks this element. (e.g., No target audience identified, extremely confusing messaging, zero social proof).</li>
-        <li><strong>4-6 (Weak/Generic):</strong> The element exists but is poorly executed. (e.g., "We help teams work better", fake-sounding testimonials).</li>
+        <li><strong>4-6 (Weak/Generic):</strong> The element exists but is poorly executed. (e.g., &quot;We help teams work better&quot;, fake-sounding testimonials).</li>
         <li><strong>7-8 (Competent):</strong> Good, standard execution. (e.g., Clear headline, decent onboarding).</li>
         <li><strong>9-10 (World-Class):</strong> Exceptional execution that creates a massive competitive advantage. (e.g., Undeniable ROI, deep network effects, viral onboarding loop).</li>
       </ul>
 
       <h2>Enforcing the Rubric (Beating Positivity Bias)</h2>
       <p>
-        Standard LLMs suffer from <strong>Positivity Bias</strong>—they desperately want to tell you that you are doing a good job. Left unchecked, an LLM will give every startup a 9/10 for "Messaging" just because the website has words on it.
+        Standard LLMs suffer from <strong>Positivity Bias</strong>—they desperately want to tell you that you are doing a good job. Left unchecked, an LLM will give every startup a 9/10 for &quot;Messaging&quot; just because the website has words on it.
       </p>
       <p>To counteract this, VERDICT uses:</p>
       <ol>
@@ -40,7 +40,7 @@ export default function ScoringPage() {
 
       <h2>The Overall Score (0-100)</h2>
       <p>
-        The final <strong>Growth Readiness Score</strong> is a calculated weighted average of the 6 pillars, mapped to a 0-100 scale. It represents the company's overall readiness to scale and deploy capital into growth channels.
+        The final <strong>Growth Readiness Score</strong> is a calculated weighted average of the 6 pillars, mapped to a 0-100 scale. It represents the company&apos;s overall readiness to scale and deploy capital into growth channels.
       </p>
 
       <div className="flex justify-between mt-16 pt-8 border-t border-slate-200 dark:border-slate-800">

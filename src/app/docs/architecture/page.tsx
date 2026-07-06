@@ -12,7 +12,7 @@ export default function ArchitecturePage() {
       <h1 className="text-5xl font-black tracking-tight mb-6">Architecture & Pipeline</h1>
       
       <p className="text-xl text-slate-600 dark:text-slate-400 mb-12 leading-relaxed">
-        VERDICT is not a simple prompt wrapper. It is a multi-stage data extraction and reasoning pipeline designed to simulate a consultant's due diligence process in 60 seconds.
+        VERDICT is not a simple prompt wrapper. It is a multi-stage data extraction and reasoning pipeline designed to simulate a consultant&apos;s due diligence process in 60 seconds.
       </p>
 
       <div className="space-y-12">
@@ -39,7 +39,7 @@ export default function ArchitecturePage() {
           </p>
           <ol>
             <li><strong>Validation:</strong> We verify the URL actually belongs to a SaaS, B2B, or B2C startup. If you submit a personal blog, a GitHub repo, or an agency, the engine rejects it.</li>
-            <li><strong>De-fluffing:</strong> We extract the actual company name, identify the real target audience, and generate an "Inferred Description" that strips away your marketing buzzwords and states <em>exactly</em> what your product physically does.</li>
+            <li><strong>De-fluffing:</strong> We extract the actual company name, identify the real target audience, and generate an &quot;Inferred Description&quot; that strips away your marketing buzzwords and states <em>exactly</em> what your product physically does.</li>
           </ol>
         </section>
 

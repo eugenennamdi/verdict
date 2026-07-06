@@ -12,8 +12,8 @@ export async function POST(req: Request) {
     const extractedData = await extractContext(url);
     
     return NextResponse.json(extractedData);
-  } catch (error: any) {
-    console.error('Extract Engine Error:', error);
-    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: error.message?.includes('not a valid startup') ? 400 : 500 });
+  } catch (error: unknown) {
+    console.error('Extraction Error:', error);
+    return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
 }
