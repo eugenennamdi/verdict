@@ -157,7 +157,7 @@ export default function Home() {
       <motion.div 
         animate={{ x: ["0%", "-5%", "0%"], y: ["0%", "-5%", "0%"] }}
         transition={{ duration: 60, ease: "linear", repeat: Infinity }}
-        className="fixed inset-[-50%] z-0 opacity-10 pointer-events-none will-change-transform" 
+        className="fixed inset-[-10%] z-0 opacity-10 pointer-events-none will-change-transform bg-repeat" 
         style={{ backgroundImage: 'url(/bg-topo.png)', backgroundSize: '600px' }} 
       />
 
