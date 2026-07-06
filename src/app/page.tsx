@@ -201,7 +201,7 @@ export default function Home() {
                 </div>
 
                 <form onSubmit={handleAnalyze}>
-                  <div className="relative flex items-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 focus-within:border-slate-400 dark:focus-within:border-slate-600 overflow-hidden shadow-2xl shadow-slate-200/50 dark:shadow-black/50 transition-all duration-300">
+                  <div className="relative flex items-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 focus-within:border-slate-400 dark:focus-within:border-slate-600 overflow-hidden shadow-2xl shadow-slate-200/50 dark:shadow-none transition-all duration-300">
                     <div className="pl-5">
                       <Search className="w-5 h-5 text-slate-400 dark:text-slate-500" />
                     </div>
@@ -275,7 +275,7 @@ export default function Home() {
                   <VerdictLogo className="w-16 h-16 text-orange-500 drop-shadow-xl" />
                 </div>
                 
-                <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-black/50 rounded-3xl overflow-hidden text-left">
+                <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none rounded-3xl overflow-hidden text-left">
                   <CardHeader className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 pb-6">
                     <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white">Context Extracted</CardTitle>
                     <CardDescription className="text-slate-500 dark:text-slate-400">

@@ -47,7 +47,7 @@ export default function ReportPage() {
   if (error || !report) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-black/50 max-w-md text-center">
+        <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none max-w-md text-center">
           <AlertCircle className="w-16 h-16 text-rose-600 dark:text-rose-400 mx-auto mb-6" />
           <h2 className="text-2xl font-black mb-3 text-slate-900 dark:text-white">Audit Not Found</h2>
           <p className="text-slate-500 dark:text-slate-400 mb-8 font-medium">{error || "This report does not exist or has been deleted."}</p>
@@ -121,7 +121,7 @@ export default function ReportPage() {
             </div>
           </div>
           
-          <div className="bg-white dark:bg-slate-900 px-8 py-6 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-100 dark:border-slate-800 flex flex-col items-center min-w-[200px]">
+          <div className="bg-white dark:bg-slate-900 px-8 py-6 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 flex flex-col items-center min-w-[200px]">
             <span className="text-[10px] uppercase font-black text-slate-400 dark:text-slate-500 tracking-widest mb-1 flex items-center gap-1.5">
               <TrendingUp className="w-3.5 h-3.5" /> Growth Readiness
             </span>
@@ -148,7 +148,7 @@ export default function ReportPage() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={springTransition}
-            className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-black/50 overflow-hidden relative rounded-3xl"
+            className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden relative rounded-3xl"
           >
             <CardHeader className="pb-4 relative z-10 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
               <CardTitle className="text-xl font-bold flex items-center gap-2 text-slate-900 dark:text-white">
