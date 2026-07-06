@@ -78,10 +78,8 @@ export default function ReportPage() {
   return (
     <div className="min-h-screen text-slate-900 dark:text-white p-4 md:p-8 lg:p-12 selection:bg-orange-500/20 selection:text-orange-900 relative">
       {/* Topo Background with subtle pan animation */}
-      <motion.div 
-        animate={{ x: ["0%", "-5%", "0%"], y: ["0%", "-5%", "0%"] }}
-        transition={{ duration: 60, ease: "linear", repeat: Infinity }}
-        className="fixed inset-[-50%] z-0 opacity-10 pointer-events-none will-change-transform" 
+      <div 
+        className="absolute inset-0 z-0 opacity-10 pointer-events-none bg-repeat animate-pan-topo" 
         style={{ backgroundImage: 'url(/bg-topo.png)', backgroundSize: '600px' }} 
       />
 
