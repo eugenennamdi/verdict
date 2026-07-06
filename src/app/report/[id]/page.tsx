@@ -37,7 +37,7 @@ export default function ReportPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
         <Loader2 className="w-12 h-12 animate-spin text-orange-500 mb-6" />
         <p className="text-slate-500 dark:text-slate-400 font-medium animate-pulse tracking-wide uppercase text-sm">Compiling Verdict...</p>
       </div>
@@ -46,7 +46,7 @@ export default function ReportPage() {
 
   if (error || !report) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
         <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-black/50 max-w-md text-center">
           <AlertCircle className="w-16 h-16 text-rose-600 dark:text-rose-400 mx-auto mb-6" />
           <h2 className="text-2xl font-black mb-3 text-slate-900 dark:text-white">Audit Not Found</h2>
@@ -76,7 +76,7 @@ export default function ReportPage() {
   const priorityMatrix = (report.top_5_priorities || []) as Record<string, unknown>[];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white p-4 md:p-8 lg:p-12 selection:bg-orange-500/20 selection:text-orange-900 overflow-hidden relative">
+    <div className="min-h-screen text-slate-900 dark:text-white p-4 md:p-8 lg:p-12 selection:bg-orange-500/20 selection:text-orange-900 relative">
       {/* Topo Background with subtle pan animation */}
       <motion.div 
         animate={{ x: ["0%", "-5%", "0%"], y: ["0%", "-5%", "0%"] }}

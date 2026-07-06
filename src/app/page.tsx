@@ -151,7 +151,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden">
+    <div className="min-h-[100dvh] flex-1 w-full flex flex-col relative">
       
       {/* Topo Background with subtle pan animation */}
       <motion.div 
