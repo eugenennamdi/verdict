@@ -13,8 +13,35 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] flex">
-      {/* Sidebar Navigation */}
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F19] flex flex-col md:flex-row">
+      {/* Mobile Top Navigation */}
+      <div className="md:hidden flex flex-col sticky top-0 z-50 bg-white/80 dark:bg-[#0F1423]/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800/50">
+        <div className="flex items-center justify-between p-4">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="bg-orange-500 p-1 rounded-lg text-white flex items-center justify-center">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4"><path d="M4 5L12 19L20 5" stroke="currentColor" strokeWidth="4" strokeMiterlimit="10" strokeLinecap="butt" strokeLinejoin="miter"/></svg>
+            </div>
+            <span className="font-black text-lg tracking-tight text-slate-900 dark:text-white">VERDICT</span>
+          </Link>
+          <Link href="/" className={buttonVariants({ variant: "outline", size: "sm", className: "h-8 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800" })}>
+            <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
+            App
+          </Link>
+        </div>
+        <nav className="flex overflow-x-auto px-4 pb-3 gap-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link key={item.name} href={item.href} className="flex-shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800/50 text-xs font-semibold text-slate-600 dark:text-slate-300 active:bg-orange-100 dark:active:bg-orange-900/30">
+                <Icon className="w-3.5 h-3.5" />
+                {item.name}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+
+      {/* Sidebar Navigation (Desktop) */}
       <aside className="w-64 md:w-72 xl:w-80 shrink-0 border-r border-slate-200 dark:border-slate-800/50 bg-white dark:bg-[#0F1423] hidden md:flex flex-col sticky top-0 h-screen">
         <div className="p-6 border-b border-slate-200 dark:border-slate-800/50">
           <Link href="/" className="flex items-center gap-2 group">
