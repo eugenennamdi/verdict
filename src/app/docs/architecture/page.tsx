@@ -34,7 +34,7 @@ export default function ArchitecturePage() {
 
         <section>
           <h2>2. Context Normalization</h2>
-          <p className="text-slate-300 mb-4">
+          <p className="text-slate-600 dark:text-slate-300 mb-4">
             Before the deep audit begins, VERDICT runs a preliminary normalization pass using glm 5.2 to establish the ground truth. This phase strips away marketing jargon, parsing the raw HTML structure to identify the true core value proposition (what the product actually does versus what the founder claims it does).
           </p>
           <ol>
