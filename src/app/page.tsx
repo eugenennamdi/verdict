@@ -154,10 +154,8 @@ export default function Home() {
     <div className="min-h-[100dvh] flex-1 w-full flex flex-col relative">
       
       {/* Topo Background with subtle pan animation */}
-      <motion.div 
-        animate={{ backgroundPosition: ["0px 0px", "-30px -30px", "0px 0px"] }}
-        transition={{ duration: 60, ease: "linear", repeat: Infinity }}
-        className="fixed inset-0 z-0 opacity-10 pointer-events-none bg-repeat" 
+      <div 
+        className="absolute inset-0 z-0 opacity-10 pointer-events-none bg-repeat animate-pan-topo" 
         style={{ backgroundImage: 'url(/bg-topo.png)', backgroundSize: '600px' }} 
       />
 
