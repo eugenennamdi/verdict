@@ -16,11 +16,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "VERDICT | Brutal Startup Growth Audit",
   description: "An autonomous Agent Service Provider that performs a brutally honest, consultant-grade startup growth audit.",
-  icons: {
-    icon: "/icon.svg",
-    shortcut: "/icon.svg",
-    apple: "/icon.svg",
-  },
 };
 
 export default function RootLayout({
