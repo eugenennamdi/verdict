@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Loader2, Target, ChevronRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -77,10 +78,16 @@ export default function Home() {
     e.preventDefault();
     setIsLoading(true);
     try {
+      let formattedUrl = url.trim();
+      if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+        formattedUrl = `https://${formattedUrl}`;
+        setUrl(formattedUrl);
+      }
+
       const res = await fetch('/api/engine/extract', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url: formattedUrl }),
       });
       const data = await res.json();
       
@@ -155,10 +162,18 @@ export default function Home() {
 
       {/* Header */}
       <header className="relative z-10 w-full pt-8 px-6 md:px-12 max-w-6xl mx-auto flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <VerdictLogo className="w-8 h-8 text-orange-500" />
+        <Link href="/" className="flex items-center gap-2 group cursor-pointer">
+          <VerdictLogo className="w-8 h-8 text-orange-500 group-hover:scale-105 transition-transform" />
           <span className="font-black tracking-tight text-xl text-slate-900 dark:text-white">VERDICT</span>
-        </div>
+        </Link>
+        <nav className="flex items-center gap-4">
+          <Link 
+            href="/docs" 
+            className="text-sm font-bold px-5 py-2.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
+          >
+            Documentation
+          </Link>
+        </nav>
       </header>
 
       <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10">
@@ -273,7 +288,7 @@ export default function Home() {
                         <Input 
                           value={extractedData?.company_name || ""} 
                           onChange={e => setExtractedData({...extractedData!, company_name: e.target.value})}
-                          className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-base py-6 focus-visible:ring-orange-500/20"
+                          className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-base py-6 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200 dark:focus-visible:border-slate-800"
                         />
                       </div>
                       
@@ -282,7 +297,7 @@ export default function Home() {
                         <Input 
                           value={extractedData?.target_audience || ""} 
                           onChange={e => setExtractedData({...extractedData!, target_audience: e.target.value})}
-                          className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-base py-6 focus-visible:ring-orange-500/20"
+                          className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-base py-6 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200 dark:focus-visible:border-slate-800"
                         />
                       </div>
 
@@ -291,7 +306,7 @@ export default function Home() {
                         <Textarea 
                           value={extractedData?.core_value_prop || ""} 
                           onChange={e => setExtractedData({...extractedData!, core_value_prop: e.target.value})}
-                          className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-base py-4 min-h-[100px] focus-visible:ring-orange-500/20"
+                          className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-base py-4 min-h-[100px] focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200 dark:focus-visible:border-slate-800"
                         />
                       </div>
 
@@ -300,7 +315,7 @@ export default function Home() {
                         <Input 
                           value={extractedData?.primary_cta || ""} 
                           onChange={e => setExtractedData({...extractedData!, primary_cta: e.target.value})}
-                          className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-base py-6 focus-visible:ring-orange-500/20"
+                          className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-base py-6 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200 dark:focus-visible:border-slate-800"
                         />
                       </div>
 

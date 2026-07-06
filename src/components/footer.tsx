@@ -13,20 +13,6 @@ export function Footer() {
     setMounted(true);
   }, []);
 
-  const toggleTheme = () => {
-    if (theme === 'light') setTheme('dark');
-    else if (theme === 'dark') setTheme('system');
-    else setTheme('light');
-  };
-
-  const Icon = mounted 
-    ? (theme === 'light' ? Sun : (theme === 'dark' ? Moon : Monitor))
-    : Monitor;
-    
-  const label = mounted
-    ? (theme === 'light' ? 'Light' : (theme === 'dark' ? 'Dark' : 'System'))
-    : 'System';
-
   return (
     <footer className="w-full py-6 px-6 mt-auto bg-slate-50 dark:bg-slate-950 transition-colors">
       <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -46,14 +32,33 @@ export function Footer() {
           </a>
         </div>
 
-        <button 
-          onClick={toggleTheme}
-          className="flex items-center gap-2 text-[13px] font-bold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors group relative"
-          title={`Current: ${label} (click to cycle)`}
-        >
-          <Icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
-          {label}
-        </button>
+        {mounted ? (
+          <div className="flex items-center gap-1 p-1 rounded-2xl bg-slate-200/50 dark:bg-slate-800/30">
+            <button 
+              onClick={() => setTheme('system')}
+              className={`p-2 rounded-xl transition-all ${theme === 'system' ? 'bg-white dark:bg-slate-700/80 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
+              title="System theme"
+            >
+              <Monitor className="w-4 h-4" />
+            </button>
+            <button 
+              onClick={() => setTheme('light')}
+              className={`p-2 rounded-xl transition-all ${theme === 'light' ? 'bg-white dark:bg-slate-700/80 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
+              title="Light theme"
+            >
+              <Sun className="w-4 h-4" />
+            </button>
+            <button 
+              onClick={() => setTheme('dark')}
+              className={`p-2 rounded-xl transition-all ${theme === 'dark' ? 'bg-white dark:bg-slate-700/80 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
+              title="Dark theme"
+            >
+              <Moon className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          <div className="h-[40px] w-[116px] bg-slate-200/50 dark:bg-slate-800/30 rounded-2xl animate-pulse" />
+        )}
 
       </div>
     </footer>

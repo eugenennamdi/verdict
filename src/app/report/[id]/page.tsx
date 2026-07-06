@@ -106,7 +106,7 @@ export default function ReportPage() {
                 {report.company_name}
               </h1>
               <a 
-                href={report.url} 
+                href={report.url.startsWith('http') ? report.url : `https://${report.url}`} 
                 target="_blank" 
                 rel="noreferrer" 
                 className="inline-flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors font-semibold text-sm w-fit"
