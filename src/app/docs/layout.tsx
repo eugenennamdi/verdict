@@ -25,7 +25,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
           </Link>
           <Link href="/" className={buttonVariants({ variant: "outline", size: "sm", className: "h-8 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800" })}>
             <ArrowLeft className="w-3.5 h-3.5 mr-1.5" />
-            App
+            Back to App
           </Link>
         </div>
         <nav className="flex overflow-x-auto px-4 pb-3 gap-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
