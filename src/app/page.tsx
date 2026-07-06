@@ -219,7 +219,7 @@ export default function Home() {
                       <Button 
                         type="submit" 
                         disabled={isLoading}
-                        className="bg-orange-500 hover:bg-orange-600 text-white font-bold tracking-wide rounded-xl px-6 h-11 transition-transform active:scale-95 w-36 flex items-center justify-center relative overflow-hidden"
+                        className="bg-orange-500 hover:bg-orange-600 text-white font-bold tracking-wide rounded-xl px-6 h-11 transition-transform active:scale-95 w-[140px] sm:w-36 flex items-center justify-center relative overflow-hidden [-webkit-tap-highlight-color:transparent]"
                       >
                         {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />}
                         Analyze
