@@ -155,9 +155,9 @@ export default function Home() {
       
       {/* Topo Background with subtle pan animation */}
       <motion.div 
-        animate={{ x: ["0%", "-5%", "0%"], y: ["0%", "-5%", "0%"] }}
+        animate={{ backgroundPosition: ["0px 0px", "-30px -30px", "0px 0px"] }}
         transition={{ duration: 60, ease: "linear", repeat: Infinity }}
-        className="fixed inset-[-10%] z-0 opacity-10 pointer-events-none will-change-transform bg-repeat" 
+        className="fixed inset-0 z-0 opacity-10 pointer-events-none bg-repeat" 
         style={{ backgroundImage: 'url(/bg-topo.png)', backgroundSize: '600px' }} 
       />
 
