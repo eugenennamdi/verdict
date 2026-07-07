@@ -56,7 +56,7 @@ Markdown Content:
 ${markdownContext}
   `;
 
-  const modelName = 'z-ai/glm-5.2';
+  const modelName = 'meta/llama-3.1-70b-instruct';
 
   const aiResponse = await openai.chat.completions.create({
     model: modelName,
@@ -142,7 +142,7 @@ You MUST output a strictly formatted JSON object matching the keys below. Do not
 }
   `;
 
-  const modelName = 'z-ai/glm-5.2';
+  const modelName = 'meta/llama-3.1-70b-instruct';
 
   const aiResponse = await openai.chat.completions.create({
     model: modelName,
