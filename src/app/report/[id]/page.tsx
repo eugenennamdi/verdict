@@ -215,7 +215,7 @@ export default function ReportPage() {
                   key={i} 
                   whileHover={{ y: -4, scale: 1.01 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="glass-panel shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all rounded-3xl"
+                  className="glass-panel shadow-sm transition-all rounded-3xl"
                 >
                   <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 rounded-t-3xl">
                     <div className="flex items-center justify-between">
@@ -285,7 +285,7 @@ export default function ReportPage() {
             <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Priority Matrix</h2>
           </div>
           
-          <Card className="glass-panel shadow-xl shadow-slate-200/50 dark:shadow-black/50 rounded-3xl overflow-hidden">
+          <Card className="glass-panel shadow-sm rounded-3xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
                 <thead className="text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-800">

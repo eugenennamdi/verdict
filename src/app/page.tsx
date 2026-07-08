@@ -244,9 +244,9 @@ export default function Home() {
                       className="overflow-hidden"
                     >
                       <div className="flex justify-center mt-8">
-                        <div className="w-full max-w-md bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl p-6 flex flex-col items-start space-y-5 border border-white/40 dark:border-slate-700/50 shadow-2xl relative overflow-hidden">
+                        <div className="w-full max-w-md bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl p-6 flex flex-col items-start space-y-5 border border-slate-200 dark:border-slate-700/50 shadow-sm dark:shadow-2xl relative overflow-hidden">
                           {/* Terminal Header */}
-                          <div className="absolute top-0 left-0 w-full h-10 bg-slate-100/40 dark:bg-slate-800/40 flex items-center px-4">
+                          <div className="absolute top-0 left-0 w-full h-10 flex items-center px-4">
                             <div className="flex gap-1.5">
                               <div className="w-3 h-3 rounded-full bg-red-400"></div>
                               <div className="w-3 h-3 rounded-full bg-amber-400"></div>
@@ -351,7 +351,7 @@ export default function Home() {
                         <Button 
                           type="submit" 
                           disabled={isLoading}
-                          className={`flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl h-12 shadow-lg shadow-orange-500/20 transition-all relative overflow-hidden ${!isLoading && 'active:scale-[0.98]'}`}
+                          className={`flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl h-12 transition-all relative overflow-hidden ${!isLoading && 'active:scale-[0.98]'}`}
                         >
                           {isLoading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
                           Confirm & Generate Verdict
@@ -370,9 +370,9 @@ export default function Home() {
                           className="overflow-hidden border-t border-slate-100 dark:border-slate-800 pt-8 mt-2"
                         >
                           <div className="flex justify-center mt-6">
-                            <div className="w-full max-w-md bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl p-6 flex flex-col items-start space-y-5 border border-white/40 dark:border-slate-700/50 shadow-2xl relative overflow-hidden">
+                            <div className="w-full max-w-md bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl p-6 flex flex-col items-start space-y-5 border border-slate-200 dark:border-slate-700/50 shadow-sm dark:shadow-2xl relative overflow-hidden">
                               {/* Terminal Header */}
-                              <div className="absolute top-0 left-0 w-full h-10 bg-slate-100/40 dark:bg-slate-800/40 flex items-center px-4">
+                              <div className="absolute top-0 left-0 w-full h-10 flex items-center px-4">
                                 <div className="flex gap-1.5">
                                   <div className="w-3 h-3 rounded-full bg-red-400"></div>
                                   <div className="w-3 h-3 rounded-full bg-amber-400"></div>
