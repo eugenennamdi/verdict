@@ -5,58 +5,68 @@ export const metadata: Metadata = {
   description: "Integrate VERDICT's brutal startup scoring into your AI agent via OKX.AI.",
 };
 
+import { Caveat } from 'next/font/google';
+
+const caveat = Caveat({ subsets: ['latin'], weight: ['400', '700'] });
+
 const FlowDiagram = () => (
-  <div className="my-10 p-6 bg-white dark:bg-[#0F1423] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
-    <svg viewBox="0 0 800 300" className="w-full h-auto text-slate-800 dark:text-slate-200" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
-      <defs>
-        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-          <polygon points="0 0, 10 3.5, 0 7" fill="currentColor" />
-        </marker>
-        <marker id="arrowhead-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-          <polygon points="0 0, 10 3.5, 0 7" fill="#f97316" />
-        </marker>
-        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="4" result="blur" />
-          <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
-      </defs>
+  <div className="my-12 p-8 bg-white dark:bg-[#0B0F19] flex flex-col items-center">
+    <h3 className={`text-3xl md:text-4xl font-bold mb-12 text-slate-800 dark:text-slate-200 ${caveat.className}`}>
+      How VERDICT works for Agents 🤖
+    </h3>
+    
+    <div className="w-full overflow-x-auto pb-4">
+      <svg viewBox="0 0 900 200" className="w-full min-w-[800px] h-auto text-slate-800 dark:text-slate-200" style={{ fontFamily: caveat.style.fontFamily }}>
+        <defs>
+          <marker id="arrowhead-sketchy" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+            <path d="M 0 0 L 8 5 L 0 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </marker>
+        </defs>
 
-      {/* Nodes */}
-      
-      {/* 1. Discovery (Your Agent) */}
-      <g transform="translate(40, 100)">
-        <rect x="0" y="0" width="160" height="80" rx="12" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="6 4" />
-        <text x="80" y="35" textAnchor="middle" className="font-bold text-sm" fill="currentColor">Your Agent</text>
-        <text x="80" y="55" textAnchor="middle" className="text-xs" fill="currentColor" opacity="0.7">e.g. Dealflow Bot</text>
-      </g>
+        {/* 1. Your Agent */}
+        <g transform="translate(40, 50)">
+          {/* Sketchy Box */}
+          <path d="M 2 2 L 198 0 L 200 78 L 0 80 Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <text x="100" y="48" textAnchor="middle" className="text-3xl font-bold" fill="currentColor">Your Agent</text>
+        </g>
 
-      {/* 2. OKX.AI */}
-      <g transform="translate(320, 100)">
-        <rect x="0" y="0" width="160" height="80" rx="12" fill="none" stroke="currentColor" strokeWidth="2" />
-        <text x="80" y="45" textAnchor="middle" className="font-black text-lg" fill="currentColor">OKX.AI Network</text>
-      </g>
+        {/* 2. OKX.AI */}
+        <g transform="translate(350, 50)">
+          {/* Sketchy Box */}
+          <path d="M 0 3 L 198 1 L 200 79 L 2 78 Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          {/* OKX Logo / Text in Green */}
+          <text x="100" y="50" textAnchor="middle" className="text-4xl font-bold" fill="#10b981">OKX.AI</text>
+        </g>
 
-      {/* 3. VERDICT */}
-      <g transform="translate(600, 100)">
-        <rect x="0" y="0" width="160" height="80" rx="12" fill="#f97316" filter="url(#glow)" />
-        <text x="80" y="45" textAnchor="middle" className="font-black text-lg text-white" fill="white">VERDICT</text>
-      </g>
+        {/* 3. VERDICT */}
+        <g transform="translate(660, 50)">
+          {/* Sketchy Box */}
+          <path d="M 1 0 L 199 2 L 198 80 L 0 78 Z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          {/* VERDICT Logo + Text in Orange */}
+          <g transform="translate(30, 26)">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#f97316" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 5L12 19L20 5" />
+            </svg>
+          </g>
+          <text x="125" y="50" textAnchor="middle" className="text-4xl font-bold" fill="#f97316">VERDICT</text>
+        </g>
 
-      {/* Connections (Forward) */}
-      <path d="M 200 130 L 310 130" fill="none" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrowhead)" />
-      <text x="255" y="120" textAnchor="middle" className="text-xs font-semibold" fill="currentColor">1. Send URL</text>
+        {/* Connections (Forward) */}
+        <path d="M 245 70 Q 295 65 340 70" fill="none" stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead-sketchy)" />
+        <text x="295" y="60" textAnchor="middle" className="text-lg" fill="currentColor">1. Send URL</text>
 
-      <path d="M 480 130 L 590 130" fill="none" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrowhead)" />
-      <text x="535" y="120" textAnchor="middle" className="text-xs font-semibold" fill="currentColor">2. Invoke Plugin</text>
+        <path d="M 555 70 Q 605 68 650 70" fill="none" stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead-sketchy)" />
+        <text x="605" y="60" textAnchor="middle" className="text-lg" fill="currentColor">2. Invoke plugin</text>
 
-      {/* Connections (Return) */}
-      <path d="M 600 150 L 490 150" fill="none" stroke="#f97316" strokeWidth="2" markerEnd="url(#arrowhead-orange)" strokeDasharray="4 4" />
-      <text x="545" y="165" textAnchor="middle" className="text-xs font-bold" fill="#f97316">3. JSON Score</text>
+        {/* Connections (Return) */}
+        <path d="M 650 110 Q 605 112 555 110" fill="none" stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead-sketchy)" />
+        <text x="605" y="105" textAnchor="middle" className="text-lg" fill="currentColor">3. JSON score</text>
 
-      <path d="M 320 150 L 210 150" fill="none" stroke="#f97316" strokeWidth="2" markerEnd="url(#arrowhead-orange)" strokeDasharray="4 4" />
-      <text x="265" y="165" textAnchor="middle" className="text-xs font-bold" fill="#f97316">4. Autonomous Action</text>
+        <path d="M 340 110 Q 295 115 245 110" fill="none" stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead-sketchy)" />
+        <text x="295" y="105" textAnchor="middle" className="text-lg" fill="currentColor">4. Autonomous action</text>
 
-    </svg>
+      </svg>
+    </div>
   </div>
 );
 
