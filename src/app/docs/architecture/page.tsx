@@ -35,7 +35,7 @@ export default function ArchitecturePage() {
         <section>
           <h2>2. Context Normalization</h2>
           <p className="text-slate-600 dark:text-slate-300 mb-4">
-            Before the deep audit begins, VERDICT runs a preliminary normalization pass using glm 5.2 to establish the ground truth. This phase strips away marketing jargon, parsing the raw HTML structure to identify the true core value proposition (what the product actually does versus what the founder claims it does).
+            Before the deep audit begins, VERDICT runs a preliminary normalization pass using <a href="https://huggingface.co/zai-org/GLM-5.2" target="_blank" rel="noopener noreferrer">GLM-5.2</a> to establish the ground truth. This phase strips away marketing jargon, parsing the raw HTML structure to identify the true core value proposition (what the product actually does versus what the founder claims it does).
           </p>
           <ol>
             <li><strong>Validation:</strong> We verify the URL actually belongs to a SaaS, B2B, or B2C startup. If you submit a personal blog, a GitHub repo, or an agency, the engine rejects it.</li>
