@@ -244,18 +244,18 @@ export default function Home() {
                       className="overflow-hidden"
                     >
                       <div className="flex justify-center mt-8">
-                        <div className="w-full max-w-md glass-panel rounded-2xl p-6 flex flex-col items-start space-y-5 border-t border-white/40 dark:border-slate-700/50 relative overflow-hidden">
+                        <div className="w-full max-w-md bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl p-6 flex flex-col items-start space-y-5 border border-white/40 dark:border-slate-700/50 shadow-2xl relative overflow-hidden">
                           {/* Terminal Header */}
-                          <div className="absolute top-0 left-0 w-full h-8 bg-slate-100/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex items-center px-4">
+                          <div className="absolute top-0 left-0 w-full h-10 bg-slate-100/40 dark:bg-slate-800/40 flex items-center px-4">
                             <div className="flex gap-1.5">
-                              <div className="w-2.5 h-2.5 rounded-full bg-red-400/80"></div>
-                              <div className="w-2.5 h-2.5 rounded-full bg-amber-400/80"></div>
-                              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400/80"></div>
+                              <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                              <div className="w-3 h-3 rounded-full bg-amber-400"></div>
+                              <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
                             </div>
-                            <span className="text-[10px] uppercase font-mono font-bold tracking-widest text-slate-400 ml-4">Verdict_Engine_v1.2</span>
+                            <span className="text-[11px] uppercase font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 ml-4">VERDICT ENGINE v0</span>
                           </div>
 
-                          <div className="pt-6 w-full flex flex-col space-y-4">
+                          <div className="pt-8 w-full flex flex-col space-y-4">
                             {analyzeLoadingPhrases.map((phrase, idx) => (
                                <div key={idx} className={`flex items-center gap-4 transition-all duration-500 font-mono ${loadingPhase >= idx ? 'opacity-100 translate-x-0' : 'opacity-20 -translate-x-2'}`}>
                                   {loadingPhase > idx ? (
@@ -370,18 +370,18 @@ export default function Home() {
                           className="overflow-hidden border-t border-slate-100 dark:border-slate-800 pt-8 mt-2"
                         >
                           <div className="flex justify-center mt-6">
-                            <div className="w-full max-w-md glass-panel rounded-2xl p-6 flex flex-col items-start space-y-5 border-t border-white/40 dark:border-slate-700/50 relative overflow-hidden">
+                            <div className="w-full max-w-md bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl p-6 flex flex-col items-start space-y-5 border border-white/40 dark:border-slate-700/50 shadow-2xl relative overflow-hidden">
                               {/* Terminal Header */}
-                              <div className="absolute top-0 left-0 w-full h-8 bg-slate-100/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex items-center px-4">
+                              <div className="absolute top-0 left-0 w-full h-10 bg-slate-100/40 dark:bg-slate-800/40 flex items-center px-4">
                                 <div className="flex gap-1.5">
-                                  <div className="w-2.5 h-2.5 rounded-full bg-red-400/80"></div>
-                                  <div className="w-2.5 h-2.5 rounded-full bg-amber-400/80"></div>
-                                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-400/80"></div>
+                                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                                  <div className="w-3 h-3 rounded-full bg-amber-400"></div>
+                                  <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
                                 </div>
-                                <span className="text-[10px] uppercase font-mono font-bold tracking-widest text-slate-400 ml-4">Verdict_Engine_v1.2</span>
+                                <span className="text-[11px] uppercase font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 ml-4">VERDICT ENGINE v0</span>
                               </div>
 
-                              <div className="pt-6 w-full flex flex-col space-y-4">
+                              <div className="pt-8 w-full flex flex-col space-y-4">
                                 {generateLoadingPhrases.map((phrase, idx) => (
                                    <div key={idx} className={`flex items-center gap-4 transition-all duration-500 font-mono ${loadingPhase >= idx ? 'opacity-100 translate-x-0' : 'opacity-20 -translate-x-2'}`}>
                                       {loadingPhase > idx ? (

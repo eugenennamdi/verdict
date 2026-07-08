@@ -150,12 +150,13 @@
 @layer utilities {
   .bg-mesh {
     background-image: 
-      radial-gradient(at 40% 20%, hsla(28,100%,74%,0.15) 0px, transparent 50%),
-      radial-gradient(at 80% 0%, hsla(189,100%,56%,0.15) 0px, transparent 50%),
-      radial-gradient(at 0% 50%, hsla(355,100%,93%,0.1) 0px, transparent 50%);
-    filter: blur(40px);
+      radial-gradient(ellipse at 40% 20%, hsla(28,100%,74%,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 0%, hsla(189,100%,56%,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 0% 50%, hsla(355,100%,93%,0.1) 0%, transparent 60%);
     z-index: -1;
-    animation: mesh-pulse 10s ease-in-out infinite alternate;
+    animation: mesh-pulse 15s ease-in-out infinite alternate;
+    will-change: transform;
+    transform: translateZ(0);
   }
 
   @keyframes mesh-pulse {
@@ -165,6 +166,6 @@
   }
 
   .glass-panel {
-    @apply bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-white/20 dark:border-slate-800/50 shadow-xl;
+    @apply bg-white/30 dark:bg-slate-900/30 backdrop-blur-md border border-white/20 dark:border-slate-800/30 shadow-2xl;
   }
 }
