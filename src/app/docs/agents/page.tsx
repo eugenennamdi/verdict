@@ -104,7 +104,7 @@ export default function AgentsPage() {
             href="https://www.okx.ai/agents" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-orange-500 text-white hover:bg-orange-600 h-10 px-6 py-2 no-underline shadow-lg shadow-orange-500/20"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-12 px-8 text-base font-bold bg-[#ff4a00] hover:bg-[#e64300] !text-white no-underline shadow-lg shadow-[#ff4a00]/25"
           >
             Connect via OKX.AI
           </a>
