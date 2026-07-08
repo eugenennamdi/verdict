@@ -53,10 +53,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             text: JSON.stringify({
               company_name: extracted.company_name,
               target_audience: extracted.target_audience,
-              growth_readiness_score: audit.growth_readiness_score,
-              founder_delusion_index: audit.founder_delusion_index,
-              verdict: audit.verdict,
-              actionable_feedback: audit.actionable_feedback
+              growth_readiness_score: audit.overallScore,
+              score_interpretation: audit.score_interpretation,
+              verdict: audit.the_verdict,
+              actionable_feedback: audit.priority_matrix
             }, null, 2)
           }
         ]
@@ -87,6 +87,35 @@ server.connect(transport);
 
 export async function POST(req: Request) {
   try {
+    // OKX Agent Payments Protocol (x402) integration
+    const paymentSignature = req.headers.get("payment-signature") || req.headers.get("x-payment");
+    
+    if (!paymentSignature) {
+      const payload = {
+        x402Version: "2",
+        resource: "VERDICT-A2MCP",
+        accepts: [
+          {
+            scheme: "exact",
+            network: "eip155:196", // X Layer
+            asset: "0x1E4a5963aBFD975d8c9021ce480b42188849D41d", // USDT on X Layer
+            amount: "500000", // 0.5 USDT
+            payTo: process.env.PAYMENT_ADDRESS || "0x0000000000000000000000000000000000000000" // Set your wallet address in .env
+          }
+        ]
+      };
+      
+      const base64Payload = Buffer.from(JSON.stringify(payload)).toString("base64");
+      
+      return new Response("Payment Required", {
+        status: 402,
+        headers: {
+          "PAYMENT-REQUIRED": base64Payload,
+          "Access-Control-Expose-Headers": "PAYMENT-REQUIRED"
+        }
+      });
+    }
+
     return await transport.handleRequest(req);
   } catch (error) {
     console.error("MCP Transport Error:", error);
