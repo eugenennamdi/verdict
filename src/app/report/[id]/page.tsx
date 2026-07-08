@@ -77,11 +77,8 @@ export default function ReportPage() {
 
   return (
     <div className="min-h-screen text-slate-900 dark:text-white p-4 md:p-8 lg:p-12 selection:bg-orange-500/20 selection:text-orange-900 relative">
-      {/* Topo Background with subtle pan animation */}
-      <div 
-        className="absolute inset-0 z-0 opacity-10 pointer-events-none bg-repeat animate-pan-topo" 
-        style={{ backgroundImage: 'url(/bg-topo.png)', backgroundSize: '600px' }} 
-      />
+      {/* Premium Mesh Background */}
+      <div className="absolute inset-0 z-0 opacity-40 dark:opacity-20 pointer-events-none bg-mesh" />
 
       <div className="max-w-6xl mx-auto space-y-16 relative z-10">
         
@@ -146,7 +143,7 @@ export default function ReportPage() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={springTransition}
-            className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden relative rounded-3xl"
+            className="glass-panel overflow-hidden relative rounded-3xl"
           >
             <CardHeader className="pb-4 relative z-10 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
               <CardTitle className="text-xl font-bold flex items-center gap-2 text-slate-900 dark:text-white">
@@ -218,7 +215,7 @@ export default function ReportPage() {
                   key={i} 
                   whileHover={{ y: -4, scale: 1.01 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all rounded-3xl"
+                  className="glass-panel shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all rounded-3xl"
                 >
                   <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 rounded-t-3xl">
                     <div className="flex items-center justify-between">
@@ -288,7 +285,7 @@ export default function ReportPage() {
             <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Priority Matrix</h2>
           </div>
           
-          <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-black/50 rounded-3xl overflow-hidden">
+          <Card className="glass-panel shadow-xl shadow-slate-200/50 dark:shadow-black/50 rounded-3xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
                 <thead className="text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-800">

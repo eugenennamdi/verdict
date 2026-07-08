@@ -153,14 +153,11 @@ export default function Home() {
   return (
     <div className="min-h-[100dvh] flex-1 w-full flex flex-col relative">
       
-      {/* Topo Background with subtle pan animation */}
-      <div 
-        className="absolute inset-0 z-0 opacity-10 pointer-events-none bg-repeat animate-pan-topo" 
-        style={{ backgroundImage: 'url(/bg-topo.png)', backgroundSize: '600px' }} 
-      />
+      {/* Premium Mesh Background */}
+      <div className="absolute inset-0 z-0 opacity-40 dark:opacity-20 pointer-events-none bg-mesh" />
 
       {/* Header */}
-      <header className="relative z-10 w-full pt-8 px-6 md:px-12 max-w-6xl mx-auto flex justify-between items-center">
+      <header className="sticky top-4 z-50 w-[calc(100%-2rem)] max-w-6xl mx-auto px-6 py-4 flex justify-between items-center glass-panel rounded-full transition-all duration-300 mb-8 mt-4">
         <Link href="/" className="flex items-center gap-2 group cursor-pointer">
           <VerdictLogo className="w-8 h-8 text-orange-500 group-hover:scale-105 transition-transform" />
           <span className="font-black tracking-tight text-xl text-slate-900 dark:text-white">VERDICT</span>
@@ -200,7 +197,7 @@ export default function Home() {
                 <div className="space-y-6 mb-12">
                   <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 dark:text-white leading-[1.1]">
                     Find the bottleneck <br className="hidden md:block" />
-                    killing your growth in 60 seconds.
+                    killing your growth in <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-amber-400">60 seconds.</span>
                   </h1>
                   <p className="text-xl text-slate-500 dark:text-slate-400 font-medium tracking-wide max-w-xl mx-auto leading-relaxed">
                     Stop guessing why you aren&apos;t scaling. Drop your URL for a brutally honest, YC-grade audit.
@@ -228,7 +225,7 @@ export default function Home() {
                       <Button 
                         type="submit" 
                         disabled={isLoading}
-                        className="bg-orange-500 hover:bg-orange-600 text-white font-bold tracking-wide rounded-xl px-6 h-11 transition-transform active:scale-95 w-[140px] sm:w-36 flex items-center justify-center relative overflow-hidden [-webkit-tap-highlight-color:transparent]"
+                        className="bg-orange-500 hover:bg-orange-600 text-white font-bold tracking-wide rounded-xl px-6 h-11 transition-all active:scale-95 w-[140px] sm:w-36 flex items-center justify-center relative overflow-hidden shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] [-webkit-tap-highlight-color:transparent]"
                       >
                         {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />}
                         Analyze
@@ -246,24 +243,38 @@ export default function Home() {
                       exit={{ opacity: 0, height: 0, marginTop: 0 }}
                       className="overflow-hidden"
                     >
-                      <div className="flex justify-center">
-                        <div className="w-[320px] flex flex-col items-start space-y-5">
-                          {analyzeLoadingPhrases.map((phrase, idx) => (
-                             <div key={idx} className={`flex items-center gap-4 transition-all duration-500 ${loadingPhase >= idx ? 'opacity-100 translate-x-0' : 'opacity-20 -translate-x-2'}`}>
-                                {loadingPhase > idx ? (
-                                   <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0 border border-emerald-500/20">
-                                      <Check className="w-3.5 h-3.5 text-emerald-500" strokeWidth={3} />
-                                   </div>
-                                ) : loadingPhase === idx ? (
-                                   <Loader2 className="w-6 h-6 text-orange-500 animate-spin shrink-0" />
-                                ) : (
-                                   <div className="w-6 h-6 rounded-full border-2 border-slate-200 dark:border-slate-800 shrink-0" />
-                                )}
-                                <span className={`font-semibold tracking-wide text-[15px] ${loadingPhase >= idx ? 'text-slate-800 dark:text-slate-200' : 'text-slate-400 dark:text-slate-600'}`}>
-                                  {phrase}
-                                </span>
-                             </div>
-                          ))}
+                      <div className="flex justify-center mt-8">
+                        <div className="w-full max-w-md glass-panel rounded-2xl p-6 flex flex-col items-start space-y-5 border-t border-white/40 dark:border-slate-700/50 relative overflow-hidden">
+                          {/* Terminal Header */}
+                          <div className="absolute top-0 left-0 w-full h-8 bg-slate-100/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex items-center px-4">
+                            <div className="flex gap-1.5">
+                              <div className="w-2.5 h-2.5 rounded-full bg-red-400/80"></div>
+                              <div className="w-2.5 h-2.5 rounded-full bg-amber-400/80"></div>
+                              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400/80"></div>
+                            </div>
+                            <span className="text-[10px] uppercase font-mono font-bold tracking-widest text-slate-400 ml-4">Verdict_Engine_v1.2</span>
+                          </div>
+
+                          <div className="pt-6 w-full flex flex-col space-y-4">
+                            {analyzeLoadingPhrases.map((phrase, idx) => (
+                               <div key={idx} className={`flex items-center gap-4 transition-all duration-500 font-mono ${loadingPhase >= idx ? 'opacity-100 translate-x-0' : 'opacity-20 -translate-x-2'}`}>
+                                  {loadingPhase > idx ? (
+                                     <div className="w-5 h-5 rounded-sm bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/30">
+                                        <Check className="w-3.5 h-3.5 text-emerald-500" strokeWidth={3} />
+                                     </div>
+                                  ) : loadingPhase === idx ? (
+                                     <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                                        <div className="w-2 h-4 bg-orange-500 animate-pulse"></div>
+                                     </div>
+                                  ) : (
+                                     <div className="w-5 h-5 rounded-sm border border-slate-300 dark:border-slate-700 shrink-0" />
+                                  )}
+                                  <span className={`text-[13px] ${loadingPhase >= idx ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-600'}`}>
+                                    {phrase}
+                                  </span>
+                               </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </motion.div>
@@ -358,24 +369,38 @@ export default function Home() {
                           exit={{ opacity: 0, height: 0, marginTop: 0 }}
                           className="overflow-hidden border-t border-slate-100 dark:border-slate-800 pt-8 mt-2"
                         >
-                          <div className="flex justify-center">
-                            <div className="w-[320px] flex flex-col items-start space-y-5">
-                              {generateLoadingPhrases.map((phrase, idx) => (
-                                 <div key={idx} className={`flex items-center gap-4 transition-all duration-500 ${loadingPhase >= idx ? 'opacity-100 translate-x-0' : 'opacity-20 -translate-x-2'}`}>
-                                    {loadingPhase > idx ? (
-                                       <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0 border border-emerald-500/20">
-                                          <Check className="w-3.5 h-3.5 text-emerald-500" strokeWidth={3} />
-                                       </div>
-                                    ) : loadingPhase === idx ? (
-                                       <Loader2 className="w-6 h-6 text-orange-500 animate-spin shrink-0" />
-                                    ) : (
-                                       <div className="w-6 h-6 rounded-full border-2 border-slate-200 dark:border-slate-800 shrink-0" />
-                                    )}
-                                    <span className={`font-semibold tracking-wide text-[15px] ${loadingPhase >= idx ? 'text-slate-800 dark:text-slate-200' : 'text-slate-400 dark:text-slate-600'}`}>
-                                      {phrase}
-                                    </span>
-                                 </div>
-                              ))}
+                          <div className="flex justify-center mt-6">
+                            <div className="w-full max-w-md glass-panel rounded-2xl p-6 flex flex-col items-start space-y-5 border-t border-white/40 dark:border-slate-700/50 relative overflow-hidden">
+                              {/* Terminal Header */}
+                              <div className="absolute top-0 left-0 w-full h-8 bg-slate-100/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex items-center px-4">
+                                <div className="flex gap-1.5">
+                                  <div className="w-2.5 h-2.5 rounded-full bg-red-400/80"></div>
+                                  <div className="w-2.5 h-2.5 rounded-full bg-amber-400/80"></div>
+                                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-400/80"></div>
+                                </div>
+                                <span className="text-[10px] uppercase font-mono font-bold tracking-widest text-slate-400 ml-4">Verdict_Engine_v1.2</span>
+                              </div>
+
+                              <div className="pt-6 w-full flex flex-col space-y-4">
+                                {generateLoadingPhrases.map((phrase, idx) => (
+                                   <div key={idx} className={`flex items-center gap-4 transition-all duration-500 font-mono ${loadingPhase >= idx ? 'opacity-100 translate-x-0' : 'opacity-20 -translate-x-2'}`}>
+                                      {loadingPhase > idx ? (
+                                         <div className="w-5 h-5 rounded-sm bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/30">
+                                            <Check className="w-3.5 h-3.5 text-emerald-500" strokeWidth={3} />
+                                         </div>
+                                      ) : loadingPhase === idx ? (
+                                         <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                                            <div className="w-2 h-4 bg-orange-500 animate-pulse"></div>
+                                         </div>
+                                      ) : (
+                                         <div className="w-5 h-5 rounded-sm border border-slate-300 dark:border-slate-700 shrink-0" />
+                                      )}
+                                      <span className={`text-[13px] ${loadingPhase >= idx ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-600'}`}>
+                                        {phrase}
+                                      </span>
+                                   </div>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         </motion.div>
