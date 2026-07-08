@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Loader2, ChevronRight, Check } from "lucide-react";
+import { Search, Loader2, ChevronRight, Check, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -166,6 +166,15 @@ export default function Home() {
           <span className="font-black tracking-tight text-xl text-slate-900 dark:text-white">VERDICT</span>
         </Link>
         <nav className="flex items-center gap-4">
+          <a 
+            href="https://www.okx.ai/agents"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-full bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/20 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-500/20 transition-colors"
+          >
+            <Bot className="w-4 h-4" />
+            For Agents
+          </a>
           <Link 
             href="/docs" 
             className="text-sm font-bold px-5 py-2.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
