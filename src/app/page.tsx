@@ -36,6 +36,7 @@ export default function Home() {
   const [url, setUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isAuditing, setIsAuditing] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
   const [extractedData, setExtractedData] = useState<{
     company_name: string;
     target_audience: string;
@@ -93,6 +94,11 @@ export default function Home() {
       const data = await res.json();
       
       if (!res.ok) {
+        if (data.error === 'RATE_LIMIT_EXCEEDED') {
+           setShowPaywall(true);
+           setIsLoading(false);
+           return;
+        }
         throw new Error(data.error || 'Failed to extract context. Please try another URL.');
       }
       
@@ -414,6 +420,57 @@ export default function Home() {
           </AnimatePresence>
         </div>
       </div>
+      
+      {/* Rate Limit / Teaser Wall Modal */}
+      <AnimatePresence>
+        {showPaywall && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100]"
+              onClick={() => setShowPaywall(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="fixed left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%] w-full max-w-md z-[101] p-6"
+            >
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden flex flex-col items-center text-center">
+                <div className="absolute inset-0 bg-mesh opacity-20 pointer-events-none" />
+                <div className="w-16 h-16 rounded-full bg-orange-100 dark:bg-orange-500/10 flex items-center justify-center mb-6 relative z-10 border border-orange-200 dark:border-orange-500/20">
+                  <Bot className="w-8 h-8 text-orange-500" />
+                </div>
+                <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-4 relative z-10">
+                  Free Limit Reached
+                </h3>
+                <p className="text-slate-600 dark:text-slate-400 font-medium mb-8 leading-relaxed relative z-10">
+                  You&apos;ve used your free audit. Our AI engine requires heavy compute to generate these teardowns. Please wait 12 hours, or unlock unlimited audits right now.
+                </p>
+                <div className="w-full space-y-3 relative z-10">
+                  <a 
+                    href="https://www.okx.ai/agents"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(249,115,22,0.3)]"
+                  >
+                    Pay via OKX.AI
+                  </a>
+                  <button 
+                    onClick={() => setShowPaywall(false)}
+                    className="w-full py-4 text-sm font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+                  >
+                    Maybe Later
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       <Footer />
     </div>
   );
