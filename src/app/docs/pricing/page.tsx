@@ -22,7 +22,7 @@ export default function PricingPage() {
             <Globe className="w-6 h-6 text-slate-600 dark:text-slate-400" />
           </div>
           <h2 className="text-2xl font-black mb-2 mt-0">The Web Playground</h2>
-          <p className="text-slate-500 dark:text-slate-400 font-medium mb-6">For founders & casual exploration.</p>
+          <p className="text-slate-500 dark:text-slate-400 font-medium mb-6">For normal users & casual exploration.</p>
           <div className="mb-8">
             <span className="text-5xl font-black">Free</span>
           </div>
@@ -52,11 +52,12 @@ export default function PricingPage() {
           <div className="w-12 h-12 rounded-2xl bg-orange-500 flex items-center justify-center mb-6 relative z-10 shadow-lg shadow-orange-500/20">
             <Bot className="w-6 h-6 text-white" />
           </div>
-          <h2 className="text-2xl font-black mb-2 mt-0 relative z-10">The OKX.AI Agent</h2>
-          <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 relative z-10">For VCs, syndicates, and high-volume use.</p>
+          <h2 className="text-2xl font-black mb-2 mt-0 relative z-10">The VERDICT Pro Agent</h2>
+          <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 relative z-10">For Founders, CMOs, Growth Marketers, VCs & high-volume use.</p>
           <div className="mb-8 relative z-10">
-            <span className="text-5xl font-black text-orange-500">Pay-per-use</span>
+            <span className="text-4xl font-black text-orange-500 tracking-tight">Pay-per-use</span>
           </div>
+          <div className="relative z-10 font-bold text-slate-900 dark:text-white mb-4">Everything in Free, plus:</div>
           <ul className="space-y-4 mb-8 flex-1 relative z-10">
             <li className="flex gap-3">
               <Check className="w-5 h-5 text-orange-500 shrink-0" />
@@ -81,7 +82,7 @@ export default function PricingPage() {
             rel="noopener noreferrer"
             className="w-full py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-center transition-all hover:scale-[1.02] relative z-10 shadow-lg shadow-orange-500/20"
           >
-            Deploy on OKX.AI
+            Continue to OKX.AI
           </a>
         </div>
       </div>
@@ -93,7 +94,7 @@ export default function PricingPage() {
       <ul>
         <li>Spinning up cloud-based headless browsers (Firecrawl) to bypass bot protection and render heavy React/Vue applications.</li>
         <li>Aggregating the entire DOM into a massive markdown context window.</li>
-        <li>Executing rigorous, multi-stage reasoning and parsing (Jina AI & OpenAI).</li>
+        <li>Executing rigorous, multi-stage reasoning and parsing using our proprietary engine powered by <strong>GLM-5.2</strong> and OpenAI.</li>
       </ul>
       <p>
         We refused to gate this behind a flat monthly fee that penalizes infrequent users. By deploying our core engine as an Autonomous Agent on the OKX.AI network, we allow power users to pay exactly for what they compute, while keeping a free playground available for early-stage founders.
