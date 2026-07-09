@@ -6,33 +6,48 @@ const openai = new OpenAI({
 });
 
 export async function extractContext(url: string) {
+  let markdownContext = '';
+
   // 1. Scrape with Firecrawl
   const firecrawlKey = process.env.FIRECRAWL_API_KEY;
-  const firecrawlRes = await fetch('https://api.firecrawl.dev/v1/scrape', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${firecrawlKey}`,
-    },
-    body: JSON.stringify({ 
-      url, 
-      formats: ['markdown'],
-      timeout: 60000
-    }),
-  });
+  try {
+    const firecrawlRes = await fetch('https://api.firecrawl.dev/v1/scrape', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${firecrawlKey}`,
+      },
+      body: JSON.stringify({ 
+        url, 
+        formats: ['markdown'],
+        timeout: 25000 // fail faster to trigger fallback
+      }),
+    });
 
-  if (!firecrawlRes.ok) {
-    if (firecrawlRes.status === 408 || firecrawlRes.statusText.includes('Timeout')) {
-      throw new Error('This website took too long to load or is actively blocking our scraper. Please try another URL.');
+    if (firecrawlRes.ok) {
+      const scrapedData = await firecrawlRes.json();
+      markdownContext = scrapedData.data?.markdown || '';
     }
-    throw new Error(`Extraction Error: ${firecrawlRes.statusText}`);
+  } catch (e) {
+    console.warn("Firecrawl scraping failed or timed out:", e);
   }
 
-  const scrapedData = await firecrawlRes.json();
-  const markdownContext = scrapedData.data?.markdown || '';
+  // 2. Fallback to Jina AI if Firecrawl fails or gets blocked
+  if (!markdownContext || markdownContext.length < 50) {
+    try {
+      const jinaRes = await fetch(`https://r.jina.ai/${url}`, {
+        headers: { 'Accept': 'text/plain' }
+      });
+      if (jinaRes.ok) {
+        markdownContext = await jinaRes.text();
+      }
+    } catch (e) {
+      console.warn("Jina AI fallback failed:", e);
+    }
+  }
 
-  if (!markdownContext) {
-    throw new Error('Failed to extract content from the URL');
+  if (!markdownContext || markdownContext.length < 50) {
+    throw new Error('This website took too long to load or is actively blocking our scraper. Please try another URL.');
   }
 
   // 2. Extract with GLM-5.2
