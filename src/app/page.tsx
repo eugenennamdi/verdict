@@ -438,29 +438,37 @@ export default function Home() {
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="fixed left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%] w-full max-w-md z-[101] p-6"
             >
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden flex flex-col items-center text-center">
-                <div className="absolute inset-0 bg-mesh opacity-20 pointer-events-none" />
-                <div className="w-16 h-16 rounded-full bg-orange-100 dark:bg-orange-500/10 flex items-center justify-center mb-6 relative z-10 border border-orange-200 dark:border-orange-500/20">
-                  <VerdictLogo className="w-8 h-8 text-orange-500" />
+              <div className="bg-white/90 dark:bg-[#0B0F19]/90 backdrop-blur-xl border border-white/20 dark:border-slate-800 rounded-3xl p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.1)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] relative overflow-hidden flex flex-col items-center text-center">
+                {/* Subtle glowing orb in background */}
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-orange-500/20 blur-[60px] rounded-full pointer-events-none" />
+                <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-orange-500/10 blur-[60px] rounded-full pointer-events-none" />
+                
+                <div className="absolute inset-0 bg-mesh opacity-10 pointer-events-none mix-blend-overlay" />
+                
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-100 to-orange-50 dark:from-orange-500/20 dark:to-orange-500/5 flex items-center justify-center mb-6 relative z-10 border border-orange-200/50 dark:border-orange-500/20 shadow-[0_0_30px_rgba(249,115,22,0.2)]">
+                  <VerdictLogo className="w-8 h-8 text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]" />
                 </div>
-                <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-4 relative z-10">
+                
+                <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3 relative z-10 tracking-tight">
                   Free Limit Reached
                 </h3>
-                <p className="text-slate-600 dark:text-slate-400 font-medium mb-8 leading-relaxed relative z-10">
-                  You&apos;ve used your free audit. Our AI engine requires heavy compute to generate these teardowns. Please wait 12 hours, or unlock unlimited audits right now.
+                
+                <p className="text-slate-600 dark:text-slate-400 font-medium mb-8 leading-relaxed relative z-10 text-sm">
+                  You&apos;ve used your free playground audit. Our AI engine requires heavy compute to generate these teardowns. Please wait 12 hours, or unlock unlimited audits right now.
                 </p>
+                
                 <div className="w-full space-y-3 relative z-10">
                   <a 
                     href="https://www.okx.ai/agents"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(249,115,22,0.3)]"
+                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 !text-white font-bold py-4 px-6 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] border border-orange-400/20"
                   >
-                    Continue via OKX.AI
+                    Continue to OKX.AI
                   </a>
                   <button 
                     onClick={() => setShowPaywall(false)}
-                    className="w-full py-4 text-sm font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+                    className="w-full py-4 text-sm font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
                   >
                     Maybe Later
                   </button>
