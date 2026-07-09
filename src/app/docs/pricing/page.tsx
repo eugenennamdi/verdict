@@ -47,7 +47,7 @@ export default function PricingPage() {
         <div className="border-2 border-orange-500 rounded-3xl p-8 bg-orange-500/5 shadow-[0_0_40px_rgba(249,115,22,0.1)] relative overflow-hidden flex flex-col">
           <div className="absolute inset-0 bg-mesh opacity-10 pointer-events-none" />
           <div className="absolute top-0 right-8 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-b-lg tracking-widest uppercase">
-            Recommended for VCs
+            RECOMMENDED
           </div>
           <div className="w-12 h-12 rounded-2xl bg-orange-500 flex items-center justify-center mb-6 relative z-10 shadow-lg shadow-orange-500/20">
             <Bot className="w-6 h-6 text-white" />
