@@ -441,7 +441,7 @@ export default function Home() {
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-2xl relative overflow-hidden flex flex-col items-center text-center">
                 <div className="absolute inset-0 bg-mesh opacity-20 pointer-events-none" />
                 <div className="w-16 h-16 rounded-full bg-orange-100 dark:bg-orange-500/10 flex items-center justify-center mb-6 relative z-10 border border-orange-200 dark:border-orange-500/20">
-                  <Bot className="w-8 h-8 text-orange-500" />
+                  <VerdictLogo className="w-8 h-8 text-orange-500" />
                 </div>
                 <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-4 relative z-10">
                   Free Limit Reached
