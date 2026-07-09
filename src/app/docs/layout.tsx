@@ -10,7 +10,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
     { name: "Scoring & Enforcement", href: "/docs/scoring", icon: CheckCircle2 },
     { name: "Growth Readiness Score", href: "/docs/growth-readiness", icon: Rocket },
     { name: "Founder Delusion Index", href: "/docs/fdi", icon: TrendingDown },
-    { name: "For Agents (OKX.AI)", href: "/docs/agents", icon: Bot },
+    { name: "Agent & Pricing (OKX.AI)", href: "/docs/pricing", icon: Bot },
   ];
 
   return (

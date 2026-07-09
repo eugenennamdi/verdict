@@ -43,6 +43,18 @@ export default function DocsIntroPage() {
         <li><strong>Brutal Honesty.</strong> If your startup is a thin wrapper, we will tell you. If your value proposition is a word salad of buzzwords, we will rip it apart.</li>
       </ul>
 
+      <h2>The Web Playground vs. The Autonomous Agent</h2>
+      <p>
+        Because VERDICT relies on heavy compute—running headless browsers (Firecrawl) and processing massive context windows (Jina AI & OpenAI)—scaling this level of deep analysis is exceptionally expensive.
+      </p>
+      <p>
+        Instead of forcing users into expensive monthly SaaS subscriptions, we engineered a hybrid model:
+      </p>
+      <ul className="space-y-4 mb-12">
+        <li><strong>The Web Playground (This Site):</strong> A free, rate-limited (1 audit per 12 hours) interface designed to let founders experience the brutality of the VERDICT engine firsthand.</li>
+        <li><strong>The OKX.AI Agent (The Full Engine):</strong> Our uncapped, autonomous auditor lives natively on the OKX.AI ecosystem. Here, VCs and heavy users can run unlimited audits on a strict pay-per-execution basis using Web3 rails.</li>
+      </ul>
+
       <div className="flex justify-end mt-16 pt-8 border-t border-slate-200 dark:border-slate-800">
         <Link href="/docs/architecture" className="flex items-center gap-2 text-slate-900 dark:text-white font-bold hover:text-orange-500 dark:hover:text-orange-500 transition-colors">
           Next: Architecture & Pipeline <ArrowRight className="w-5 h-5" />

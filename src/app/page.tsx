@@ -456,7 +456,7 @@ export default function Home() {
                     rel="noopener noreferrer"
                     className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(249,115,22,0.3)]"
                   >
-                    Pay via OKX.AI
+                    Continue via OKX.AI
                   </a>
                   <button 
                     onClick={() => setShowPaywall(false)}
