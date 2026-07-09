@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Loader2, ChevronRight, Check, Bot } from "lucide-react";
+import { Search, Loader2, ChevronRight, Check, Bot, X, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -429,49 +429,111 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100]"
+              className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100]"
               onClick={() => setShowPaywall(false)}
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%] w-full max-w-md z-[101] p-6"
+              className="fixed left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%] w-full max-w-5xl z-[101] p-4 md:p-6"
             >
-              <div className="bg-white/90 dark:bg-[#0B0F19]/90 backdrop-blur-xl border border-white/20 dark:border-slate-800 rounded-3xl p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.1)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] relative overflow-hidden flex flex-col items-center text-center">
-                {/* Subtle glowing orb in background */}
-                <div className="absolute -top-24 -right-24 w-48 h-48 bg-orange-500/20 blur-[60px] rounded-full pointer-events-none" />
-                <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-orange-500/10 blur-[60px] rounded-full pointer-events-none" />
-                
-                <div className="absolute inset-0 bg-mesh opacity-10 pointer-events-none mix-blend-overlay" />
-                
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-100 to-orange-50 dark:from-orange-500/20 dark:to-orange-500/5 flex items-center justify-center mb-6 relative z-10 border border-orange-200/50 dark:border-orange-500/20 shadow-[0_0_30px_rgba(249,115,22,0.2)]">
-                  <VerdictLogo className="w-8 h-8 text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]" />
+              <div className="bg-white/90 dark:bg-[#0B0F19]/90 backdrop-blur-2xl border border-white/20 dark:border-slate-800 rounded-[2rem] p-6 md:p-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col">
+                <button 
+                  onClick={() => setShowPaywall(false)}
+                  className="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors z-20"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+
+                <div className="text-center mb-10 mt-2 relative z-10">
+                  <h3 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                    Upgrade your plan
+                  </h3>
+                  <p className="text-slate-500 mt-3 font-medium">You&apos;ve used your free playground audit. Choose a tier to continue.</p>
                 </div>
-                
-                <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3 relative z-10 tracking-tight">
-                  Free Limit Reached
-                </h3>
-                
-                <p className="text-slate-600 dark:text-slate-400 font-medium mb-8 leading-relaxed relative z-10 text-sm">
-                  You&apos;ve used your free playground audit. Our AI engine requires heavy compute to generate these teardowns. Please wait 12 hours, or unlock unlimited audits right now.
-                </p>
-                
-                <div className="w-full space-y-3 relative z-10">
-                  <a 
-                    href="https://www.okx.ai/agents"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 !text-white font-bold py-4 px-6 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] border border-orange-400/20"
-                  >
-                    Continue to OKX.AI
-                  </a>
-                  <button 
-                    onClick={() => setShowPaywall(false)}
-                    className="w-full py-4 text-sm font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
-                  >
-                    Maybe Later
-                  </button>
+
+                <div className="grid md:grid-cols-2 gap-6 relative z-10">
+                  {/* Free Plan Card */}
+                  <div className="border border-slate-200 dark:border-slate-800/50 rounded-3xl p-8 bg-white dark:bg-slate-900/50 shadow-sm flex flex-col">
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-6">
+                      <Globe className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+                    </div>
+                    <h4 className="text-2xl font-black mb-1">The Web Playground</h4>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 text-sm">For normal users & casual exploration.</p>
+                    <div className="mb-8">
+                      <span className="text-5xl font-black text-slate-900 dark:text-white">Free</span>
+                    </div>
+                    <ul className="space-y-4 mb-8 flex-1">
+                      <li className="flex gap-3">
+                        <Check className="w-5 h-5 text-slate-300 dark:text-slate-600 shrink-0" />
+                        <span className="text-slate-600 dark:text-slate-300 text-sm font-medium">1 full audit per 12 hours (IP limited)</span>
+                      </li>
+                      <li className="flex gap-3">
+                        <Check className="w-5 h-5 text-slate-300 dark:text-slate-600 shrink-0" />
+                        <span className="text-slate-600 dark:text-slate-300 text-sm font-medium">Full 7-Pillar framework</span>
+                      </li>
+                      <li className="flex gap-3">
+                        <Check className="w-5 h-5 text-slate-300 dark:text-slate-600 shrink-0" />
+                        <span className="text-slate-600 dark:text-slate-300 text-sm font-medium">Headless browser extraction</span>
+                      </li>
+                    </ul>
+                    <button 
+                      onClick={() => setShowPaywall(false)}
+                      className="w-full py-3.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl text-center transition-colors text-sm"
+                    >
+                      Your current plan
+                    </button>
+                  </div>
+
+                  {/* Pro Plan Card */}
+                  <div className="border-2 border-orange-500 rounded-3xl p-8 bg-orange-50 dark:bg-orange-500/5 shadow-[0_0_40px_rgba(249,115,22,0.1)] relative overflow-hidden flex flex-col">
+                    <div className="absolute inset-0 bg-mesh opacity-10 pointer-events-none mix-blend-overlay" />
+                    <div className="absolute top-0 right-6 bg-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-b-lg tracking-widest uppercase">
+                      RECOMMENDED
+                    </div>
+                    
+                    {/* Glowing orbs for the premium card */}
+                    <div className="absolute -top-24 -right-24 w-48 h-48 bg-orange-500/20 blur-[60px] rounded-full pointer-events-none" />
+                    
+                    <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center mb-6 relative z-10 shadow-lg shadow-orange-500/20">
+                      <Bot className="w-5 h-5 text-white" />
+                    </div>
+                    <h4 className="text-2xl font-black mb-1 relative z-10">The VERDICT Pro Agent</h4>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 relative z-10 text-sm">For Founders, CMOs, VCs & high-volume use.</p>
+                    <div className="mb-8 relative z-10">
+                      <span className="text-4xl font-black text-orange-500 tracking-tight">Pay-per-use</span>
+                    </div>
+                    
+                    <div className="relative z-10 font-bold text-slate-900 dark:text-white mb-4 text-sm">Everything in Free, plus:</div>
+                    <ul className="space-y-4 mb-8 flex-1 relative z-10">
+                      <li className="flex gap-3">
+                        <Check className="w-5 h-5 text-orange-500 shrink-0" />
+                        <span className="text-slate-700 dark:text-slate-200 text-sm font-medium">Unlimited audits</span>
+                      </li>
+                      <li className="flex gap-3">
+                        <Check className="w-5 h-5 text-orange-500 shrink-0" />
+                        <span className="text-slate-700 dark:text-slate-200 text-sm font-medium">No monthly SaaS subscription lock-in</span>
+                      </li>
+                      <li className="flex gap-3">
+                        <Check className="w-5 h-5 text-orange-500 shrink-0" />
+                        <span className="text-slate-700 dark:text-slate-200 text-sm font-medium">Run autonomously via OKX Agent rails</span>
+                      </li>
+                      <li className="flex gap-3">
+                        <Check className="w-5 h-5 text-orange-500 shrink-0" />
+                        <span className="text-slate-700 dark:text-slate-200 text-sm font-medium">Bulk processing capabilities (Coming soon)</span>
+                      </li>
+                    </ul>
+                    
+                    <a 
+                      href="https://www.okx.ai/agents"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 !text-white font-bold rounded-xl text-center transition-all hover:scale-[1.02] active:scale-[0.98] relative z-10 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] border border-orange-400/20 text-sm"
+                    >
+                      Continue to OKX.AI
+                    </a>
+                  </div>
                 </div>
               </div>
             </motion.div>
