@@ -80,7 +80,7 @@ export default function PricingPage() {
             href="https://www.okx.ai/agents"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-center transition-all hover:scale-[1.02] relative z-10 shadow-lg shadow-orange-500/20"
+            className="w-full py-4 bg-orange-500 hover:bg-orange-600 !text-white font-bold rounded-xl text-center transition-all hover:scale-[1.02] relative z-10 shadow-lg shadow-orange-500/20"
           >
             Continue to OKX.AI
           </a>
