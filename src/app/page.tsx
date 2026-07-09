@@ -455,14 +455,14 @@ export default function Home() {
 
                 <div className="grid md:grid-cols-2 gap-6 relative z-10">
                   {/* Free Plan Card */}
-                  <div className="border border-slate-200 dark:border-slate-800/50 rounded-3xl p-8 bg-white dark:bg-slate-900/50 shadow-sm flex flex-col">
-                    <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-6">
+                  <div className="border border-slate-200 dark:border-slate-800/50 rounded-3xl p-8 bg-white dark:bg-slate-900/50 shadow-sm flex flex-col h-full">
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-6 shrink-0">
                       <Globe className="w-5 h-5 text-slate-600 dark:text-slate-400" />
                     </div>
-                    <h4 className="text-2xl font-black mb-1">The Web Playground</h4>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 text-sm">For normal users & casual exploration.</p>
-                    <div className="mb-8">
-                      <span className="text-5xl font-black text-slate-900 dark:text-white">Free</span>
+                    <h4 className="text-2xl font-black mb-1 shrink-0">Web Playground</h4>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 text-sm shrink-0">For normal users & casual exploration.</p>
+                    <div className="mb-8 shrink-0">
+                      <span className="text-4xl font-black text-slate-900 dark:text-white">Free</span>
                     </div>
                     <ul className="space-y-4 mb-8 flex-1">
                       <li className="flex gap-3">
@@ -487,25 +487,23 @@ export default function Home() {
                   </div>
 
                   {/* Pro Plan Card */}
-                  <div className="border-2 border-orange-500 rounded-3xl p-8 bg-orange-50 dark:bg-orange-500/5 shadow-[0_0_40px_rgba(249,115,22,0.1)] relative overflow-hidden flex flex-col">
+                  <div className="border-2 border-orange-500 rounded-3xl p-8 bg-orange-50 dark:bg-orange-500/5 shadow-[0_0_40px_rgba(249,115,22,0.1)] relative overflow-hidden flex flex-col h-full">
                     <div className="absolute inset-0 bg-mesh opacity-10 pointer-events-none mix-blend-overlay" />
-                    <div className="absolute top-0 right-6 bg-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-b-lg tracking-widest uppercase">
+                    <div className="absolute top-0 right-6 bg-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-b-lg tracking-widest uppercase shrink-0">
                       RECOMMENDED
                     </div>
                     
                     {/* Glowing orbs for the premium card */}
                     <div className="absolute -top-24 -right-24 w-48 h-48 bg-orange-500/20 blur-[60px] rounded-full pointer-events-none" />
                     
-                    <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center mb-6 relative z-10 shadow-lg shadow-orange-500/20">
+                    <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center mb-6 relative z-10 shadow-lg shadow-orange-500/20 shrink-0">
                       <Bot className="w-5 h-5 text-white" />
                     </div>
-                    <h4 className="text-2xl font-black mb-1 relative z-10">The VERDICT Pro Agent</h4>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 relative z-10 text-sm">For Founders, CMOs, VCs & high-volume use.</p>
-                    <div className="mb-8 relative z-10">
+                    <h4 className="text-2xl font-black mb-1 relative z-10 shrink-0">VERDICT Pro</h4>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 relative z-10 text-sm shrink-0">For Founders, CMOs, VCs & high-volume use.</p>
+                    <div className="mb-8 relative z-10 shrink-0">
                       <span className="text-4xl font-black text-orange-500 tracking-tight">Pay-per-use</span>
                     </div>
-                    
-                    <div className="relative z-10 font-bold text-slate-900 dark:text-white mb-4 text-sm">Everything in Free, plus:</div>
                     <ul className="space-y-4 mb-8 flex-1 relative z-10">
                       <li className="flex gap-3">
                         <Check className="w-5 h-5 text-orange-500 shrink-0" />
