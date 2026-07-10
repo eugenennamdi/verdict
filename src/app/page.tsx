@@ -506,8 +506,8 @@ export default function Home() {
                     <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 relative z-10 text-sm shrink-0">For Founders, CMOs, VCs, Growth Marketers, Indie Hackers & high-volume usage.</p>
                     <div className="mb-8 relative z-10 shrink-0 flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-[#26A17B] flex items-center justify-center shrink-0 shadow-sm border border-[#26A17B]/20">
-                        <svg viewBox="0 0 24 24" className="w-5 h-5 text-white" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M13.435 9.824v-1.12c3.264-.132 5.66-.814 5.66-1.624 0-.847-2.554-1.548-5.934-1.67V4h7.27v2.688H15.06v1.045c2.772.132 4.824.7 4.824 1.387 0 .732-2.31 1.336-5.378 1.462v9.21c0 .434-.308.784-.732.852l-2.424.37c-.368.056-.708-.222-.732-.593v-9.742c-3.068-.126-5.377-.73-5.377-1.462 0-.683 2.052-1.254 4.824-1.386V5.644h-5.37v-2.4h7.27v2.4c-3.38.125-5.934.726-5.934 1.673 0 .81 2.396 1.492 5.66 1.624v1.122c-3.282-.134-5.68-.84-5.68-1.68 0-.876 2.575-1.598 5.958-1.73v-.857h-1.964v5.28h5.65v1.18h-1.964v-.857c3.383.132 5.958.854 5.958 1.73 0 .84-2.398 1.546-5.68 1.68z" />
+                        <svg viewBox="0 0 339.43 295.27" className="w-6 h-6 text-white" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M191.19,144.8v0c-1.2.09-7.4,0.46-21.23,0.46-11,0-18.81-.33-21.55-0.46v0c-42.51-1.87-74.24-9.27-74.24-18.13s31.73-16.25,74.24-18.15v28.91c2.78,0.2,10.74.67,21.74,0.67,13.2,0,19.81-.55,21-0.66v-28.9c42.42,1.89,74.08,9.29,74.08,18.13s-31.65,16.24-74.08,18.12h0Zm0-39.25V79.68h59.2V40.23H89.21V79.68H148.4v25.86c-48.11,2.21-84.29,11.74-84.29,23.16s36.18,20.94,84.29,23.16v82.9h42.78V151.83c48-2.21,84.12-11.73,84.12-23.14s-36.09-20.93-84.12-23.15h0Zm0,0h0Z" fill="white" fillRule="evenodd" />
                         </svg>
                       </div>
                       <div className="flex items-baseline gap-1.5">
