@@ -38,7 +38,7 @@ export default function GrowthReadinessPage() {
           <tbody className="text-sm md:text-base">
             <tr className="border-b border-slate-100 dark:border-slate-800/50">
               <td className="py-5 px-6 align-top">
-                <div className="inline-flex px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-black tracking-tight shadow-sm shadow-red-500/10 items-center justify-center min-w-[4.5rem]">
+                <div className="inline-flex px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-black tracking-tight shadow-sm shadow-red-500/10 items-center justify-center min-w-[4.5rem] whitespace-nowrap">
                   0-40
                 </div>
               </td>
@@ -49,7 +49,7 @@ export default function GrowthReadinessPage() {
             </tr>
             <tr className="border-b border-slate-100 dark:border-slate-800/50">
               <td className="py-5 px-6 align-top">
-                <div className="inline-flex px-3 py-1.5 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 font-black tracking-tight shadow-sm shadow-yellow-500/10 items-center justify-center min-w-[4.5rem]">
+                <div className="inline-flex px-3 py-1.5 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 font-black tracking-tight shadow-sm shadow-yellow-500/10 items-center justify-center min-w-[4.5rem] whitespace-nowrap">
                   41-75
                 </div>
               </td>
@@ -60,7 +60,7 @@ export default function GrowthReadinessPage() {
             </tr>
             <tr>
               <td className="py-5 px-6 align-top">
-                <div className="inline-flex px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 font-black tracking-tight shadow-sm shadow-emerald-500/10 items-center justify-center min-w-[4.5rem]">
+                <div className="inline-flex px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 font-black tracking-tight shadow-sm shadow-emerald-500/10 items-center justify-center min-w-[4.5rem] whitespace-nowrap">
                   76-100
                 </div>
               </td>
