@@ -505,7 +505,8 @@ export default function Home() {
                     <h4 className="text-2xl font-black mb-1 relative z-10 shrink-0">VERDICT Pro</h4>
                     <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 relative z-10 text-sm shrink-0">For Founders, CMOs, VCs, Growth Marketers, Indie Hackers & high-volume usage.</p>
                     <div className="mb-8 relative z-10 shrink-0">
-                      <span className="text-4xl font-black text-orange-500 tracking-tight">Pay-per-use</span>
+                      <span className="text-4xl font-black text-orange-500 tracking-tight">0.5 USDT</span>
+                      <span className="text-slate-500 dark:text-slate-400 font-medium ml-2">/ audit</span>
                     </div>
                     <ul className="space-y-4 mb-8 flex-1 relative z-10">
                       <li className="flex gap-3">

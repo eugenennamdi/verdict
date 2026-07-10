@@ -34,7 +34,7 @@ export default function PricingPage() {
             <tr className="border-b border-slate-100 dark:border-slate-800/50">
               <td className="py-4 px-6 font-medium">Pricing Model</td>
               <td className="py-4 px-6 font-bold">Free</td>
-              <td className="py-4 px-6 font-bold text-orange-500">Pay-per-use</td>
+              <td className="py-4 px-6 font-bold text-orange-500">0.5 USDT <span className="text-sm font-medium text-slate-500 dark:text-slate-400">/ audit</span></td>
             </tr>
             <tr className="border-b border-slate-100 dark:border-slate-800/50">
               <td className="py-4 px-6 font-medium">Usage Limits</td>

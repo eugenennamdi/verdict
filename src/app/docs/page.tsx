@@ -75,7 +75,7 @@ export default function DocsIntroPage() {
       </p>
       <ul className="space-y-4 mb-12">
         <li><strong>VERDICT:</strong> A free, rate-limited (1 audit per 12 hours) interface designed to let founders experience the brutality of the engine firsthand.</li>
-        <li><strong>VERDICT Pro (ASP on OKX.AI):</strong> Our uncapped, autonomous auditor lives natively on the OKX.AI ecosystem. Here, VCs and heavy users can run unlimited audits on a strict pay-per-execution basis using Web3 rails.</li>
+        <li><strong>VERDICT Pro (ASP on OKX.AI):</strong> Our uncapped, autonomous auditor lives natively on the OKX.AI ecosystem. Here, VCs and heavy users can run unlimited audits on a strict pay-per-execution (0.5 USDT per audit) basis using Web3 rails.</li>
       </ul>
       <DocsPagination next={{ title: "Architecture & Pipeline", href: "/docs/architecture" }} />
     </>
