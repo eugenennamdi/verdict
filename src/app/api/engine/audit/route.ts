@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/dist/server/web/spec-extension/response';
 import { generateAudit } from '@/lib/engine';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
+import { redis } from '@/lib/redis';
 
 export async function POST(req: Request) {
   try {
@@ -10,10 +11,26 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    // Rate Limiting for the Audit phase (1 per 12 hours)
+    const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
+    const rateLimitKey = `rate_limit:audit:${ip}`;
+    
+    const lastAudit = await redis.get(rateLimitKey);
+    
+    if (lastAudit) {
+      return NextResponse.json(
+        { error: 'RATE_LIMIT_EXCEEDED' },
+        { status: 429 }
+      );
+    }
+
     const auditData = await generateAudit(url, { company_name, inferred_description, target_audience });
+    
+    // Set rate limit for 12 hours (43200 seconds)
+    await redis.set(rateLimitKey, Date.now(), 'EX', 43200);
 
     // Save to Supabase (mapping new GRF schema keys to existing database columns)
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('reports')
       .insert([
         {

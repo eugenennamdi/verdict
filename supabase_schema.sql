@@ -32,8 +32,5 @@ CREATE POLICY "Allow public read access to reports"
     FOR SELECT
     USING (true);
 
--- Allow public insert access (for the backend API to insert anonymously, though usually backend uses service role. Since we use Anon key for simplicity, we allow insert)
-CREATE POLICY "Allow public insert access to reports"
-    ON public.reports
-    FOR INSERT
-    WITH CHECK (true);
+-- Note: Insert access is handled via the backend API using the SUPABASE_SERVICE_ROLE_KEY,
+-- which automatically bypasses RLS. Therefore, no public insert policy is needed.
