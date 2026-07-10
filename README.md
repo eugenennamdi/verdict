@@ -40,21 +40,21 @@ Most AI tools try to be overly polite. Verdict is intentionally designed with an
 
 ---
 
-## 🗺️ Roadmap: The Autonomous Growth Agency (The Master Plan)
+## 🗺️ Roadmap: The Autonomous Growth Agency 
 
-VERDICT is not just an auditor. We are building a YC-caliber, fully autonomous growth agency in a box. Here is our roadmap to scaling from a hackathon project to a massive startup ecosystem staple:
+VERDICT is not just a landing page auditor. We are building a fully autonomous growth agency packaged as a simple tool. 
 
-### Phase 1 (Live): The Reality Check
+### Phase 1: The Reality Check 🟢 Live
 Landing page audits, UX friction analysis, and the Growth Readiness Score.
 
-### Phase 2 (Q4): Campaign Architecture
-You input your goal (*"We need 500 beta signups in 30 days with $2k budget"*). VERDICT reverse-engineers a growth campaign, writes the ad copy, and builds a launch playbook.
+### Phase 2: Campaign Architecture
+You input your goal ("We need 500 beta signups in 30 days with $2k budget"). VERDICT reverse-engineers a growth campaign, writes the ad copy, and builds a launch playbook.
 
-### Phase 3 (Q1): Social & Distribution Audits
-Deep-dive audits of your X/LinkedIn presence. Are you shouting into the void, or building an audience? VERDICT analyzes your hook-rate and content velocity to build scalable organic flywheels.
+### Phase 3: Social & Distribution Audits
+Deep-dive audits of your social media presence (X/LinkedIn). Are you shouting into the void, or building an audience? VERDICT analyzes your hook-rate and content velocity to build scalable organic flywheels.
 
-### Phase 4 (The Vision): The VC & Accelerator API
-VCs and accelerators plug VERDICT into their application portals to automatically score and filter the landing pages and growth models of startups applying for funding.
+### Phase 4: The VC & Accelerator API
+VCs and accelerators plug VERDICT into their application portals to automatically score and filter the landing pages and growth models of startups applying for funding. 
 
 ---
 
