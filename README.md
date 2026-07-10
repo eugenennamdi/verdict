@@ -17,7 +17,7 @@ When founders ask for feedback, they usually get polite nods from friends or sup
 
 ---
 
-## ✨ Standout Features & Benefits
+## Standout Features & Benefits
 
 ### 1. Consumer-Grade UX for Enterprise-Grade Analysis
 Verdict goes beyond simple prompt wrapping. It features a bespoke, premium UI with an asynchronous processing engine. It handles complex scraping natively, extracts semantic context, and streams structured analysis back to the user, delivering immediate, high-ticket value to startups and founders.
@@ -30,7 +30,7 @@ Most AI tools try to be overly polite. Verdict is intentionally designed with an
 
 ---
 
-## ⚙️ Core Features
+## Core Features
 
 - **Deep Context Extraction:** Uses Firecrawl to render headless DOMs, bypassing simple HTML scraping to actually "see" the page as a user does.
 - **Growth Readiness Framework (GRF):** A proprietary scoring system evaluating Trust Deficits, Value Clarity, and Intent Friction.
@@ -40,7 +40,7 @@ Most AI tools try to be overly polite. Verdict is intentionally designed with an
 
 ---
 
-## 🗺️ Roadmap: The Autonomous Growth Agency 
+## Roadmap: The Autonomous Growth Agency 
 
 VERDICT is not just a landing page auditor. We are building a fully autonomous growth agency packaged as a simple tool. 
 
@@ -92,7 +92,7 @@ flowchart LR
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Framework:** Next.js 14 (App Router)
 - **Language:** TypeScript (Strict Mode)
