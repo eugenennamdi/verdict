@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, BookOpen, Cpu, Target, CheckCircle2, Rocket, Bot } from "lucide-react";
+import { ArrowLeft, BookOpen, Cpu, Target, CheckCircle2, Rocket, Bot, Wallet } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 
 export default function DocsLayout({ children }: { children: React.ReactNode }) {
@@ -10,6 +10,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
     { name: "Scoring & Enforcement", href: "/docs/scoring", icon: CheckCircle2 },
     { name: "Growth Readiness Score", href: "/docs/growth-readiness", icon: Rocket },
     { name: "Agent & Pricing (OKX.AI)", href: "/docs/pricing", icon: Bot },
+    { name: "Agentic Payments (x402)", href: "/docs/pricing/okx-x402", icon: Wallet },
   ];
 
   return (
