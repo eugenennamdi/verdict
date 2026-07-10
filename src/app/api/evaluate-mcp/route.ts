@@ -103,7 +103,7 @@ const routeConfig = {
       network: "eip155:196" as const,
       asset: "0x1E4a5963aBFD975d8c9021ce480b42188849D41d", // USDT on X Layer
       price: "0.5", // 0.5 USDT
-      payTo: process.env.PAYMENT_ADDRESS || "0x0000000000000000000000000000000000000000",
+      payTo: process.env.PAYMENT_ADDRESS || "0x8713783e9d8391c4bf54f705b355ba775184f906", // Hardcoded to User's Wallet
     }
   ],
   description: "VERDICT MCP Evaluation Server",
