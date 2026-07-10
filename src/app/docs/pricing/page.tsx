@@ -90,6 +90,14 @@ export default function PricingPage() {
         We refused to gate this behind a flat monthly fee that penalizes infrequent users. By deploying our core engine as an Autonomous Agent on the OKX.AI network, we allow power users to pay exactly for what they compute, while keeping a free playground available for early-stage founders.
       </p>
 
+      <h2>Agentic Payments (x402)</h2>
+      <p>
+        VERDICT uses the <strong>OKX Payment SDK</strong> and the <a href="https://web3.okx.com/onchainos/dev-docs/payments/overview" target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:underline">x402 protocol</a> to enable seamless, machine-to-machine micropayments. Built on <a href="https://web3.okx.com/onchainos/dev-docs/xlayer/developer/build-on-xlayer/about-xlayer" target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:underline">X Layer</a>, this completely bypasses traditional SaaS subscriptions.
+      </p>
+      <p>
+        When an AI Agent requests an audit, our server intercepts it and returns an <code>HTTP 402 Payment Required</code> challenge. The agent automatically executes the 0.5 USDT transaction on-chain, and re-sends the request with cryptographic proof. Once the SDK validates the transaction, our engine executes the heavy LLM compute and delivers the comprehensive JSON audit directly back to the agent—zero human intervention required.
+      </p>
+
       <DocsPagination 
         prev={{ title: "Growth Readiness Score", href: "/docs/growth-readiness" }}
       />
