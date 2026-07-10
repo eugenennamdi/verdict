@@ -37,22 +37,4 @@ const handleRequest = async (req: Request) => {
   }
 };
 
-const routeConfig = {
-  accepts: [
-    {
-      scheme: "exact" as const,
-      network: "eip155:196" as const,
-      asset: "0x1E4a5963aBFD975d8c9021ce480b42188849D41d", // USDT on X Layer
-      price: "0.25", // 0.25 USDT
-      payTo: process.env.PAYMENT_ADDRESS || "0x0000000000000000000000000000000000000000",
-    }
-  ],
-  description: "VERDICT Engine Context Extraction",
-  resource: "VERDICT-EXTRACT",
-};
-
-export const POST = async (req: Request) => {
-  const paymentServer = await getPaymentServer();
-  const protectedHandler = withX402(handleRequest as any, routeConfig, paymentServer as any);
-  return protectedHandler(req as any);
-};
+export const POST = handleRequest;
