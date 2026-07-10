@@ -9,11 +9,11 @@
 [![Built for OKX.AI Genesis Hackathon](https://img.shields.io/badge/Built%20for-OKX.AI%20Genesis%20Hackathon-000000)](https://web3.okx.com/xlayer/build-x-hackathon)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)
-![GLM-5.2](https://img.shields.io/badge/LLM-GLM--5.2-blue)
+[![GLM-5.2](https://img.shields.io/badge/LLM-GLM--5.2-blue)](https://huggingface.co/zai-org/GLM-5.2)
 
 When founders ask for feedback, they usually get polite nods from friends or superficial critiques from basic AI wrappers ("Looks great! Maybe add a clearer CTA?"). 
 
-**Verdict is different.** It is an autonomous Agent Service Provider (ASP) that performs deep, aggressive, and highly actionable conversion audits. We run headless browsers to scrape the live DOM, process massive context windows using GLM-5.2, and deliver a brutally honest teardown, a Growth Readiness Framework (GRF) score, and a clear execution plan with priority matrices.
+**Verdict is different.** It is an autonomous Agent Service Provider (ASP) that performs deep, aggressive, and highly actionable conversion audits. We run headless browsers to scrape the live DOM, process massive context windows using [GLM-5.2](https://huggingface.co/zai-org/GLM-5.2), and deliver a brutally honest teardown, a Growth Readiness Framework (GRF) score, and a clear execution plan with priority matrices.
 
 ---
 
@@ -79,7 +79,7 @@ flowchart LR
 - **Framework:** Next.js 14 (App Router)
 - **Language:** TypeScript (Strict Mode)
 - **Styling:** Tailwind CSS + Radix UI + Lucide Icons
-- **LLM:** GLM-5.2
+- **LLM:** [GLM-5.2](https://huggingface.co/zai-org/GLM-5.2)
 - **Web Scraping:** Firecrawl
 - **Database:** Supabase (PostgreSQL)
 - **Rate Limiting:** Upstash Redis
