@@ -58,7 +58,7 @@ VCs and accelerators plug VERDICT into their application portals to automaticall
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```mermaid
 flowchart LR
