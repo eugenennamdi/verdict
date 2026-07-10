@@ -1,6 +1,6 @@
 # Verdict
 
-> **Brutal Startup Growth Audit**
+> **Autonomous Growth Auditor for Startups**
 
 <p align="center">
   <img src="./public/preview.png" alt="Verdict Preview" width="800">
@@ -44,7 +44,7 @@ Most AI tools try to be overly polite. Verdict is intentionally designed with an
 
 VERDICT is not just a landing page auditor. We are building a fully autonomous growth agency packaged as a simple tool. 
 
-### Phase 1: The Reality Check 🟢 Live
+### Phase 1: The Reality Check (Live)
 Landing page audits, UX friction analysis, and the Growth Readiness Score.
 
 ### Phase 2: Campaign Architecture
