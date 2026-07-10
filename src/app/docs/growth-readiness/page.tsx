@@ -75,7 +75,7 @@ export default function GrowthReadinessPage() {
 
       <DocsPagination 
         prev={{ title: "Scoring & Enforcement", href: "/docs/scoring" }}
-        next={{ title: "Founder Delusion Index", href: "/docs/fdi" }} 
+        next={{ title: "Agent & Pricing (OKX.AI)", href: "/docs/pricing" }} 
       />
     </>
   );

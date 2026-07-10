@@ -33,10 +33,28 @@ Most AI tools try to be overly polite. Verdict is intentionally designed with an
 ## ⚙️ Core Features
 
 - **Deep Context Extraction:** Uses Firecrawl to render headless DOMs, bypassing simple HTML scraping to actually "see" the page as a user does.
-- **Growth Readiness Framework (GRF):** A proprietary scoring system evaluating FDI (Founder Delusion Index), Trust Deficits, and Intent Friction.
+- **Growth Readiness Framework (GRF):** A proprietary scoring system evaluating Trust Deficits, Value Clarity, and Intent Friction.
 - **GLM-5.2 Intelligence:** Powered by high-context, ultra-fast reasoning models to generate comprehensive, multi-page strategy reports.
 - **Secure by Design:** Backend execution is entirely decoupled from the frontend, secured via Supabase Service Role Keys (RLS bypass) and IP-based Upstash Redis rate limiting.
 - **Sleek Presentation Layer:** Fully responsive, dark-mode optimized, beautifully animated reports that users want to share.
+
+---
+
+## 🗺️ Roadmap: The Autonomous Growth Agency (The Master Plan)
+
+VERDICT is not just an auditor. We are building a YC-caliber, fully autonomous growth agency in a box. Here is our roadmap to scaling from a hackathon project to a massive startup ecosystem staple:
+
+### Phase 1 (Live): The Reality Check
+Landing page audits, UX friction analysis, and the Growth Readiness Score.
+
+### Phase 2 (Q4): Campaign Architecture
+You input your goal (*"We need 500 beta signups in 30 days with $2k budget"*). VERDICT reverse-engineers a growth campaign, writes the ad copy, and builds a launch playbook.
+
+### Phase 3 (Q1): Social & Distribution Audits
+Deep-dive audits of your X/LinkedIn presence. Are you shouting into the void, or building an audience? VERDICT analyzes your hook-rate and content velocity to build scalable organic flywheels.
+
+### Phase 4 (The Vision): The VC & Accelerator API
+VCs and accelerators plug VERDICT into their application portals to automatically score and filter the landing pages and growth models of startups applying for funding.
 
 ---
 

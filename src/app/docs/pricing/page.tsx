@@ -91,7 +91,7 @@ export default function PricingPage() {
       </p>
 
       <DocsPagination 
-        prev={{ title: "Founder Delusion Index", href: "/docs/fdi" }}
+        prev={{ title: "Growth Readiness Score", href: "/docs/growth-readiness" }}
       />
     </>
   );
