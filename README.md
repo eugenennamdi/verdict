@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Verdict
 
-## Getting Started
+> **Brutal, AI-Powered Landing Page Teardowns. No Sugarcoating.**
 
-First, run the development server:
+[![Built for OKX.AI Genesis Hackathon](https://img.shields.io/badge/Built%20for-OKX.AI%20Genesis%20Hackathon-000000)](https://web3.okx.com/xlayer/build-x-hackathon)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)
+![Nvidia AI](https://img.shields.io/badge/AI-Nvidia%20GLM--4-76B900?logo=nvidia)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+When founders ask for feedback, they usually get polite nods from friends or superficial critiques from basic AI wrappers ("Looks great! Maybe add a clearer CTA?"). 
+
+**Verdict is different.** It is an autonomous Agent Service Provider (ASP) that performs deep, aggressive, and highly actionable conversion audits. We run headless browsers to scrape the live DOM, process massive context windows using Nvidia's cutting-edge GLM-4 models, and deliver a brutally honest teardown, a Growth Readiness Framework (GRF) score, and a 30-day execution plan.
+
+[**Live Application**](https://tryverdict.com) | [**Follow us on X**](https://x.com/tryverdict)
+
+---
+
+## 🏆 Why Verdict Wins (OKX.AI Genesis Hackathon)
+
+Verdict is built natively to thrive as an elite Agent Service Provider (ASP) on the OKX.AI network.
+
+### 1. Best Product: Consumer-Grade UX for Enterprise-Grade Analysis
+We didn't just build a prompt wrapper. Verdict features a bespoke, premium UI with an asynchronous processing engine. It handles complex scraping (via Firecrawl), extracts semantic context, and streams structured analysis back to the user. It's a complete, end-to-end product that delivers immediate, high-ticket value to startups and founders.
+
+### 2. Revenue Rocket: A Clear Path to Monetization
+Landing page audits from human agencies cost between $500 to $2,000. Verdict automates this. The platform is pre-built with Upstash Redis rate limiting to protect expensive compute, laying the immediate foundation for a pay-per-audit or subscription-based business model (e.g., continuous monitoring of landing page changes).
+
+### 3. Creative Genius: "The Founder's Reality Check" Agent
+Most AI tools try to be overly polite. Verdict is intentionally designed with an opinionated, direct, and slightly ruthless persona. It doesn't just summarize a page; it aggressively identifies "Trust Deficits", "Gatekeeping Friction", and "Feature Ratios", turning qualitative design into quantitative metrics (The GRF Score).
+
+---
+
+## ⚙️ Core Features
+
+- **Deep Context Extraction:** Uses Firecrawl to render headless DOMs, bypassing simple HTML scraping to actually "see" the page as a user does.
+- **Growth Readiness Framework (GRF):** A proprietary scoring system evaluating FDI (Founder Delusion Index), Trust Deficits, and Intent Friction.
+- **Nvidia GLM-4 Intelligence:** Powered by high-context, ultra-fast reasoning models to generate comprehensive, multi-page strategy reports.
+- **Secure by Design:** Backend execution is entirely decoupled from the frontend, secured via Supabase Service Role Keys (RLS bypass) and IP-based Upstash Redis rate limiting.
+- **Sleek Presentation Layer:** Fully responsive, dark-mode optimized, beautifully animated reports that users want to share.
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+flowchart LR
+  subgraph Client
+    A[Next.js Frontend]
+  end
+
+  subgraph Verdict API Engine
+    B[Extract Phase<br/>/api/engine/extract]
+    C[Audit Phase<br/>/api/engine/audit]
+  end
+
+  subgraph External Services
+    D[Firecrawl API<br/>Headless Scraping]
+    E[Nvidia GLM-4 API<br/>Inference]
+    F[(Upstash Redis<br/>Rate Limiter)]
+    G[(Supabase<br/>PostgreSQL)]
+  end
+
+  A -->|1. Submit URL| B
+  B <-->|Scrape DOM| D
+  B <-->|Check Limit| F
+  B -->|Return Context| A
+  
+  A -->|2. Request Audit| C
+  C <-->|Analyze Context| E
+  C <-->|Enforce Limit| F
+  C -->|Save Report securely| G
+  C -->|Return ID| A
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript (Strict Mode)
+- **Styling:** Tailwind CSS + Radix UI + Lucide Icons
+- **AI / LLM:** Nvidia API (GLM-4-Plus)
+- **Web Scraping:** Firecrawl
+- **Database:** Supabase (PostgreSQL with strict RLS configurations)
+- **Rate Limiting:** Upstash Redis
