@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Check, Bot, Globe } from "lucide-react";
+import { DocsPagination } from "@/components/DocsPagination";
+import { Check, Bot, Globe } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Agent & Pricing (OKX.AI) | Documentation",
@@ -99,14 +100,9 @@ export default function PricingPage() {
         We refused to gate this behind a flat monthly fee that penalizes infrequent users. By deploying our core engine as an Autonomous Agent on the OKX.AI network, we allow power users to pay exactly for what they compute, while keeping a free playground available for early-stage founders.
       </p>
 
-      <div className="flex justify-between mt-16 pt-8 border-t border-slate-200 dark:border-slate-800">
-        <Link href="/docs/fdi" className="flex items-center gap-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
-          <ArrowLeft className="w-5 h-5" /> Previous: Founder Delusion Index
-        </Link>
-        <Link href="/" className="flex items-center gap-2 text-slate-900 dark:text-white font-bold hover:text-orange-500 dark:hover:text-orange-500 transition-colors">
-          Back to App <ArrowRight className="w-5 h-5" />
-        </Link>
-      </div>
+      <DocsPagination 
+        prev={{ title: "Founder Delusion Index", href: "/docs/fdi" }}
+      />
     </>
   );
 }

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { DocsPagination } from "@/components/DocsPagination";
 
 export const metadata: Metadata = {
   title: "Scoring & Enforcement | Documentation",
@@ -43,14 +43,10 @@ export default function ScoringPage() {
         The final <strong>Growth Readiness Score</strong> is a calculated weighted average of the 6 pillars, mapped to a 0-100 scale. It represents the company&apos;s overall readiness to scale and deploy capital into growth channels.
       </p>
 
-      <div className="flex justify-between mt-16 pt-8 border-t border-slate-200 dark:border-slate-800">
-        <Link href="/docs/framework" className="flex items-center gap-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
-          <ArrowLeft className="w-5 h-5" /> Previous: 7-Pillar Framework
-        </Link>
-        <Link href="/docs/growth-readiness" className="flex items-center gap-2 text-slate-900 dark:text-white font-bold hover:text-orange-500 dark:hover:text-orange-500 transition-colors">
-          Next: Growth Readiness Score <ArrowRight className="w-5 h-5" />
-        </Link>
-      </div>
+      <DocsPagination 
+        prev={{ title: "7-Pillar Framework", href: "/docs/framework" }}
+        next={{ title: "Growth Readiness Score", href: "/docs/growth-readiness" }} 
+      />
     </>
   );
 }

@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Rocket } from "lucide-react";
+import { DocsPagination } from "@/components/DocsPagination";
+import { Rocket } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Growth Readiness Score | Documentation",
@@ -63,14 +64,10 @@ export default function GrowthReadinessPage() {
         </div>
       </div>
 
-      <div className="flex justify-between mt-12 pt-8 border-t border-slate-200 dark:border-slate-800">
-        <Link href="/docs/scoring" className="flex items-center gap-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
-          <ArrowLeft className="w-5 h-5" /> Previous: Scoring & Enforcement
-        </Link>
-        <Link href="/docs/fdi" className="flex items-center gap-2 text-slate-900 dark:text-white font-bold hover:text-orange-500 dark:hover:text-orange-500 transition-colors">
-          Next: Founder Delusion Index <ArrowRight className="w-5 h-5" />
-        </Link>
-      </div>
+      <DocsPagination 
+        prev={{ title: "Scoring & Enforcement", href: "/docs/scoring" }}
+        next={{ title: "Founder Delusion Index", href: "/docs/fdi" }} 
+      />
     </>
   );
 }

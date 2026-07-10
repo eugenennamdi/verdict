@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { DocsPagination } from "@/components/DocsPagination";
 
 export const metadata: Metadata = {
   title: "Architecture & Pipeline | Documentation",
@@ -68,14 +68,10 @@ export default function ArchitecturePage() {
         </p>
       </div>
 
-      <div className="flex justify-between mt-16 pt-8 border-t border-slate-200 dark:border-slate-800">
-        <Link href="/docs" className="flex items-center gap-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
-          <ArrowLeft className="w-5 h-5" /> Previous: Introduction
-        </Link>
-        <Link href="/docs/framework" className="flex items-center gap-2 text-slate-900 dark:text-white font-bold hover:text-orange-500 dark:hover:text-orange-500 transition-colors">
-          Next: The 7 Pillars <ArrowRight className="w-5 h-5" />
-        </Link>
-      </div>
+      <DocsPagination 
+        prev={{ title: "Introduction", href: "/docs" }}
+        next={{ title: "The 7-Pillar Framework", href: "/docs/framework" }} 
+      />
     </>
   );
 }

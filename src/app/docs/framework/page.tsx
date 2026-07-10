@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import { DocsPagination } from "@/components/DocsPagination";
 import { ArrowLeft, ArrowRight, Target, PenTool, MousePointerClick, Zap, ShieldCheck, Shield, Rocket } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -78,14 +79,10 @@ export default function FrameworkPage() {
         <li>An <strong>actionable fix</strong> (how to fix it today).</li>
       </ul>
 
-      <div className="flex justify-between mt-16 pt-8 border-t border-slate-200 dark:border-slate-800">
-        <Link href="/docs/architecture" className="flex items-center gap-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
-          <ArrowLeft className="w-5 h-5" /> Previous: Architecture
-        </Link>
-        <Link href="/docs/scoring" className="flex items-center gap-2 text-slate-900 dark:text-white font-bold hover:text-orange-500 dark:hover:text-orange-500 transition-colors">
-          Next: Scoring & Enforcement <ArrowRight className="w-5 h-5" />
-        </Link>
-      </div>
+      <DocsPagination 
+        prev={{ title: "Architecture", href: "/docs/architecture" }}
+        next={{ title: "Scoring & Enforcement", href: "/docs/scoring" }} 
+      />
     </>
   );
 }

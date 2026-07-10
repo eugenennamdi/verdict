@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, AlertTriangle } from "lucide-react";
+import { DocsPagination } from "@/components/DocsPagination";
+import { AlertTriangle } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Founder Delusion Index | Documentation",
@@ -23,11 +24,10 @@ export default function FDIPage() {
         </p>
       </div>
 
-      <div className="flex justify-between mt-12 pt-8 border-t border-slate-200 dark:border-slate-800">
-        <Link href="/docs/growth-readiness" className="flex items-center gap-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
-          <ArrowLeft className="w-5 h-5" /> Previous: Growth Readiness Score
-        </Link>
-      </div>
+      <DocsPagination 
+        prev={{ title: "Growth Readiness Score", href: "/docs/growth-readiness" }}
+        next={{ title: "Agent & Pricing", href: "/docs/pricing" }} 
+      />
     </>
   );
 }

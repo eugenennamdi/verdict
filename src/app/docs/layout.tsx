@@ -19,9 +19,9 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
       <div className="md:hidden flex flex-col sticky top-0 z-50 bg-white/80 dark:bg-[#0F1423]/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800/50">
         <div className="flex items-center justify-between p-4">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="bg-orange-500 p-1 rounded-lg text-white flex items-center justify-center">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4"><path d="M4 5L12 19L20 5" stroke="currentColor" strokeWidth="4" strokeMiterlimit="10" strokeLinecap="butt" strokeLinejoin="miter"/></svg>
-            </div>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-orange-500 group-hover:scale-105 transition-transform">
+              <path d="M4 5L12 19L20 5" stroke="currentColor" strokeWidth="4" strokeMiterlimit="10" strokeLinecap="butt" strokeLinejoin="miter"/>
+            </svg>
             <span className="font-black text-lg tracking-tight text-slate-900 dark:text-white">VERDICT</span>
           </Link>
           <Link href="/" className={buttonVariants({ variant: "outline", size: "sm", className: "h-8 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800" })}>
@@ -46,23 +46,21 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
       <aside className="w-64 md:w-72 xl:w-80 shrink-0 border-r border-slate-200 dark:border-slate-800/50 bg-white dark:bg-[#0F1423] hidden md:flex flex-col sticky top-0 h-screen">
         <div className="p-6 border-b border-slate-200 dark:border-slate-800/50">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="bg-orange-500 p-1.5 rounded-lg text-white flex items-center justify-center">
-              <svg 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-4 h-4"
-              >
-                <path 
-                  d="M4 5L12 19L20 5" 
-                  stroke="currentColor" 
-                  strokeWidth="4" 
-                  strokeMiterlimit="10"
-                  strokeLinecap="butt" 
-                  strokeLinejoin="miter" 
-                />
-              </svg>
-            </div>
+            <svg 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-7 h-7 text-orange-500 group-hover:scale-105 transition-transform"
+            >
+              <path 
+                d="M4 5L12 19L20 5" 
+                stroke="currentColor" 
+                strokeWidth="4" 
+                strokeMiterlimit="10"
+                strokeLinecap="butt" 
+                strokeLinejoin="miter" 
+              />
+            </svg>
             <span className="font-black text-xl tracking-tight text-slate-900 dark:text-white">VERDICT</span>
           </Link>
         </div>
@@ -81,8 +79,8 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
         </nav>
         
         <div className="p-4 border-t border-slate-200 dark:border-slate-800/50">
-          <Link href="/" className={buttonVariants({ variant: "outline", className: "w-full justify-start gap-2 h-11 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800" })}>
-            <ArrowLeft className="w-4 h-4" />
+          <Link href="/" className="flex items-center gap-3 w-full px-4 py-3 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/30 dark:hover:bg-slate-800/60 text-slate-900 dark:text-slate-200 font-medium transition-colors">
+            <ArrowLeft className="w-4 h-4 text-slate-700 dark:text-slate-400" />
             Back to App
           </Link>
         </div>
