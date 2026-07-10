@@ -497,10 +497,7 @@ export default function Home() {
                     <div className="absolute -top-24 -right-24 w-48 h-48 bg-orange-500/20 blur-[60px] rounded-full pointer-events-none" />
                     
                     <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center mb-6 relative z-10 shadow-lg shadow-orange-500/20 shrink-0">
-                      <div className="relative">
-                        <VerdictLogo className="w-5 h-5 text-white" />
-                        <span className="absolute -top-1.5 -right-2.5 text-[10px]">🤖</span>
-                      </div>
+                      <VerdictLogo className="w-5 h-5 text-white" />
                     </div>
                     <h4 className="text-2xl font-black mb-1 relative z-10 shrink-0">VERDICT Pro</h4>
                     <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 relative z-10 text-sm shrink-0">For Founders, CMOs, VCs, Growth Marketers, Indie Hackers & high-volume usage.</p>
