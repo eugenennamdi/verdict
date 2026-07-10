@@ -26,42 +26,51 @@ export default function GrowthReadinessPage() {
       </div>
 
       <h2>Interpreting the Score</h2>
-      <div className="space-y-6 mt-8 not-prose">
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row gap-5 items-start">
-          <div className="shrink-0">
-            <div className="px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-black text-lg tracking-tight shadow-sm shadow-red-500/10 flex items-center justify-center min-w-[5rem]">
-              0-40
-            </div>
-          </div>
-          <div className="pt-1">
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white m-0 mb-2 leading-none">Not Ready for Scale</h3>
-            <p className="text-slate-500 dark:text-slate-400 leading-relaxed mb-0">Do not spend money on paid acquisition. You have critical flaws in your messaging, extreme friction in your UX, or a completely undefined ICP. Fix the foundations.</p>
-          </div>
-        </div>
-        
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row gap-5 items-start">
-          <div className="shrink-0">
-            <div className="px-4 py-2 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 font-black text-lg tracking-tight shadow-sm shadow-yellow-500/10 flex items-center justify-center min-w-[5rem]">
-              41-75
-            </div>
-          </div>
-          <div className="pt-1">
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white m-0 mb-2 leading-none">Leaky Bucket</h3>
-            <p className="text-slate-500 dark:text-slate-400 leading-relaxed mb-0">You can acquire users, but your conversion rates will be suboptimal. You likely lack strong social proof, or your copy is slightly too generic.</p>
-          </div>
-        </div>
-        
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex flex-col sm:flex-row gap-5 items-start">
-          <div className="shrink-0">
-            <div className="px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 font-black text-lg tracking-tight shadow-sm shadow-emerald-500/10 flex items-center justify-center min-w-[5rem]">
-              76-100
-            </div>
-          </div>
-          <div className="pt-1">
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white m-0 mb-2 leading-none">Ready for Growth</h3>
-            <p className="text-slate-500 dark:text-slate-400 leading-relaxed mb-0">Your value proposition is lethal, your friction is zero, and your conversion triggers are in place. Pour fuel on the fire.</p>
-          </div>
-        </div>
+      <div className="mt-8 not-prose overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-2xl bg-white dark:bg-slate-900 shadow-sm">
+        <table className="w-full border-collapse text-left">
+          <thead>
+            <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+              <th className="py-4 px-6 font-black text-sm uppercase tracking-wider text-slate-500 w-28">Score</th>
+              <th className="py-4 px-6 font-black text-sm uppercase tracking-wider text-slate-500 w-48">Status</th>
+              <th className="py-4 px-6 font-black text-sm uppercase tracking-wider text-slate-500">Interpretation</th>
+            </tr>
+          </thead>
+          <tbody className="text-sm md:text-base">
+            <tr className="border-b border-slate-100 dark:border-slate-800/50">
+              <td className="py-5 px-6 align-top">
+                <div className="inline-flex px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-black tracking-tight shadow-sm shadow-red-500/10 items-center justify-center min-w-[4.5rem]">
+                  0-40
+                </div>
+              </td>
+              <td className="py-5 px-6 align-top font-bold text-slate-900 dark:text-white">Not Ready for Scale</td>
+              <td className="py-5 px-6 align-top text-slate-500 dark:text-slate-400 leading-relaxed">
+                Do not spend money on paid acquisition. You have critical flaws in your messaging, extreme friction in your UX, or a completely undefined ICP. Fix the foundations.
+              </td>
+            </tr>
+            <tr className="border-b border-slate-100 dark:border-slate-800/50">
+              <td className="py-5 px-6 align-top">
+                <div className="inline-flex px-3 py-1.5 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 font-black tracking-tight shadow-sm shadow-yellow-500/10 items-center justify-center min-w-[4.5rem]">
+                  41-75
+                </div>
+              </td>
+              <td className="py-5 px-6 align-top font-bold text-slate-900 dark:text-white">Leaky Bucket</td>
+              <td className="py-5 px-6 align-top text-slate-500 dark:text-slate-400 leading-relaxed">
+                You can acquire users, but your conversion rates will be suboptimal. You likely lack strong social proof, or your copy is slightly too generic.
+              </td>
+            </tr>
+            <tr>
+              <td className="py-5 px-6 align-top">
+                <div className="inline-flex px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 font-black tracking-tight shadow-sm shadow-emerald-500/10 items-center justify-center min-w-[4.5rem]">
+                  76-100
+                </div>
+              </td>
+              <td className="py-5 px-6 align-top font-bold text-slate-900 dark:text-white">Ready for Growth</td>
+              <td className="py-5 px-6 align-top text-slate-500 dark:text-slate-400 leading-relaxed">
+                Your value proposition is lethal, your friction is zero, and your conversion triggers are in place. Pour fuel on the fire.
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <DocsPagination 
