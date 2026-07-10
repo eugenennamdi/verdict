@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/dist/server/web/spec-extension/response';
 import { extractContext } from '@/lib/engine';
 import { redis } from '@/lib/redis';
+import { withX402 } from "@okxweb3/app-x402-next";
+import { getPaymentServer } from "@/lib/payment";
 
-export async function POST(req: Request) {
+const handleRequest = async (req: Request) => {
   try {
     const { url } = await req.json();
 
@@ -33,4 +35,24 @@ export async function POST(req: Request) {
     console.error('Extraction Error:', error);
     return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
-}
+};
+
+const routeConfig = {
+  accepts: [
+    {
+      scheme: "exact" as const,
+      network: "eip155:196" as const,
+      asset: "0x1E4a5963aBFD975d8c9021ce480b42188849D41d", // USDT on X Layer
+      price: "0.25", // 0.25 USDT
+      payTo: process.env.PAYMENT_ADDRESS || "0x0000000000000000000000000000000000000000",
+    }
+  ],
+  description: "VERDICT Engine Context Extraction",
+  resource: "VERDICT-EXTRACT",
+};
+
+export const POST = async (req: Request) => {
+  const paymentServer = await getPaymentServer();
+  const protectedHandler = withX402(handleRequest as any, routeConfig, paymentServer as any);
+  return protectedHandler(req as any);
+};

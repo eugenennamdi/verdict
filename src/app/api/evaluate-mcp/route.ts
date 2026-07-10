@@ -2,6 +2,8 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import { extractContext, generateAudit } from "@/lib/engine";
+import { withX402 } from "@okxweb3/app-x402-next";
+import { getPaymentServer } from "@/lib/payment";
 
 // Define the MCP Server
 const server = new Server({
@@ -85,49 +87,38 @@ const transport = new WebStandardStreamableHTTPServerTransport({
 
 server.connect(transport);
 
-export async function POST(req: Request) {
+const handleRequest = async (req: Request) => {
   try {
-    // OKX Agent Payments Protocol (x402) integration
-    const paymentSignature = req.headers.get("payment-signature") || req.headers.get("x-payment");
-    
-    if (!paymentSignature) {
-      const payload = {
-        x402Version: "2",
-        resource: "VERDICT-A2MCP",
-        accepts: [
-          {
-            scheme: "exact",
-            network: "eip155:196", // X Layer
-            asset: "0x1E4a5963aBFD975d8c9021ce480b42188849D41d", // USDT on X Layer
-            amount: "500000", // 0.5 USDT
-            payTo: process.env.PAYMENT_ADDRESS || "0x0000000000000000000000000000000000000000" // Set your wallet address in .env
-          }
-        ]
-      };
-      
-      const base64Payload = Buffer.from(JSON.stringify(payload)).toString("base64");
-      
-      return new Response("Payment Required", {
-        status: 402,
-        headers: {
-          "PAYMENT-REQUIRED": base64Payload,
-          "Access-Control-Expose-Headers": "PAYMENT-REQUIRED"
-        }
-      });
+    return await transport.handleRequest(req);
+  } catch (error) {
+    console.error("MCP Transport Error:", error);
+    return new Response("Internal Server Error", { status: 500 });
+  }
+};
+
+const routeConfig = {
+  accepts: [
+    {
+      scheme: "exact" as const,
+      network: "eip155:196" as const,
+      asset: "0x1E4a5963aBFD975d8c9021ce480b42188849D41d", // USDT on X Layer
+      price: "0.5", // 0.5 USDT
+      payTo: process.env.PAYMENT_ADDRESS || "0x0000000000000000000000000000000000000000",
     }
+  ],
+  description: "VERDICT MCP Evaluation Server",
+  resource: "VERDICT-A2MCP",
+};
 
-    return await transport.handleRequest(req);
-  } catch (error) {
-    console.error("MCP Transport Error:", error);
-    return new Response("Internal Server Error", { status: 500 });
-  }
-}
+// Next.js API Routes (App Router) wrapped with x402 Payment verification
+export const POST = async (req: Request) => {
+  const paymentServer = await getPaymentServer();
+  const protectedHandler = withX402(handleRequest as any, routeConfig, paymentServer as any);
+  return protectedHandler(req as any);
+};
 
-export async function GET(req: Request) {
-  try {
-    return await transport.handleRequest(req);
-  } catch (error) {
-    console.error("MCP Transport Error:", error);
-    return new Response("Internal Server Error", { status: 500 });
-  }
-}
+export const GET = async (req: Request) => {
+  const paymentServer = await getPaymentServer();
+  const protectedHandler = withX402(handleRequest as any, routeConfig, paymentServer as any);
+  return protectedHandler(req as any);
+};
