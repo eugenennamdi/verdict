@@ -436,9 +436,9 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%] w-full max-w-5xl z-[101] p-4 md:p-6"
+              className="fixed inset-0 z-[101] p-4 md:p-6 overflow-y-auto flex items-center justify-center"
             >
-              <div className="bg-white/90 dark:bg-[#0B0F19]/90 backdrop-blur-2xl border border-white/20 dark:border-slate-800 rounded-[2rem] p-6 md:p-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col">
+              <div className="w-full max-w-5xl bg-white/90 dark:bg-[#0B0F19]/90 backdrop-blur-2xl border border-white/20 dark:border-slate-800 rounded-[2rem] p-6 md:p-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] relative flex flex-col my-auto h-max">
                 <button 
                   onClick={() => setShowPaywall(false)}
                   className="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors z-20"
@@ -450,16 +450,16 @@ export default function Home() {
                   <h3 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
                     Upgrade your plan
                   </h3>
-                  <p className="text-slate-500 mt-3 font-medium">You&apos;ve used your free playground audit. Choose a tier to continue.</p>
+                  {/* Text removed as requested */}
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6 relative z-10">
                   {/* Free Plan Card */}
                   <div className="border border-slate-200 dark:border-slate-800/50 rounded-3xl p-8 bg-white dark:bg-slate-900/50 shadow-sm flex flex-col h-full">
                     <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-6 shrink-0">
-                      <Globe className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+                      <VerdictLogo className="w-5 h-5 text-slate-600 dark:text-slate-400" />
                     </div>
-                    <h4 className="text-2xl font-black mb-1 shrink-0">Web Playground</h4>
+                    <h4 className="text-2xl font-black mb-1 shrink-0">VERDICT</h4>
                     <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 text-sm shrink-0">For normal users & casual exploration.</p>
                     <div className="mb-8 shrink-0">
                       <span className="text-4xl font-black text-slate-900 dark:text-white">Free</span>
@@ -497,10 +497,13 @@ export default function Home() {
                     <div className="absolute -top-24 -right-24 w-48 h-48 bg-orange-500/20 blur-[60px] rounded-full pointer-events-none" />
                     
                     <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center mb-6 relative z-10 shadow-lg shadow-orange-500/20 shrink-0">
-                      <Bot className="w-5 h-5 text-white" />
+                      <div className="relative">
+                        <VerdictLogo className="w-5 h-5 text-white" />
+                        <span className="absolute -top-1.5 -right-2.5 text-[10px]">🤖</span>
+                      </div>
                     </div>
                     <h4 className="text-2xl font-black mb-1 relative z-10 shrink-0">VERDICT Pro</h4>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 relative z-10 text-sm shrink-0">For Founders, CMOs, VCs & high-volume use.</p>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 relative z-10 text-sm shrink-0">For Founders, CMOs, VCs, Growth Marketers, Indie Hackers & high-volume usage.</p>
                     <div className="mb-8 relative z-10 shrink-0">
                       <span className="text-4xl font-black text-orange-500 tracking-tight">Pay-per-use</span>
                     </div>

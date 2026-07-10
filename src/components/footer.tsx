@@ -17,27 +17,27 @@ export function Footer() {
 
   return (
     <footer className="w-full py-6 px-6 mt-auto bg-transparent transition-colors">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 relative">
+      <div className="max-w-6xl mx-auto flex items-center justify-between gap-4 relative w-full">
         
         {/* Left: Author */}
-        <div className="flex items-center justify-center md:justify-start w-full md:w-1/3 text-[13px] font-medium text-slate-500 dark:text-slate-400">
-          <span>Built by</span>
+        <div className="flex-1 flex items-center justify-start text-[13px] font-medium text-slate-500 dark:text-slate-400">
+          <span className="hidden sm:inline">Built by</span>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img 
             src="https://eugenennamdi.com/favicon.png" 
             alt="Eugene Nnamdi" 
-            className="w-5 h-5 rounded-full mx-2 shadow-sm object-cover"
+            className="w-5 h-5 rounded-full sm:mx-2 shadow-sm object-cover"
             onError={(e) => {
                (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjxwYXRoIGQ9Ik0xMiAxMGEyIDIgMCAxIDAgMC00IDIgMiAwIDAgMCAwIDR6Ii8+PHBhdGggZD0iTTcuNCAxOGE1IDUgMCAwIDEgOS4yIDB6Ii8+PC9zdmc+';
             }}
           />
-          <a href="https://eugenennamdi.com" target="_blank" rel="noreferrer" className="text-slate-900 dark:text-white hover:underline decoration-slate-300 dark:decoration-slate-600 underline-offset-4 mr-1">
+          <a href="https://eugenennamdi.com" target="_blank" rel="noreferrer" className="text-slate-900 dark:text-white hover:underline decoration-slate-300 dark:decoration-slate-600 underline-offset-4 ml-2 sm:ml-0 mr-1 hidden sm:inline">
             Eugene Nnamdi
           </a>
         </div>
 
         {/* Center: Social Links */}
-        <div className="flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 w-full md:w-1/3">
+        <div className="flex-shrink-0 flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400">
           <a 
             href="https://x.com/tryverdict" 
             target="_blank" 
@@ -59,7 +59,7 @@ export function Footer() {
         </div>
 
         {/* Right: Theme Toggler */}
-        <div className="flex items-center justify-center md:justify-end w-full md:w-1/3">
+        <div className="flex-1 flex items-center justify-end">
           {mounted ? (
             <div className="flex items-center gap-1 p-1 rounded-2xl bg-slate-200/50 dark:bg-slate-800/30">
               <button 
