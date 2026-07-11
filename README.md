@@ -62,13 +62,16 @@ VCs and accelerators plug VERDICT into their application portals to automaticall
 
 ```mermaid
 flowchart LR
-  subgraph Client
-    A[Next.js Frontend]
+  subgraph Clients
+    A[Human / Next.js Frontend]
+    Agent[OKX.AI Agent]
   end
 
   subgraph Verdict API Engine
+    H[A2MCP Endpoint<br/>/api/evaluate-mcp]
     B[Extract Phase<br/>/api/engine/extract]
     C[Audit Phase<br/>/api/engine/audit]
+    I[Report Fetcher<br/>/api/report/id]
   end
 
   subgraph External Services
@@ -76,17 +79,29 @@ flowchart LR
     E[GLM-5.2 API<br/>Inference]
     F[(Upstash Redis<br/>Rate Limiter)]
     G[(Supabase<br/>PostgreSQL)]
+    J[(X-Layer Blockchain<br/>OKX Web3 SDK)]
   end
 
+  %% Agent Flow (A2MCP)
+  Agent -->|1. Request Audit| H
+  H <-->|2. x402 Payment Challenge| J
+  H -->|3. Route to Engine| B
+  H -->|4. Return Final Report| Agent
+
+  %% Human Flow
   A -->|1. Submit URL| B
+  A -->|2. Request Audit| C
+  A -->|3. Fetch Report| I
+  
+  %% Internal Data Flow
+  I <-->|Read Data| G
   B <-->|Scrape DOM| D
   B <-->|Check Limit| F
   B -->|Return Context| A
   
-  A -->|2. Request Audit| C
   C <-->|Analyze Context| E
   C <-->|Enforce Limit| F
-  C -->|Save Report securely| G
+  C -->|Save Report| G
   C -->|Return ID| A
 ```
 
@@ -97,6 +112,7 @@ flowchart LR
 - **Framework:** Next.js 14 (App Router)
 - **Language:** TypeScript (Strict Mode)
 - **Styling:** Tailwind CSS + Radix UI + Lucide Icons
+- **Payments / A2MCP:** OKX Web3 SDK (x402 standard) + X-Layer
 - **LLM:** [GLM-5.2](https://huggingface.co/zai-org/GLM-5.2)
 - **Web Scraping:** Firecrawl
 - **Database:** Supabase (PostgreSQL)
