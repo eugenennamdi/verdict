@@ -12,7 +12,7 @@ export default function ArchitecturePage() {
       <h1 className="text-5xl font-black tracking-tight mb-6">Architecture & Pipeline</h1>
       
       <p className="text-xl text-slate-600 dark:text-slate-400 mb-12 leading-relaxed">
-        VERDICT is not a simple prompt wrapper. It is a multi-stage data extraction and reasoning pipeline designed to simulate a consultant&apos;s due diligence process in 60 seconds.
+        Verdict is not a simple prompt wrapper. It is a multi-stage data extraction and reasoning pipeline designed to simulate a consultant&apos;s due diligence process in 60 seconds.
       </p>
 
       <div className="space-y-12">
@@ -22,7 +22,7 @@ export default function ArchitecturePage() {
             When you submit a URL, standard scraping tools often fail. Modern SaaS landing pages are heavily client-side rendered (React, Vue, Next.js) and protected by Cloudflare or Datadome. 
           </p>
           <p>
-            VERDICT utilizes a headless browser infrastructure via <strong>Firecrawl</strong> to:
+            Verdict utilizes a headless browser infrastructure via <strong>Firecrawl</strong> to:
           </p>
           <ul>
             <li>Bypass basic bot protection.</li>
@@ -35,7 +35,7 @@ export default function ArchitecturePage() {
         <section>
           <h2>2. Context Normalization</h2>
           <p className="text-slate-600 dark:text-slate-300 mb-4">
-            Before the deep audit begins, VERDICT runs a preliminary normalization pass using <a href="https://huggingface.co/zai-org/GLM-5.2" target="_blank" rel="noopener noreferrer">GLM-5.2</a> to establish the ground truth. This phase strips away marketing jargon, parsing the raw HTML structure to identify the true core value proposition (what the product actually does versus what the founder claims it does).
+            Before the deep audit begins, Verdict runs a preliminary normalization pass using <a href="https://huggingface.co/zai-org/GLM-5.2" target="_blank" rel="noopener noreferrer">GLM-5.2</a> to establish the ground truth. This phase strips away marketing jargon, parsing the raw HTML structure to identify the true core value proposition (what the product actually does versus what the founder claims it does).
           </p>
           <ol>
             <li><strong>Validation:</strong> We verify the URL actually belongs to a SaaS, B2B, or B2C startup. If you submit a personal blog, a GitHub repo, or an agency, the engine rejects it.</li>
@@ -64,7 +64,7 @@ export default function ArchitecturePage() {
       <div className="mt-12 bg-slate-100 dark:bg-slate-800/50 rounded-2xl p-8 border border-slate-200 dark:border-slate-800">
         <h2 className="mt-0 text-xl font-bold mb-4">Compute Costs & Rate Limiting</h2>
         <p className="text-slate-600 dark:text-slate-400 mb-0 leading-relaxed">
-          Running headless browsers on-demand, fetching assets, and reasoning over massive DOM context windows is extremely compute-heavy. To protect our infrastructure, the Web App strictly enforces an IP-based rate limit via <strong>Vercel KV (Redis)</strong>. If you require unlimited, scalable audits without rate limits, the VERDICT pipeline can be executed autonomously via the <strong>OKX.AI Agent Ecosystem</strong>.
+          Running headless browsers on-demand, fetching assets, and reasoning over massive DOM context windows is extremely compute-heavy. To protect our infrastructure, the Web App strictly enforces an IP-based rate limit via <strong>Vercel KV (Redis)</strong>. If you require unlimited, scalable audits without rate limits, the Verdict pipeline can be executed autonomously via the <strong>OKX.AI Agent Ecosystem</strong>.
         </p>
       </div>
 

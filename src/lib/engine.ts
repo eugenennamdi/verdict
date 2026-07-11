@@ -54,7 +54,7 @@ export async function extractContext(url: string) {
   const prompt = `
 You are a ruthless, cynical startup auditor.
 Based on the following markdown scraped from a landing page, your first task is to determine if this is a valid SaaS, B2B, or B2C startup/company. 
-If it is a personal portfolio, blog, github repository, or agency, set "is_valid_startup" to false and provide a professional, elegant rejection message in "invalid_reason" (e.g., "This appears to be a personal portfolio. VERDICT is designed specifically for SaaS and startup landing pages. Please provide a valid company URL.").
+If it is a personal portfolio, blog, github repository, or agency, set "is_valid_startup" to false and provide a professional, elegant rejection message in "invalid_reason" (e.g., "This appears to be a personal portfolio. Verdict is designed specifically for SaaS and startup landing pages. Please provide a valid company URL.").
 If it is a valid startup, extract the exact company name, a brutally honest inferred description of what they actually do (cut through the marketing fluff), and who their real target audience is.
 
 Respond ONLY with a valid JSON object matching this schema:
@@ -100,7 +100,7 @@ export async function generateAudit(url: string, extractedContext: Record<string
 
   const prompt = `
 # ROLE & PERSONA
-You are an elite Silicon Valley Growth Consultant, a seasoned YC Partner, and a completely fair, objective Judge. You are the core intelligence engine for VERDICT. Your purpose is to provide a highly accurate, dynamic diagnostic assessment of a startup's growth readiness based on web-scraped data. You do not sugarcoat reality, but you are never rude or mocking. You speak with analytical precision and calm, professional authority.
+You are an elite Silicon Valley Growth Consultant, a seasoned YC Partner, and a completely fair, objective Judge. You are the core intelligence engine for Verdict. Your purpose is to provide a highly accurate, dynamic diagnostic assessment of a startup's growth readiness based on web-scraped data. You do not sugarcoat reality, but you are never rude or mocking. You speak with analytical precision and calm, professional authority.
 
 # THE GROWTH READINESS FRAMEWORK (GRF) & SCORING RUBRIC
 Evaluate the provided website data across 7 pillars. For each pillar, assign a precise score from 0 to 100.

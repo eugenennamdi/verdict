@@ -258,7 +258,7 @@ export default function Home() {
                               <div className="w-3 h-3 rounded-full bg-amber-400"></div>
                               <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
                             </div>
-                            <span className="text-[11px] uppercase font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 ml-4">VERDICT ENGINE v0</span>
+                            <span className="text-[11px] uppercase font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 ml-4">Verdict Engine v0</span>
                           </div>
 
                           <div className="pt-8 w-full flex flex-col space-y-4">
@@ -384,7 +384,7 @@ export default function Home() {
                                   <div className="w-3 h-3 rounded-full bg-amber-400"></div>
                                   <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
                                 </div>
-                                <span className="text-[11px] uppercase font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 ml-4">VERDICT ENGINE v0</span>
+                                <span className="text-[11px] uppercase font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 ml-4">Verdict Engine v0</span>
                               </div>
 
                               <div className="pt-8 w-full flex flex-col space-y-4">
@@ -459,7 +459,7 @@ export default function Home() {
                     <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-6 shrink-0">
                       <VerdictLogo className="w-5 h-5 text-slate-600 dark:text-slate-400" />
                     </div>
-                    <h4 className="text-2xl font-black mb-1 shrink-0">VERDICT</h4>
+                    <h4 className="text-2xl font-black mb-1 shrink-0">Verdict</h4>
                     <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 text-sm shrink-0">For normal users & casual exploration.</p>
                     <div className="mb-8 shrink-0">
                       <span className="text-4xl font-black text-slate-900 dark:text-white">Free</span>
@@ -499,7 +499,7 @@ export default function Home() {
                     <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center mb-6 relative z-10 shadow-lg shadow-orange-500/20 shrink-0">
                       <VerdictLogo className="w-5 h-5 text-white" />
                     </div>
-                    <h4 className="text-2xl font-black mb-1 relative z-10 shrink-0">VERDICT Pro</h4>
+                    <h4 className="text-2xl font-black mb-1 relative z-10 shrink-0">Verdict Pro</h4>
                     <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 relative z-10 text-sm shrink-0">For Founders, CMOs, VCs, Growth Marketers, Indie Hackers & high-volume usage.</p>
                     <div className="mb-8 relative z-10 shrink-0 flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-[#26A17B] flex items-center justify-center shrink-0 shadow-sm border border-[#26A17B]/20">

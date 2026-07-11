@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VERDICT | Brutal Startup Growth Audit",
-  description: "An autonomous Agent Service Provider that performs a brutally honest, consultant-grade startup growth audit.",
+  title: "Verdict | Brutal Startup Growth Audit",
+  description: "An autonomous agent that strips away positivity bias to deliver brutally honest, YC-grade landing page teardowns.",
 };
 
 export default function RootLayout({

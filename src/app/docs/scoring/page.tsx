@@ -12,7 +12,7 @@ export default function ScoringPage() {
       <h1 className="text-5xl font-black tracking-tight mb-6">Scoring & Enforcement</h1>
       
       <p className="text-xl text-slate-600 dark:text-slate-400 mb-12 leading-relaxed">
-        VERDICT does not guess your score. It operates on a strict, mathematically constrained rubric enforced by JSON Schema.
+        Verdict does not guess your score. It operates on a strict, mathematically constrained rubric enforced by JSON Schema.
       </p>
 
       <h2>The Rubric</h2>
@@ -31,7 +31,7 @@ export default function ScoringPage() {
       <p>
         Standard LLMs suffer from <strong>Positivity Bias</strong>—they desperately want to tell you that you are doing a good job. Left unchecked, an LLM will give every startup a 9/10 for &quot;Messaging&quot; just because the website has words on it.
       </p>
-      <p>To counteract this, VERDICT uses:</p>
+      <p>To counteract this, Verdict uses:</p>
       <ol>
         <li><strong>Aggressive Persona Prompting:</strong> The system prompt strictly commands the model to act as a cynical, hyper-critical auditor who actively searches for flaws.</li>
         <li><strong>Schema Constraints:</strong> We use structured output (JSON schema) to force the model to justify its low scores before it outputs the number.</li>

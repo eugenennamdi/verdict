@@ -42,19 +42,19 @@ Most AI tools try to be overly polite. Verdict is intentionally designed with an
 
 ## Roadmap: The Autonomous Growth Agency 
 
-VERDICT is not just a landing page auditor. We are building a fully autonomous growth agency packaged as a simple tool. 
+Verdict is not just a landing page auditor. We are building a fully autonomous growth agency packaged as a simple tool. 
 
 ### Phase 1: The Reality Check (Live)
 Landing page audits, UX friction analysis, and the Growth Readiness Score.
 
 ### Phase 2: Campaign Architecture
-You input your goal ("We need 500 beta signups in 30 days with $2k budget"). VERDICT reverse-engineers a growth campaign, writes the ad copy, and builds a launch playbook.
+You input your goal ("We need 500 beta signups in 30 days with $2k budget"). Verdict reverse-engineers a growth campaign, writes the ad copy, and builds a launch playbook.
 
 ### Phase 3: Social & Distribution Audits
-Deep-dive audits of your social media presence (X/LinkedIn). Are you shouting into the void, or building an audience? VERDICT analyzes your hook-rate and content velocity to build scalable organic flywheels.
+Deep-dive audits of your social media presence (X/LinkedIn). Are you shouting into the void, or building an audience? Verdict analyzes your hook-rate and content velocity to build scalable organic flywheels.
 
 ### Phase 4: The VC & Accelerator API
-VCs and accelerators plug VERDICT into their application portals to automatically score and filter the landing pages and growth models of startups applying for funding. 
+VCs and accelerators plug Verdict into their application portals to automatically score and filter the landing pages and growth models of startups applying for funding. 
 
 ---
 

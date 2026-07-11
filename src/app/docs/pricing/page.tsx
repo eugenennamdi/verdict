@@ -13,7 +13,7 @@ export default function PricingPage() {
       <h1 className="text-5xl font-black tracking-tight mb-6">Agent & Pricing</h1>
       
       <p className="text-xl text-slate-600 dark:text-slate-400 mb-12 leading-relaxed">
-        VERDICT operates on a hybrid model to balance accessibility with the realities of heavy AI compute costs.
+        Verdict operates on a hybrid model to balance accessibility with the realities of heavy AI compute costs.
       </p>
 
       <div className="overflow-x-auto mb-16 border border-slate-200 dark:border-slate-800 rounded-2xl bg-white dark:bg-[#0F1423] shadow-sm">
@@ -21,8 +21,8 @@ export default function PricingPage() {
           <thead>
             <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
               <th className="py-4 px-6 font-black text-sm uppercase tracking-wider text-slate-500">Feature</th>
-              <th className="py-4 px-6 font-black text-lg">VERDICT</th>
-              <th className="py-4 px-6 font-black text-lg text-orange-500">VERDICT Pro (ASP)</th>
+              <th className="py-4 px-6 font-black text-lg">Verdict</th>
+              <th className="py-4 px-6 font-black text-lg text-orange-500">Verdict Pro (ASP)</th>
             </tr>
           </thead>
           <tbody className="text-sm md:text-base">
@@ -79,7 +79,7 @@ export default function PricingPage() {
 
       <h2>Why this model?</h2>
       <p>
-        The AI industry is filled with companies charging $99/mo for simple prompt wrappers. VERDICT is fundamentally different. Our pipeline relies on computationally expensive operations:
+        The AI industry is filled with companies charging $99/mo for simple prompt wrappers. Verdict is fundamentally different. Our pipeline relies on computationally expensive operations:
       </p>
       <ul>
         <li>Spinning up cloud-based headless browsers (Firecrawl) to bypass bot protection and render heavy React/Vue applications.</li>
@@ -92,7 +92,7 @@ export default function PricingPage() {
 
       <h2>Agentic Payments (x402)</h2>
       <p>
-        VERDICT uses the <strong>OKX Payment SDK</strong> and the <a href="https://web3.okx.com/onchainos/dev-docs/payments/overview" target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:underline">x402 protocol</a> to enable seamless, machine-to-machine micropayments. Built on <a href="https://web3.okx.com/onchainos/dev-docs/xlayer/developer/build-on-xlayer/about-xlayer" target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:underline">X Layer</a>, this completely bypasses traditional SaaS subscriptions.
+        Verdict uses the <strong>OKX Payment SDK</strong> and the <a href="https://web3.okx.com/onchainos/dev-docs/payments/overview" target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:underline">x402 protocol</a> to enable seamless, machine-to-machine micropayments. Built on <a href="https://web3.okx.com/onchainos/dev-docs/xlayer/developer/build-on-xlayer/about-xlayer" target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:underline">X Layer</a>, this completely bypasses traditional SaaS subscriptions.
       </p>
       <p>
         When an AI Agent requests an audit, our server intercepts it and returns an <code>HTTP 402 Payment Required</code> challenge. The agent automatically executes the 0.5 USDT transaction on-chain, and re-sends the request with cryptographic proof. Once the SDK validates the transaction, our engine executes the heavy LLM compute and delivers the comprehensive JSON audit directly back to the agent—zero human intervention required.

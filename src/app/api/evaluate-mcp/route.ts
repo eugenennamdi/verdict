@@ -7,7 +7,7 @@ import { getPaymentServer } from "@/lib/payment";
 
 // Define the MCP Server
 const server = new Server({
-  name: "VERDICT-A2MCP",
+  name: "Verdict-A2MCP",
   version: "1.0.0",
 }, {
   capabilities: {
@@ -106,8 +106,8 @@ const routeConfig = {
       payTo: process.env.PAYMENT_ADDRESS || "0x8713783e9d8391c4bf54f705b355ba775184f906", // Hardcoded to User's Wallet
     }
   ],
-  description: "VERDICT MCP Evaluation Server",
-  resource: "VERDICT-A2MCP",
+  description: "Verdict MCP Evaluation Server",
+  resource: "Verdict-A2MCP",
 };
 
 // Next.js API Routes (App Router) wrapped with x402 Payment verification

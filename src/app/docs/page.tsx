@@ -4,13 +4,13 @@ import { ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "Why VERDICT Exists | Documentation",
+  title: "Why Verdict Exists | Documentation",
 };
 
 export default function DocsIntroPage() {
   return (
     <>
-      <h1 className="text-5xl font-black tracking-tight mb-6">Why VERDICT Exists</h1>
+      <h1 className="text-5xl font-black tracking-tight mb-6">Why Verdict Exists</h1>
       
       <p className="text-xl text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
         The startup ecosystem is plagued by &quot;delusion by echo chamber.&quot; Founders spend months building products, wrapping them in generic marketing fluff, and wondering why they aren&apos;t scaling.
@@ -21,7 +21,7 @@ export default function DocsIntroPage() {
           When founders ask for feedback, they get polite nods from friends or superficial critiques from AI wrappers that simply say, &quot;Your website looks great! Maybe add a clearer CTA?&quot;
         </p>
         <p className="text-orange-500 font-black text-xl m-0 tracking-tight">
-          VERDICT is the antidote.
+          Verdict is the antidote.
         </p>
       </div>
 
@@ -35,7 +35,7 @@ export default function DocsIntroPage() {
 
       <h2>Our Philosophy</h2>
       <p>
-        VERDICT strips away the RLHF positivity bias using aggressive system prompts, strict JSON schema enforcement, and a rigid 7-pillar grading rubric. 
+        Verdict strips away the RLHF positivity bias using aggressive system prompts, strict JSON schema enforcement, and a rigid 7-pillar grading rubric. 
       </p>
       
       <ul className="space-y-4 mb-12">
@@ -44,7 +44,7 @@ export default function DocsIntroPage() {
         <li><strong>Brutal Honesty.</strong> If your startup is a thin wrapper, we will tell you. If your value proposition is a word salad of buzzwords, we will rip it apart.</li>
       </ul>
 
-      <h2>Who is VERDICT for?</h2>
+      <h2>Who is Verdict for?</h2>
       <p>
         Designed to give brutally honest, actionable insights for those who build and scale.
       </p>
@@ -66,16 +66,16 @@ export default function DocsIntroPage() {
         ))}
       </div>
 
-      <h2>VERDICT vs. VERDICT Pro</h2>
+      <h2>Verdict vs. Verdict Pro</h2>
       <p>
-        VERDICT burns through a lot of compute. Spinning up headless browsers (Firecrawl) and processing massive amounts of context means running this kind of deep analysis gets expensive fast.
+        Verdict burns through a lot of compute. Spinning up headless browsers (Firecrawl) and processing massive amounts of context means running this kind of deep analysis gets expensive fast.
       </p>
       <p>
         Instead of forcing users into expensive monthly SaaS subscriptions, we engineered a hybrid model:
       </p>
       <ul className="space-y-4 mb-12">
-        <li><strong>VERDICT:</strong> A free, rate-limited (1 audit per 12 hours) interface designed to let founders experience the brutality of the engine firsthand.</li>
-        <li><strong>VERDICT Pro (ASP on OKX.AI):</strong> Our uncapped, autonomous auditor lives natively on the OKX.AI ecosystem. Here, VCs and heavy users can run unlimited audits on a strict pay-per-execution (0.5 USDT per audit) basis using Web3 rails.</li>
+        <li><strong>Verdict:</strong> A free, rate-limited (1 audit per 12 hours) interface designed to let founders experience the brutality of the engine firsthand.</li>
+        <li><strong>Verdict Pro (ASP on OKX.AI):</strong> Our uncapped, autonomous auditor lives natively on the OKX.AI ecosystem. Here, VCs and heavy users can run unlimited audits on a strict pay-per-execution (0.5 USDT per audit) basis using Web3 rails.</li>
       </ul>
       <DocsPagination next={{ title: "Architecture & Pipeline", href: "/docs/architecture" }} />
     </>
