@@ -98,6 +98,35 @@ export default function PricingPage() {
         When an AI Agent requests an audit, our server intercepts it and returns an <code>HTTP 402 Payment Required</code> challenge. The agent automatically executes the 0.5 USDT transaction on-chain, and re-sends the request with cryptographic proof. Once the SDK validates the transaction, our engine executes the heavy LLM compute and delivers the comprehensive JSON audit directly back to the agent—zero human intervention required.
       </p>
 
+      <h3>Connecting Your Agent</h3>
+      <p>
+        To allow your AI agent (Claude, Hermes, OpenClaw) to securely pay for Verdict audits, you must equip it with the Onchain OS skill and an Agentic Wallet.
+      </p>
+      
+      <div className="space-y-4 my-6">
+        <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl">
+          <h4 className="font-bold text-slate-900 dark:text-white mb-2">1. Install the Skill & Login</h4>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">Paste the following prompt into your agent to install the required capabilities and generate your TEE-secured Agentic Wallet:</p>
+          <pre className="p-3 bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-sm overflow-x-auto text-slate-800 dark:text-slate-300">
+            <code>Run npx skills add okx/onchainos-skills to install Onchain OS skills, then run onchainos wallet login</code>
+          </pre>
+        </div>
+
+        <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl">
+          <h4 className="font-bold text-slate-900 dark:text-white mb-2">2. Connect to Verdict</h4>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">Once your wallet is funded with Test USDT0 on X Layer, paste this connection block to expose the Verdict MCP tool to your agent:</p>
+          <pre className="p-3 bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-sm overflow-x-auto text-slate-800 dark:text-slate-300">
+            <code>{`I'd like to use the service provided by Verdict:
+
+Service title: Verdict MCP Evaluation Server
+Service type: A2MCP
+Endpoint: https://tryverdict.xyz/api/evaluate-mcp
+
+Please use OKX Agent Payments Protocol to send a request to this endpoint.`}</code>
+          </pre>
+        </div>
+      </div>
+
       <DocsPagination 
         prev={{ title: "Growth Readiness Score", href: "/docs/growth-readiness" }}
       />
