@@ -10,6 +10,12 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Footer } from "@/components/footer";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const springTransition = { type: "spring" as const, stiffness: 400, damping: 30 };
 
@@ -420,7 +426,40 @@ export default function Home() {
           </AnimatePresence>
         </div>
       </div>
-      
+
+      {/* FAQ Section */}
+      <section className="w-full max-w-3xl mx-auto px-6 pb-24 z-10 relative">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Frequently Asked Questions</h2>
+          <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Everything you need to know about Verdict.</p>
+        </div>
+        <Accordion type="single" collapsible className="w-full bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200 dark:border-slate-800 rounded-3xl px-6 py-2 shadow-sm">
+          <AccordionItem value="item-1" className="border-slate-200 dark:border-slate-800">
+            <AccordionTrigger className="text-left font-bold text-slate-900 dark:text-white hover:no-underline hover:text-orange-500 dark:hover:text-orange-400 transition-colors py-5">Is this just a ChatGPT prompt wrapper?</AccordionTrigger>
+            <AccordionContent className="text-slate-500 dark:text-slate-400 leading-relaxed pb-5 font-medium text-[15px]">
+              No. We spin up a headless browser, bypass Cloudflare, parse your raw DOM, run it through GLM-5.2 for normalization, and then grade it against a strict 7-pillar JSON schema rubric.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-2" className="border-slate-200 dark:border-slate-800">
+            <AccordionTrigger className="text-left font-bold text-slate-900 dark:text-white hover:no-underline hover:text-orange-500 dark:hover:text-orange-400 transition-colors py-5">Does it cost money?</AccordionTrigger>
+            <AccordionContent className="text-slate-500 dark:text-slate-400 leading-relaxed pb-5 font-medium text-[15px]">
+              The web interface is free but rate-limited to 1 audit per 12 hours to protect our compute resources. Unlimited audits require Verdict Pro on the OKX.AI ecosystem.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-3" className="border-slate-200 dark:border-slate-800">
+            <AccordionTrigger className="text-left font-bold text-slate-900 dark:text-white hover:no-underline hover:text-orange-500 dark:hover:text-orange-400 transition-colors py-5">How does Verdict Pro (x402) work?</AccordionTrigger>
+            <AccordionContent className="text-slate-500 dark:text-slate-400 leading-relaxed pb-5 font-medium text-[15px]">
+              It uses machine-to-machine micropayments. Your AI agent pays our AI agent 0.5 USDT on X Layer per audit. No monthly subscriptions, no human intervention.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-4" className="border-slate-200 dark:border-slate-800 border-b-0">
+            <AccordionTrigger className="text-left font-bold text-slate-900 dark:text-white hover:no-underline hover:text-orange-500 dark:hover:text-orange-400 transition-colors py-5">Will this steal my data or ideas?</AccordionTrigger>
+            <AccordionContent className="text-slate-500 dark:text-slate-400 leading-relaxed pb-5 font-medium text-[15px]">
+              We only audit public-facing landing pages. If it's on the internet, it's public. We do not store your code or scrape anything beyond what a normal visitor sees.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </section>      
       {/* Rate Limit / Teaser Wall Modal */}
       <AnimatePresence>
         {showPaywall && (
