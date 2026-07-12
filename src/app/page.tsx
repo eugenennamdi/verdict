@@ -423,7 +423,6 @@ export default function Home() {
                 </Card>
               </motion.div>
             )}
-            )}
           </AnimatePresence>
 
           {/* FAQ Section */}
