@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { DocsPagination } from "@/components/DocsPagination";
 import { Check, Bot, Globe } from "lucide-react";
+import { CopyBlock } from "@/components/copy-block";
 
 export const metadata: Metadata = {
   title: "Agent & Pricing (OKX.AI) | Documentation",
@@ -105,25 +106,39 @@ export default function PricingPage() {
       
       <div className="space-y-4 my-6">
         <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl">
-          <h4 className="font-bold text-slate-900 dark:text-white mb-2">1. Install the Skill & Login</h4>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">Paste the following prompt into your agent to install the required capabilities and generate your TEE-secured Agentic Wallet:</p>
-          <pre className="p-3 bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-sm overflow-x-auto text-slate-800 dark:text-slate-300">
-            <code>Run npx skills add okx/onchainos-skills to install Onchain OS skills, then run onchainos wallet login</code>
-          </pre>
+          <h4 className="font-bold text-slate-900 dark:text-white mb-2">1. Install Onchain OS skill</h4>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Paste the following prompt into your agent to install the required capabilities:</p>
+          <CopyBlock text="Run npx skills add okx/onchainos-skills to install Onchain OS skills">
+            <code className="whitespace-pre">Run npx skills add okx/onchainos-skills to install Onchain OS skills</code>
+          </CopyBlock>
         </div>
 
         <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl">
-          <h4 className="font-bold text-slate-900 dark:text-white mb-2">2. Connect to Verdict</h4>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">Once your wallet is funded with Test USDT0 on X Layer, paste this connection block to expose the Verdict MCP tool to your agent:</p>
-          <pre className="p-3 bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-sm overflow-x-auto text-slate-800 dark:text-slate-300">
-            <code>{`I'd like to use the service provided by Verdict:
+          <h4 className="font-bold text-slate-900 dark:text-white mb-2">2. Login</h4>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Create your TEE-secured Agentic Wallet by running the following prompt:</p>
+          <CopyBlock text="onchainos wallet login">
+            <code className="whitespace-pre">onchainos wallet login</code>
+          </CopyBlock>
+        </div>
+
+        <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl">
+          <h4 className="font-bold text-slate-900 dark:text-white mb-2">3. Connect to Verdict</h4>
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Fund your agentic wallet with USDT on X Layer, paste this connection block to expose the Verdict MCP tool to your agent:</p>
+          <CopyBlock text={`I'd like to use the service provided by Verdict:
+
+Service title: Verdict MCP Evaluation Server
+Service type: A2MCP
+Endpoint: https://tryverdict.xyz/api/evaluate-mcp
+
+Please use OKX Agent Payments Protocol to send a request to this endpoint.`}>
+            <code className="whitespace-pre">{`I'd like to use the service provided by Verdict:
 
 Service title: Verdict MCP Evaluation Server
 Service type: A2MCP
 Endpoint: https://tryverdict.xyz/api/evaluate-mcp
 
 Please use OKX Agent Payments Protocol to send a request to this endpoint.`}</code>
-          </pre>
+          </CopyBlock>
         </div>
       </div>
 
