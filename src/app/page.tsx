@@ -433,7 +433,7 @@ export default function Home() {
           <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Frequently Asked Questions</h2>
           <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Everything you need to know about Verdict.</p>
         </div>
-        <Accordion type="single" collapsible className="w-full bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200 dark:border-slate-800 rounded-3xl px-6 py-2 shadow-sm">
+        <Accordion className="w-full bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200 dark:border-slate-800 rounded-3xl px-6 py-2 shadow-sm">
           <AccordionItem value="item-1" className="border-slate-200 dark:border-slate-800">
             <AccordionTrigger className="text-left font-bold text-slate-900 dark:text-white hover:no-underline hover:text-orange-500 dark:hover:text-orange-400 transition-colors py-5">Is this just a ChatGPT prompt wrapper?</AccordionTrigger>
             <AccordionContent className="text-slate-500 dark:text-slate-400 leading-relaxed pb-5 font-medium text-[15px]">
