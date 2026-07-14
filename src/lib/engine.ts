@@ -150,14 +150,14 @@ export async function extractContext(url: string) {
     throw new Error('This website took too long to load or is actively blocking our scraper. Please try another URL.');
   }
 
-  // 2. Extract with GLM-5.2
+  // 2. Extract with Gemini
   const prompt = `
 You are a ruthless, cynical startup auditor.
 Based on the following markdown scraped from a landing page, your first task is to determine if this is a valid SaaS, B2B, or B2C startup/company. 
 If it is a personal portfolio, blog, github repository, or agency, set "is_valid_startup" to false and provide a professional, elegant rejection message in "invalid_reason" (e.g., "This appears to be a personal portfolio. Verdict is designed specifically for SaaS and startup landing pages. Please provide a valid company URL.").
 If it is a valid startup, extract the exact company name, a brutally honest inferred description of what they actually do (cut through the marketing fluff), and who their real target audience is.
 
-Respond ONLY with a valid JSON object matching this schema:
+Respond ONLY with a valid JSON object matching this schema. CRITICAL: Ensure your JSON is perfectly valid. Do NOT use unescaped double quotes inside string values. Escape them properly (e.g., \\"word\\").
 {
   "is_valid_startup": boolean,
   "invalid_reason": "string (only if false, else empty string)",
@@ -173,7 +173,12 @@ ${markdownContext}
 
   let extractedData;
   for (let attempt = 1; attempt <= 3; attempt++) {
-    const aiResponse = await callLLMWithRetry(prompt);
+    const aiResponse = await openai.chat.completions.create({
+      model: 'gemini-3.5-flash',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: attempt === 1 ? 0.0 : 0.5 + (attempt * 0.1),
+      response_format: { type: 'json_object' }
+    });
     const resultText = aiResponse.choices[0]?.message?.content;
     if (!resultText) {
       if (attempt === 3) throw new Error('No response from AI engine');
@@ -239,7 +244,7 @@ Target Audience: ${target_audience}
 ---
 
 # OUTPUT SPECIFICATION
-You MUST output a strictly formatted JSON object matching the keys below. Do not include markdown blocks outside the JSON. 
+You MUST output a strictly formatted JSON object matching the keys below. Do not include markdown blocks outside the JSON. CRITICAL: Ensure your JSON is perfectly valid. Do NOT use unescaped double quotes inside string values. Escape them properly (e.g., \\"word\\").
 
 {
   "company_name": "${company_name}",
@@ -267,7 +272,12 @@ You MUST output a strictly formatted JSON object matching the keys below. Do not
 
   let auditData;
   for (let attempt = 1; attempt <= 3; attempt++) {
-    const aiResponse = await callLLMWithRetry(prompt);
+    const aiResponse = await openai.chat.completions.create({
+      model: 'gemini-3.5-flash',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: attempt === 1 ? 0.0 : 0.5 + (attempt * 0.1),
+      response_format: { type: 'json_object' }
+    });
     const resultText = aiResponse.choices[0]?.message?.content;
     if (!resultText) {
       if (attempt === 3) throw new Error('No response from AI engine');
@@ -379,7 +389,7 @@ If it is a valid startup, set "is_valid_startup" to true, and evaluate it strict
 # CONFIDENCE
 For each pillar, assign Confidence (High, Medium, Low). High = lots of data; Low = inferred.
 
-Respond ONLY with a valid JSON object matching this schema:
+Respond ONLY with a valid JSON object matching this schema. CRITICAL: Ensure your JSON is perfectly valid. Do NOT use unescaped double quotes inside string values. Escape them properly (e.g., \\"word\\").
 {
   "is_valid_startup": boolean,
   "invalid_reason": "string (only if false, else empty)",
@@ -414,7 +424,12 @@ ${markdownContext}
 
   let extractedData;
   for (let attempt = 1; attempt <= 3; attempt++) {
-    const aiResponse = await callLLMWithRetry(prompt);
+    const aiResponse = await openai.chat.completions.create({
+      model: 'gemini-3.5-flash',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: attempt === 1 ? 0.0 : 0.5 + (attempt * 0.1),
+      response_format: { type: 'json_object' }
+    });
     const resultText = aiResponse.choices[0]?.message?.content;
     if (!resultText) {
       if (attempt === 3) throw new Error('No response from AI engine');
