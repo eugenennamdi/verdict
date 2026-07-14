@@ -163,7 +163,6 @@ You MUST output a strictly formatted JSON object matching the keys below. Do not
     model: modelName,
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.0,
-    seed: 42,
     response_format: { type: 'json_object' }
   });
 
@@ -306,7 +305,6 @@ ${markdownContext}
     model: modelName,
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.0,
-    seed: 42,
     response_format: { type: 'json_object' }
   });
 
