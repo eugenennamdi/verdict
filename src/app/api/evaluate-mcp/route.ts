@@ -106,7 +106,7 @@ const routeConfig: any = {
     }
   ],
   description: "Verdict MCP Evaluation Server",
-  resource: "Verdict-A2MCP",
+  resource: "https://tryverdict.xyz/api/evaluate-mcp",
 };
 
 // Next.js API Routes (App Router) wrapped with x402 Payment verification
