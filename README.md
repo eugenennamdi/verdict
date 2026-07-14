@@ -9,11 +9,11 @@
 [![Built for OKX.AI Genesis Hackathon](https://img.shields.io/badge/Built%20for-OKX.AI%20Genesis%20Hackathon-000000)](https://web3.okx.com/xlayer/build-x-hackathon)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)
-[![GLM-5.2](https://img.shields.io/badge/LLM-GLM--5.2-blue)](https://huggingface.co/zai-org/GLM-5.2)
+[![Gemini-3.5-Flash](https://img.shields.io/badge/LLM-Gemini--3.5--Flash-blue)](https://deepmind.google/technologies/gemini/flash/)
 
 When founders ask for feedback, they usually get polite nods from friends or superficial critiques from basic AI wrappers ("Looks great! Maybe add a clearer CTA?"). 
 
-**Verdict is different.** It is an autonomous Agent Service Provider (ASP) that performs deep, aggressive, and highly actionable conversion audits. We run headless browsers to scrape the live DOM, process massive context windows using [GLM-5.2](https://huggingface.co/zai-org/GLM-5.2), and deliver a brutally honest teardown, a Growth Readiness Framework (GRF) score, and a clear execution plan with priority matrices.
+**Verdict is different.** It is an autonomous Agent Service Provider (ASP) that performs deep, aggressive, and highly actionable conversion audits. We run headless browsers to scrape the live DOM, process massive context windows using [Gemini 3.5 Flash](https://deepmind.google/technologies/gemini/flash/), and deliver a brutally honest teardown, a Growth Readiness Framework (GRF) score, and a clear execution plan with priority matrices.
 
 ---
 
@@ -34,7 +34,7 @@ Most AI tools try to be overly polite. Verdict is intentionally designed with an
 
 - **Deep Context Extraction:** Uses Firecrawl to render headless DOMs, bypassing simple HTML scraping to actually "see" the page as a user does.
 - **Growth Readiness Framework (GRF):** A proprietary scoring system evaluating Trust Deficits, Value Clarity, and Intent Friction.
-- **GLM-5.2 Intelligence:** Powered by high-context, ultra-fast reasoning models to generate comprehensive, multi-page strategy reports.
+- **Gemini Intelligence:** Powered by high-context, ultra-fast reasoning models to generate comprehensive, multi-page strategy reports.
 - **Secure by Design:** Backend execution is entirely decoupled from the frontend, secured via Supabase Service Role Keys (RLS bypass) and IP-based Upstash Redis rate limiting.
 - **Sleek Presentation Layer:** Fully responsive, dark-mode optimized, beautifully animated reports that users want to share.
 
@@ -76,7 +76,7 @@ flowchart LR
 
   subgraph External Services
     D[Firecrawl API<br/>Headless Scraping]
-    E[GLM-5.2 API<br/>Inference]
+    E[Gemini API<br/>Inference]
     F[(Upstash Redis<br/>Rate Limiter)]
     G[(Supabase<br/>PostgreSQL)]
     J[(X-Layer Blockchain<br/>OKX Web3 SDK)]
@@ -113,7 +113,7 @@ flowchart LR
 - **Language:** TypeScript (Strict Mode)
 - **Styling:** Tailwind CSS + Radix UI + Lucide Icons
 - **Payments / A2MCP:** OKX Web3 SDK (x402 standard) + X-Layer
-- **LLM:** [GLM-5.2](https://huggingface.co/zai-org/GLM-5.2)
+- **LLM:** [Gemini 3.5 Flash](https://deepmind.google/technologies/gemini/flash/)
 - **Web Scraping:** Firecrawl
 - **Database:** Supabase (PostgreSQL)
 - **Rate Limiting:** Upstash Redis
