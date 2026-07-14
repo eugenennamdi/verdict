@@ -252,8 +252,16 @@ const handleRequest = async (req: Request) => {
             }
           }), { status: 400, headers: { "Content-Type": "application/json" } });
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error("Direct evaluation error:", err);
+        return new Response(JSON.stringify({
+          jsonrpc: "2.0",
+          id: 1,
+          error: {
+            code: -32603,
+            message: err.message || "An error occurred during evaluation."
+          }
+        }), { status: 400, headers: { "Content-Type": "application/json" } });
       }
     }
 
