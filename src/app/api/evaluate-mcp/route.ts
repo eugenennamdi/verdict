@@ -96,13 +96,13 @@ const handleRequest = async (req: Request) => {
   }
 };
 
-const routeConfig = {
+const routeConfig: any = {
   accepts: [
     {
-      scheme: "exact" as const,
-      network: "eip155:196" as const,
+      scheme: "exact",
+      network: "eip155:196",
       asset: "0x1E4a5963aBFD975d8c9021ce480b42188849D41d", // USDT on X Layer
-      price: "0.5", // 0.5 USDT
+      amount: "500000", // 500000 = 0.5 USDT (6 decimals)
       payTo: process.env.PAYMENT_ADDRESS || "0x8713783e9d8391c4bf54f705b355ba775184f906", // Hardcoded to User's Wallet
     }
   ],
