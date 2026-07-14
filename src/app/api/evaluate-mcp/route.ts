@@ -131,6 +131,27 @@ const handleRequest = async (req: Request) => {
           return await transport.handleRequest(req);
         }
 
+        // Handle stateless tools/list request
+        if (body.method === "tools/list") {
+          return new Response(JSON.stringify({
+            jsonrpc: "2.0",
+            id: body.id || 1,
+            result: {
+              tools: [{
+                name: "evaluate_startup",
+                description: "Evaluates a startup landing page across 7 growth pillars. Deducts a payment.",
+                inputSchema: {
+                  type: "object",
+                  properties: {
+                    url: { type: "string", description: "The URL of the startup to evaluate" }
+                  },
+                  required: ["url"]
+                }
+              }]
+            }
+          }), { status: 200, headers: { "Content-Type": "application/json" } });
+        }
+
         // For stateless A2MCP agents (like Hermes), just extract the URL and run the audit directly
         const hasUrl = body.target_url || body.url || body.params?.url || body.arguments?.url || body.params?.arguments?.url;
         
@@ -198,6 +219,18 @@ const handleRequest = async (req: Request) => {
             status: 200,
             headers: { "Content-Type": "application/json" }
           });
+        }
+        
+        // If Hermes tries to call an evaluation method but forgot the URL parameter
+        if (body.method === "tools/call" || body.method === "evaluate" || body.method === "audit" || body.method === "evaluate_startup") {
+          return new Response(JSON.stringify({
+            jsonrpc: "2.0",
+            id: body.id || 1,
+            error: {
+              code: -32602,
+              message: "Invalid params: 'url' is required."
+            }
+          }), { status: 400, headers: { "Content-Type": "application/json" } });
         }
       } catch (err) {
         console.error("Direct evaluation error:", err);
