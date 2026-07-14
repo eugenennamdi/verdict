@@ -171,19 +171,30 @@ Markdown Content:
 ${markdownContext}
   `;
 
-  const aiResponse = await callLLMWithRetry(prompt);
+  let extractedData;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const aiResponse = await callLLMWithRetry(prompt);
+    const resultText = aiResponse.choices[0]?.message?.content;
+    if (!resultText) {
+      if (attempt === 3) throw new Error('No response from AI engine');
+      continue;
+    }
 
-  const resultText = aiResponse.choices[0]?.message?.content;
-  if (!resultText) {
-     throw new Error('No response from glm 5.2');
+    try {
+      extractedData = robustJsonParse(resultText);
+      if (Array.isArray(extractedData) && extractedData.length > 0) {
+        extractedData = extractedData[0];
+      }
+      break; // Success
+    } catch (e) {
+      console.warn(`[extractContext] JSON parsing failed on attempt ${attempt}:`, e);
+      if (attempt === 3) {
+        throw new Error("The AI failed to generate a valid analysis for this website. Please try again.");
+      }
+    }
   }
 
-  let extractedData = robustJsonParse(resultText);
-  if (Array.isArray(extractedData) && extractedData.length > 0) {
-    extractedData = extractedData[0];
-  }
-
-  if (extractedData.is_valid_startup === false) {
+  if (extractedData?.is_valid_startup === false) {
     throw new Error(extractedData.invalid_reason || 'This URL is not a valid startup or company website.');
   }
 
@@ -254,16 +265,27 @@ You MUST output a strictly formatted JSON object matching the keys below. Do not
 }
   `;
 
-  const aiResponse = await callLLMWithRetry(prompt);
+  let auditData;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const aiResponse = await callLLMWithRetry(prompt);
+    const resultText = aiResponse.choices[0]?.message?.content;
+    if (!resultText) {
+      if (attempt === 3) throw new Error('No response from AI engine');
+      continue;
+    }
 
-  const resultText = aiResponse.choices[0]?.message?.content;
-  if (!resultText) {
-     throw new Error('No response from glm 5.2');
-  }
-
-  let auditData = robustJsonParse(resultText);
-  if (Array.isArray(auditData) && auditData.length > 0) {
-    auditData = auditData[0];
+    try {
+      auditData = robustJsonParse(resultText);
+      if (Array.isArray(auditData) && auditData.length > 0) {
+        auditData = auditData[0];
+      }
+      break; // Success
+    } catch (e) {
+      console.warn(`[generateAudit] JSON parsing failed on attempt ${attempt}:`, e);
+      if (attempt === 3) {
+        throw new Error("The AI failed to generate a valid audit for this website. Please try again.");
+      }
+    }
   }
 
   // Calculate overall score from AI's generated pillar scores
@@ -390,19 +412,30 @@ Markdown Content:
 ${markdownContext}
   `;
 
-  const aiResponse = await callLLMWithRetry(prompt);
+  let extractedData;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const aiResponse = await callLLMWithRetry(prompt);
+    const resultText = aiResponse.choices[0]?.message?.content;
+    if (!resultText) {
+      if (attempt === 3) throw new Error('No response from AI engine');
+      continue;
+    }
 
-  const resultText = aiResponse.choices[0]?.message?.content;
-  if (!resultText) {
-     throw new Error('No response from glm 5.2');
+    try {
+      extractedData = robustJsonParse(resultText);
+      if (Array.isArray(extractedData) && extractedData.length > 0) {
+        extractedData = extractedData[0];
+      }
+      break; // Success
+    } catch (e) {
+      console.warn(`[performFullAudit] JSON parsing failed on attempt ${attempt}:`, e);
+      if (attempt === 3) {
+        throw new Error("The AI failed to generate a valid analysis for this website. Please try again.");
+      }
+    }
   }
 
-  let extractedData = robustJsonParse(resultText);
-  if (Array.isArray(extractedData) && extractedData.length > 0) {
-    extractedData = extractedData[0];
-  }
-
-  if (extractedData.is_valid_startup === false) {
+  if (extractedData?.is_valid_startup === false) {
     throw new Error(extractedData.invalid_reason || 'This URL is not a valid startup or company website.');
   }
 
