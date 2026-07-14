@@ -259,7 +259,6 @@ const createCleanReq = (req: Request) => {
   const sig = newHeaders.get("payment-signature") || newHeaders.get("PAYMENT-SIGNATURE");
   if (sig) {
     newHeaders.set("payment-signature", cleanSignature(sig)!);
-    newHeaders.delete("PAYMENT-SIGNATURE");
   }
   
   // Return a proxy that overrides the headers property
