@@ -7,126 +7,124 @@ import { getPaymentServer } from "@/lib/payment";
 import { supabaseAdmin } from "@/lib/supabase";
 
 // Define the MCP Server
-const server = new Server({
-  name: "Verdict-A2MCP",
-  version: "1.0.0",
-}, {
-  capabilities: {
-    tools: {}
-  }
-});
-
-// Setup the Tool
-server.setRequestHandler(ListToolsRequestSchema, async () => {
-  return {
-    tools: [
-      {
-        name: "evaluate_startup",
-        description: "Evaluates a startup landing page URL and returns a brutal growth readiness audit.",
-        inputSchema: {
-          type: "object",
-          properties: {
-            url: { type: "string", description: "The URL of the startup landing page (e.g. https://stripe.com)" }
-          },
-          required: ["url"]
-        }
-      }
-    ]
-  };
-});
-
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  if (request.params.name === "evaluate_startup") {
-    const url = String(request.params.arguments?.url);
-    if (!url) {
-      throw new Error("URL is required");
+const createMCPServer = () => {
+  const server = new Server({
+    name: "Verdict-A2MCP",
+    version: "1.0.0",
+  }, {
+    capabilities: {
+      tools: {}
     }
+  });
 
-    try {
-      // 1. Extract context
-      const extracted = await extractContext(url);
-      
-      // 2. Generate audit
-      const audit = await generateAudit(url, extracted);
+  // Setup the Tool
+  server.setRequestHandler(ListToolsRequestSchema, async () => {
+    return {
+      tools: [
+        {
+          name: "evaluate_startup",
+          description: "Evaluates a startup landing page URL and returns a brutal growth readiness audit.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              url: { type: "string", description: "The URL of the startup landing page (e.g. https://stripe.com)" }
+            },
+            required: ["url"]
+          }
+        }
+      ]
+    };
+  });
 
-      let reportUrl = "";
+  server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    if (request.params.name === "evaluate_startup") {
+      const url = String(request.params.arguments?.url);
+      if (!url) {
+        throw new Error("URL is required");
+      }
+
       try {
-        const { data, error } = await supabaseAdmin
-          .from('reports')
-          .insert([
-            {
-              company_name: extracted.company_name,
-              url,
-              fdi_buzzword_density: 0,
-              fdi_trust_deficit: 0,
-              fdi_gatekeeping_friction: 0,
-              fdi_feature_ratio: 0,
-              fdi_overall_score: audit.overallScore,
-              verdict_value_prop: "N/A",
-              verdict_evidence_deficit: "N/A",
-              verdict_revenue_viability: "N/A",
-              verdict_distribution_moat: "N/A",
-              verdict_intent_friction: "N/A",
-              verdict_competitive_overlap: "N/A",
-              verdict_terminal_risk: "N/A",
-              executive_summary: audit.score_interpretation || "N/A",
-              first_impression_teardown: "N/A",
-              top_5_priorities: audit.priority_matrix || [],
-              key_risks: audit.the_verdict || {},
-              growth_plan_30_day: audit.pillars || {},
-            }
-          ])
-          .select('id')
-          .single();
-        if (!error && data?.id) {
-          reportUrl = `https://tryverdict.xyz/report/${data.id}`;
+        const extracted = await extractContext(url);
+        if (!extracted) {
+          throw new Error("Failed to extract context from URL");
         }
-      } catch (err) {
-        console.error("Failed to save report to supabase in MCP", err);
+
+        const audit = await generateAudit(extracted);
+        if (!audit) {
+          throw new Error("Failed to generate audit");
+        }
+
+        // Save to Supabase
+        let reportUrl = null;
+        try {
+          const { data, error } = await supabaseAdmin
+            .from('reports')
+            .insert([
+              {
+                url: url,
+                company_name: extracted.company_name || "Unknown",
+                target_audience: extracted.target_audience || "Unknown",
+                growth_readiness_score: audit.overallScore || 0,
+                executive_summary: audit.score_interpretation || "N/A",
+                first_impression_teardown: "N/A",
+                top_5_priorities: audit.priority_matrix || [],
+                key_risks: audit.the_verdict || {},
+                growth_plan_30_day: audit.pillars || {},
+              }
+            ])
+            .select('id')
+            .single();
+          if (!error && data?.id) {
+            reportUrl = `https://tryverdict.xyz/report/${data.id}`;
+          }
+        } catch (err) {
+          console.error("Failed to save report to supabase in MCP", err);
+        }
+
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify({
+                company_name: extracted.company_name,
+                target_audience: extracted.target_audience,
+                growth_readiness_score: audit.overallScore,
+                score_interpretation: audit.score_interpretation,
+                verdict: audit.the_verdict,
+                actionable_feedback: audit.priority_matrix,
+                ...(reportUrl ? { report_url: reportUrl } : {})
+              }, null, 2)
+            }
+          ]
+        };
+      } catch (e: unknown) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error evaluating startup: ${e instanceof Error ? e.message : String(e)}`
+            }
+          ],
+          isError: true
+        };
       }
-
-      return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify({
-              company_name: extracted.company_name,
-              target_audience: extracted.target_audience,
-              growth_readiness_score: audit.overallScore,
-              score_interpretation: audit.score_interpretation,
-              verdict: audit.the_verdict,
-              actionable_feedback: audit.priority_matrix,
-              ...(reportUrl ? { report_url: reportUrl } : {})
-            }, null, 2)
-          }
-        ]
-      };
-    } catch (e: unknown) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error evaluating startup: ${e instanceof Error ? e.message : String(e)}`
-          }
-        ],
-        isError: true
-      };
     }
-  }
 
-  throw new Error(`Unknown tool: ${request.params.name}`);
-});
+    throw new Error(`Unknown tool: ${request.params.name}`);
+  });
 
-// Use the stateless streamable HTTP transport
-const transport = new WebStandardStreamableHTTPServerTransport({
-  sessionIdGenerator: undefined, // Stateless mode
-  enableJsonResponse: true, // Allow direct JSON-RPC responses for simple request/response
-});
-
-server.connect(transport);
+  return server;
+};
 
 const handleRequest = async (req: Request) => {
   try {
+    const server = createMCPServer();
+    const transport = new WebStandardStreamableHTTPServerTransport({
+      sessionIdGenerator: undefined, // Stateless mode
+      enableJsonResponse: true, // Allow direct JSON-RPC responses for simple request/response
+    });
+    await server.connect(transport);
+
     if (req.method === "POST") {
       const clonedReq = req.clone();
       try {
