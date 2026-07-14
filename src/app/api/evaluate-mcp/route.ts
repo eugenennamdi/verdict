@@ -242,13 +242,13 @@ const handleRequest = async (req: Request) => {
         }
         
         // If Hermes tries to call an evaluation method but forgot the URL parameter
-        if (body.method === "tools/call" || body.method === "evaluate" || body.method === "audit" || body.method === "evaluate_startup") {
+        if (body.method === "tools/call" || body.method === "evaluate" || body.method === "audit" || body.method === "evaluate_startup" || body.action === "evaluate") {
           return new Response(JSON.stringify({
             jsonrpc: "2.0",
             id: body.id || 1,
             error: {
               code: -32602,
-              message: "Invalid params: 'url' is required."
+              message: "Invalid params: 'url' is required. Please ask the user for the URL and resubmit."
             }
           }), { status: 400, headers: { "Content-Type": "application/json" } });
         }
@@ -315,18 +315,16 @@ const createCleanReq = async (req: Request) => {
   const rawSig = newHeaders.get("payment-signature") || newHeaders.get("PAYMENT-SIGNATURE");
   const rawAuth = newHeaders.get("authorization") || newHeaders.get("Authorization");
   
-  // Intercept payment_tx from body if present
+  // Aggressively extract payment_tx or txHash from anywhere in the body
   let paymentTx: string | null = null;
   if (req.method === "POST" && req.body) {
     try {
       const cloned = req.clone();
       const body = await cloned.json();
-      if (body && body.payment_tx) {
-        paymentTx = body.payment_tx;
-      }
-      if (body && body.txHash) {
-        paymentTx = body.txHash;
-      }
+      paymentTx = body?.txHash || body?.payment_tx || 
+                  body?.params?.txHash || body?.params?.payment_tx || 
+                  body?.arguments?.txHash || body?.arguments?.payment_tx || 
+                  body?.params?.arguments?.txHash || body?.params?.arguments?.payment_tx || null;
     } catch {
       // Ignore
     }
@@ -427,11 +425,10 @@ export const POST = async (req: Request) => {
     if (body.method === "tools/list" || body.method === "initialize" || body.method === "notifications/initialized") {
       requiresPayment = false;
     }
-    if (body.txHash) {
-      interceptedTxHash = body.txHash;
-    } else if (body.payment_tx) {
-      interceptedTxHash = body.payment_tx;
-    }
+    interceptedTxHash = body?.txHash || body?.payment_tx || 
+                        body?.params?.txHash || body?.params?.payment_tx || 
+                        body?.arguments?.txHash || body?.arguments?.payment_tx || 
+                        body?.params?.arguments?.txHash || body?.params?.arguments?.payment_tx || null;
   } catch {
     // Ignore
   }
