@@ -247,10 +247,6 @@ const cleanSignature = (sig: string | null) => {
   if (!sig) return sig;
   let clean = sig.replace(/^Bearer\s+/i, '');
   clean = clean.trim().replace(/\s+/g, '');
-  clean = clean.replace(/-/g, '+').replace(/_/g, '/');
-  while (clean.length % 4 !== 0) {
-    clean += '=';
-  }
   return clean;
 };
 
