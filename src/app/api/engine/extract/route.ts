@@ -14,19 +14,19 @@ const handleRequest = async (req: Request) => {
     const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
     const rateLimitKey = `rate_limit:${ip}`;
     
-    const lastAudit = await redis.get(rateLimitKey);
+    // const lastAudit = await redis.get(rateLimitKey);
     
-    if (lastAudit) {
-      return NextResponse.json(
-        { error: 'RATE_LIMIT_EXCEEDED' },
-        { status: 429 }
-      );
-    }
+    // if (lastAudit) {
+    //   return NextResponse.json(
+    //     { error: 'RATE_LIMIT_EXCEEDED' },
+    //     { status: 429 }
+    //   );
+    // }
 
     const extractedData = await extractContext(url);
     
     // Set rate limit for 12 hours (43200 seconds)
-    await redis.set(rateLimitKey, Date.now(), 'EX', 43200);
+    // await redis.set(rateLimitKey, Date.now(), 'EX', 43200);
 
     return NextResponse.json(extractedData);
   } catch (error: unknown) {

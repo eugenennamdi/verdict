@@ -15,19 +15,19 @@ const handleRequest = async (req: Request) => {
     const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
     const rateLimitKey = `rate_limit:audit:${ip}`;
     
-    const lastAudit = await redis.get(rateLimitKey);
+    // const lastAudit = await redis.get(rateLimitKey);
     
-    if (lastAudit) {
-      return NextResponse.json(
-        { error: 'RATE_LIMIT_EXCEEDED' },
-        { status: 429 }
-      );
-    }
+    // if (lastAudit) {
+    //   return NextResponse.json(
+    //     { error: 'RATE_LIMIT_EXCEEDED' },
+    //     { status: 429 }
+    //   );
+    // }
 
     const auditData = await generateAudit(url, { company_name, inferred_description, target_audience });
     
     // Set rate limit for 12 hours (43200 seconds)
-    await redis.set(rateLimitKey, Date.now(), 'EX', 43200);
+    // await redis.set(rateLimitKey, Date.now(), 'EX', 43200);
 
     // Save to Supabase (mapping new GRF schema keys to existing database columns)
     const { data, error } = await supabaseAdmin
