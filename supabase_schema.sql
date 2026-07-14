@@ -34,3 +34,14 @@ CREATE POLICY "Allow public read access to reports"
 
 -- Note: Insert access is handled via the backend API using the SUPABASE_SERVICE_ROLE_KEY,
 -- which automatically bypasses RLS. Therefore, no public insert policy is needed.
+
+-- Create used_transactions table for preventing double-spends in the A2MCP hybrid interceptor
+CREATE TABLE public.used_transactions (
+    tx_hash TEXT PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Set up Row Level Security (RLS)
+ALTER TABLE public.used_transactions ENABLE ROW LEVEL SECURITY;
+
+-- Note: No public policies needed. Insert/Select handled securely by backend API using SUPABASE_SERVICE_ROLE_KEY.

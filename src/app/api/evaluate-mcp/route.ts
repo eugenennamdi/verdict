@@ -384,7 +384,9 @@ const createCleanReq = async (req: Request) => {
 const verifyTransactionManually = async (txHash: string): Promise<boolean> => {
   try {
     console.log(`[Hybrid Interceptor] Verifying raw tx hash against X Layer RPC: ${txHash}`);
-    const res = await fetch("https://rpc.xlayer.tech", {
+    
+    // 1. Check Receipt (did it succeed?)
+    const receiptRes = await fetch("https://rpc.xlayer.tech", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -394,16 +396,81 @@ const verifyTransactionManually = async (txHash: string): Promise<boolean> => {
         id: 1
       })
     });
-    const data = await res.json();
+    const receiptData = await receiptRes.json();
     
-    // Check if receipt exists and status is 1 (success)
-    if (data && data.result && data.result.status === "0x1") {
-      console.log(`[Hybrid Interceptor] Transaction ${txHash} successfully verified on-chain.`);
-      return true;
+    if (!receiptData?.result || receiptData.result.status !== "0x1") {
+      console.log(`[Hybrid Interceptor] Transaction ${txHash} failed or not found.`);
+      return false;
     }
+
+    // 2. Check Transaction Payload (was it sent to us with the correct amount?)
+    const txRes = await fetch("https://rpc.xlayer.tech", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        method: "eth_getTransactionByHash",
+        params: [txHash],
+        id: 2
+      })
+    });
+    const txData = await txRes.json();
+    const tx = txData?.result;
     
-    console.log(`[Hybrid Interceptor] Transaction ${txHash} not yet confirmed or failed.`);
-    return false;
+    if (!tx) {
+      console.log(`[Hybrid Interceptor] Transaction details not found.`);
+      return false;
+    }
+
+    const USDT_CONTRACT = "0x779ded0c9e1022225f8e0630b35a9b54be713736".toLowerCase();
+    const PAYMENT_ADDRESS = (process.env.PAYMENT_ADDRESS || "0x8713783e9d8391c4bf54f705b355ba775184f906").toLowerCase();
+    
+    if (tx.to?.toLowerCase() !== USDT_CONTRACT) {
+      console.log(`[Hybrid Interceptor] Transaction was not sent to the USDT contract.`);
+      return false;
+    }
+
+    // ERC20 transfer(address,uint256) signature is 0xa9059cbb
+    const input = tx.input || "";
+    if (!input.startsWith("0xa9059cbb") || input.length < 138) {
+      console.log(`[Hybrid Interceptor] Transaction is not a valid ERC20 transfer.`);
+      return false;
+    }
+
+    // Extract recipient address (bytes 4 to 36)
+    const paddedRecipient = "0x" + input.substring(10, 74).slice(-40).toLowerCase();
+    
+    if (paddedRecipient !== PAYMENT_ADDRESS) {
+      console.log(`[Hybrid Interceptor] Transaction was not sent to the correct payment address. Found: ${paddedRecipient}, Expected: ${PAYMENT_ADDRESS}`);
+      return false;
+    }
+
+    // Extract amount (bytes 36 to 68)
+    const amountHex = "0x" + input.substring(74, 138);
+    const amount = BigInt(amountHex);
+    const REQUIRED_AMOUNT = BigInt(500000); // 0.5 USDT (6 decimals)
+
+    if (amount < REQUIRED_AMOUNT) {
+      console.log(`[Hybrid Interceptor] Insufficient payment amount: ${amount.toString()}`);
+      return false;
+    }
+
+    // 3. Double-Spend Prevention
+    const { error } = await supabaseAdmin
+      .from('used_transactions')
+      .insert([{ tx_hash: txHash }]);
+      
+    if (error) {
+      if (error.code === '23505' || error.message.includes('duplicate key')) { // Postgres Unique Violation
+        console.log(`[Hybrid Interceptor] REPLAY ATTACK BLOCKED. Transaction ${txHash} was already used.`);
+      } else {
+        console.error(`[Hybrid Interceptor] Supabase error verifying double-spend:`, error);
+      }
+      return false;
+    }
+
+    console.log(`[Hybrid Interceptor] Transaction ${txHash} successfully verified on-chain and marked as used.`);
+    return true;
   } catch (error) {
     console.error("[Hybrid Interceptor] RPC verification error:", error);
     return false;
