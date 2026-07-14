@@ -43,6 +43,44 @@ function robustJsonParse(text: string) {
   }
 }
 
+async function callLLMWithRetry(prompt: string) {
+  let retries = 3;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let lastError: any = null;
+  while (retries > 0) {
+    try {
+      const response = await openai.chat.completions.create({
+        model: 'gemini-3.5-flash',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.0,
+        response_format: { type: 'json_object' }
+      });
+      return response;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      lastError = e;
+      // If we get a 503 Service Unavailable or 504 Gateway Timeout or 429 Rate Limit from Gemini
+      if (
+        (e.status && [503, 504, 429].includes(e.status)) || 
+        (e.message && (e.message.includes('503') || e.message.includes('504') || e.message.includes('429')))
+      ) {
+        retries--;
+        if (retries > 0) {
+          await new Promise(r => setTimeout(r, 2000)); // wait 2 seconds and retry
+        }
+      } else {
+        throw e; // throw immediately for other errors
+      }
+    }
+  }
+  
+  // If we exhausted retries
+  if (lastError && (lastError.status === 503 || (lastError.message && lastError.message.includes('503')))) {
+    throw new Error('The AI service is currently overloaded (503). Please try again in a few moments.');
+  }
+  throw lastError;
+}
+
 export async function extractContext(url: string) {
   let markdownContext = '';
 
@@ -133,13 +171,7 @@ Markdown Content:
 ${markdownContext}
   `;
 
-  const modelName = 'gemini-3.5-flash';
-
-  const aiResponse = await openai.chat.completions.create({
-    model: modelName,
-    messages: [{ role: 'user', content: prompt }],
-    response_format: { type: 'json_object' }
-  });
+  const aiResponse = await callLLMWithRetry(prompt);
 
   const resultText = aiResponse.choices[0]?.message?.content;
   if (!resultText) {
@@ -222,14 +254,7 @@ You MUST output a strictly formatted JSON object matching the keys below. Do not
 }
   `;
 
-  const modelName = 'gemini-3.5-flash';
-
-  const aiResponse = await openai.chat.completions.create({
-    model: modelName,
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.0,
-    response_format: { type: 'json_object' }
-  });
+  const aiResponse = await callLLMWithRetry(prompt);
 
   const resultText = aiResponse.choices[0]?.message?.content;
   if (!resultText) {
@@ -367,21 +392,17 @@ Markdown Content:
 ${markdownContext}
   `;
 
-  const modelName = 'gemini-3.5-flash';
-
-  const aiResponse = await openai.chat.completions.create({
-    model: modelName,
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.0,
-    response_format: { type: 'json_object' }
-  });
+  const aiResponse = await callLLMWithRetry(prompt);
 
   const resultText = aiResponse.choices[0]?.message?.content;
   if (!resultText) {
      throw new Error('No response from glm 5.2');
   }
 
-  const extractedData = JSON.parse(resultText);
+  let extractedData = robustJsonParse(resultText);
+  if (Array.isArray(extractedData) && extractedData.length > 0) {
+    extractedData = extractedData[0];
+  }
 
   if (extractedData.is_valid_startup === false) {
     throw new Error(extractedData.invalid_reason || 'This URL is not a valid startup or company website.');
