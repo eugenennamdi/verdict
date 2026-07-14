@@ -132,8 +132,12 @@ const handleRequest = async (req: Request) => {
       const clonedReq = req.clone();
       try {
         const body = await clonedReq.json();
-        // If it's a standard JSON request from Hermes testing instead of MCP JSON-RPC
-        if (body.target_url && !body.jsonrpc) {
+        
+        // Check if Hermes is sending a non-standard MCP request (e.g., method: "evaluate" or missing method)
+        const isStandardMcp = body.jsonrpc === "2.0" && body.method === "tools/call" && body.params?.name === "evaluate_startup";
+        const hasUrl = body.target_url || body.url || body.params?.url || body.arguments?.url || body.params?.arguments?.url;
+        
+        if (!isStandardMcp && hasUrl) {
           const fakeReq = new Request(req.url, {
             method: "POST",
             headers: req.headers,
@@ -142,9 +146,9 @@ const handleRequest = async (req: Request) => {
               method: "tools/call",
               params: {
                 name: "evaluate_startup",
-                arguments: { url: body.target_url }
+                arguments: { url: hasUrl }
               },
-              id: 1
+              id: body.id || 1
             })
           });
           
