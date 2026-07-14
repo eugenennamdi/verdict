@@ -49,7 +49,7 @@ const createMCPServer = () => {
           throw new Error("Failed to extract context from URL");
         }
 
-        const audit = await generateAudit(extracted);
+        const audit = await generateAudit(url, extracted);
         if (!audit) {
           throw new Error("Failed to generate audit");
         }
