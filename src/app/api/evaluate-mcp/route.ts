@@ -217,8 +217,31 @@ const handleRequest = async (req: Request) => {
             ...(reportUrl ? { report_url: reportUrl } : {})
           };
 
-          const txHash = req.headers.get("x-payment-tx-hash");
-          if (txHash) {
+          let txHash = req.headers.get("x-payment-tx-hash");
+          
+          if (!txHash) {
+            // If it bypassed the interceptor and used the standard OKX withX402 SDK,
+            // we can decode the PAYMENT-SIGNATURE to find the transaction receipt.
+            const sigHeader = req.headers.get("payment-signature") || req.headers.get("PAYMENT-SIGNATURE") || req.headers.get("authorization");
+            if (sigHeader) {
+               try {
+                 let token = sigHeader;
+                 const match = sigHeader.trim().match(/^(Bearer|L402|L402-MAC)\s+(.+)$/i);
+                 if (match) token = match[2].trim();
+                 const decoded = Buffer.from(token, "base64").toString("utf-8");
+                 const sigObj = JSON.parse(decoded);
+                 if (sigObj.receipt) {
+                   txHash = sigObj.receipt;
+                 } else if (sigObj.payment_tx) {
+                   txHash = sigObj.payment_tx;
+                 }
+               } catch (e) {
+                 // Ignore
+               }
+            }
+          }
+
+          if (txHash && txHash.startsWith("0x")) {
             parsedContent.transaction_link = `https://web3.okx.com/explorer/x-layer/evm/tx/${txHash}`;
           }
 
