@@ -59,8 +59,18 @@ const createMCPServer = () => {
               {
                 url: url,
                 company_name: audit.company_name || "Unknown",
-                target_audience: audit.target_audience || "Unknown",
-                growth_readiness_score: audit.overallScore || 0,
+                fdi_buzzword_density: 0,
+                fdi_trust_deficit: 0,
+                fdi_gatekeeping_friction: 0,
+                fdi_feature_ratio: 0,
+                fdi_overall_score: audit.overallScore || 0,
+                verdict_value_prop: "N/A",
+                verdict_evidence_deficit: "N/A",
+                verdict_revenue_viability: "N/A",
+                verdict_distribution_moat: "N/A",
+                verdict_intent_friction: "N/A",
+                verdict_competitive_overlap: "N/A",
+                verdict_terminal_risk: "N/A",
                 executive_summary: audit.score_interpretation || "N/A",
                 first_impression_teardown: "N/A",
                 top_5_priorities: audit.priority_matrix || [],
@@ -170,8 +180,18 @@ const handleRequest = async (req: Request) => {
               .insert([{
                 url: hasUrl,
                 company_name: audit.company_name || "Unknown",
-                target_audience: audit.target_audience || "Unknown",
-                growth_readiness_score: audit.overallScore || 0,
+                fdi_buzzword_density: 0,
+                fdi_trust_deficit: 0,
+                fdi_gatekeeping_friction: 0,
+                fdi_feature_ratio: 0,
+                fdi_overall_score: audit.overallScore || 0,
+                verdict_value_prop: "N/A",
+                verdict_evidence_deficit: "N/A",
+                verdict_revenue_viability: "N/A",
+                verdict_distribution_moat: "N/A",
+                verdict_intent_friction: "N/A",
+                verdict_competitive_overlap: "N/A",
+                verdict_terminal_risk: "N/A",
                 executive_summary: audit.score_interpretation || "N/A",
                 first_impression_teardown: "N/A",
                 top_5_priorities: audit.priority_matrix || [],
@@ -326,22 +346,19 @@ const createCleanReq = async (req: Request) => {
       }
     }
     
-    // If it's the Authorization header and it has no prefix, default to L402
-    if (headerName.toLowerCase() === 'authorization' && !prefix) {
-      prefix = 'L402 ';
-    }
-    
-    newHeaders.set(headerName, prefix + token);
+    // The OKX SDK strictly expects the raw base64 string in the header without any prefixes
+    // because it runs JSON.parse(safeBase64Decode(header)). 
+    // If we include 'L402 ', it will crash.
+    newHeaders.set(headerName, token);
   };
 
   processHeader(rawSig, "payment-signature");
   processHeader(rawAuth, "authorization");
   
   // Ensure that OKX Next.js SDK can find the payment signature.
-  // The SDK strictly looks for 'payment-signature' or 'x-payment' but A2MCP standard uses 'Authorization: L402 <token>'
-  const finalAuth = newHeaders.get("authorization");
-  if (finalAuth && !newHeaders.get("payment-signature")) {
-    newHeaders.set("payment-signature", finalAuth);
+  const finalAuthToken = newHeaders.get("authorization");
+  if (finalAuthToken && !newHeaders.get("payment-signature")) {
+    newHeaders.set("payment-signature", finalAuthToken);
   }
 
   // Return a proxy that overrides the headers and url properties
@@ -361,6 +378,37 @@ const createCleanReq = async (req: Request) => {
     }
   });
 };
+
+// --- HYBRID INTERCEPTOR HELPER ---
+const verifyTransactionManually = async (txHash: string): Promise<boolean> => {
+  try {
+    console.log(`[Hybrid Interceptor] Verifying raw tx hash against X Layer RPC: ${txHash}`);
+    const res = await fetch("https://rpc.xlayer.tech", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        method: "eth_getTransactionReceipt",
+        params: [txHash],
+        id: 1
+      })
+    });
+    const data = await res.json();
+    
+    // Check if receipt exists and status is 1 (success)
+    if (data && data.result && data.result.status === "0x1") {
+      console.log(`[Hybrid Interceptor] Transaction ${txHash} successfully verified on-chain.`);
+      return true;
+    }
+    
+    console.log(`[Hybrid Interceptor] Transaction ${txHash} not yet confirmed or failed.`);
+    return false;
+  } catch (error) {
+    console.error("[Hybrid Interceptor] RPC verification error:", error);
+    return false;
+  }
+};
+// --- END HYBRID INTERCEPTOR HELPER ---
 
 export const POST = async (req: Request) => {
   const cleanReq = await createCleanReq(req);
@@ -388,6 +436,35 @@ export const POST = async (req: Request) => {
   if (!requiresPayment) {
     return handleRequest(cleanReq);
   }
+
+  // --- HYBRID INTERCEPTOR ---
+  // If the payment signature is just a raw transaction hash (length 66, starts with 0x),
+  // this is a generic AI agent (like Hermes) that doesn't natively support building x402 EIP-712 payloads.
+  // We manually verify it against the X Layer RPC to gracefully allow them to use the service.
+  const rawTxHash = (cleanReq.headers.get("payment-signature") || "").trim();
+  if (rawTxHash.startsWith("0x") && rawTxHash.length === 66) {
+    const isValid = await verifyTransactionManually(rawTxHash);
+    if (isValid) {
+      console.log("[Hybrid Interceptor] Bypassing withX402 SDK due to valid raw transaction hash.");
+      
+      // Inject the transaction hash into a header so the downstream code knows it's paid
+      const proxyReq = new Proxy(cleanReq, {
+        get(target, prop) {
+          if (prop === 'headers') {
+            const h = new Headers(cleanReq.headers);
+            h.set("x-payment-tx-hash", rawTxHash);
+            return h;
+          }
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const value = (target as any)[prop as string];
+          if (typeof value === 'function') return value.bind(target);
+          return value;
+        }
+      });
+      return handleRequest(proxyReq);
+    }
+  }
+  // --- END HYBRID INTERCEPTOR ---
 
   const paymentServer = await getPaymentServer();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
