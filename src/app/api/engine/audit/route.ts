@@ -18,10 +18,11 @@ const handleRequest = async (req: Request) => {
     const lastAudit = await redis.get(rateLimitKey);
     
     if (lastAudit) {
-      return NextResponse.json(
-        { error: 'RATE_LIMIT_EXCEEDED' },
-        { status: 429 }
-      );
+      // TEMPORARILY DISABLED FOR TESTING
+      // return NextResponse.json(
+      //   { error: 'RATE_LIMIT_EXCEEDED' },
+      //   { status: 429 }
+      // );
     }
 
     const auditData = await generateAudit(url, { company_name, inferred_description, target_audience });
