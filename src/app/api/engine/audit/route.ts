@@ -1,4 +1,4 @@
-export const maxDuration = 60;
+export const maxDuration = 300;
 import { NextResponse } from 'next/dist/server/web/spec-extension/response';
 import { generateAudit } from '@/lib/engine';
 import { supabaseAdmin } from '@/lib/supabase';

@@ -6,7 +6,7 @@ import { withX402 } from "@okxweb3/app-x402-next";
 import { getPaymentServer } from "@/lib/payment";
 import { supabaseAdmin } from "@/lib/supabase";
 
-export const maxDuration = 60; // Max allowed for Vercel Hobby to prevent timeouts
+export const maxDuration = 300; // Max allowed for Vercel Hobby to prevent timeouts
 
 // Define the MCP Server
 const createMCPServer = () => {
