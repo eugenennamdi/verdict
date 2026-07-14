@@ -1,7 +1,6 @@
 import { Metadata } from "next";
-import Link from "next/link";
 import { DocsPagination } from "@/components/DocsPagination";
-import { Check, Bot, Globe } from "lucide-react";
+
 import { CopyBlock } from "@/components/copy-block";
 
 export const metadata: Metadata = {

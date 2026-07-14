@@ -113,12 +113,17 @@ const routeConfig = {
 // Next.js API Routes (App Router) wrapped with x402 Payment verification
 export const POST = async (req: Request) => {
   const paymentServer = await getPaymentServer();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const protectedHandler = withX402(handleRequest as any, routeConfig, paymentServer as any);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return protectedHandler(req as any);
 };
 
 export const GET = async (req: Request) => {
   const paymentServer = await getPaymentServer();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const protectedHandler = withX402(handleRequest as any, routeConfig, paymentServer as any);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return protectedHandler(req as any);
 };
+

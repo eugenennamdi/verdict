@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, BookOpen, Cpu, Target, CheckCircle2, Rocket, Bot, Wallet } from "lucide-react";
+import { ArrowLeft, BookOpen, Cpu, Target, CheckCircle2, Rocket, Bot } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 
 export default function DocsLayout({ children }: { children: React.ReactNode }) {

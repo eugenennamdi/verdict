@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import Link from "next/link";
 import { DocsPagination } from "@/components/DocsPagination";
 import { Rocket } from "lucide-react";
 

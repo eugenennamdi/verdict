@@ -2,15 +2,19 @@ import { OKXFacilitatorClient } from "@okxweb3/app-x402-core";
 import { x402ResourceServer } from "@okxweb3/app-x402-core/server";
 import { ExactEvmScheme } from "@okxweb3/app-x402-evm/exact/server";
 
-const apiKey = process.env.OKX_API_KEY || "";
-const secretKey = process.env.OKX_SECRET_KEY || "";
-const passphrase = process.env.OKX_PASSPHRASE || "";
-
 let resourceServerInstance: x402ResourceServer | null = null;
 
 export async function getPaymentServer(): Promise<x402ResourceServer> {
   if (resourceServerInstance) {
     return resourceServerInstance;
+  }
+
+  const apiKey = process.env.OKX_API_KEY || "";
+  const secretKey = process.env.OKX_SECRET_KEY || "";
+  const passphrase = process.env.OKX_PASSPHRASE || "";
+
+  if (!apiKey || !secretKey || !passphrase) {
+    console.warn("x402: OKX API credentials missing in environment variables!");
   }
 
   const facilitatorClient = new OKXFacilitatorClient({

@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import { DocsPagination } from "@/components/DocsPagination";
-import { ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 export const metadata: Metadata = {

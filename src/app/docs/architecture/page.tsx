@@ -1,7 +1,5 @@
 import { Metadata } from "next";
-import Link from "next/link";
 import { DocsPagination } from "@/components/DocsPagination";
-
 export const metadata: Metadata = {
   title: "Architecture & Pipeline | Documentation",
 };

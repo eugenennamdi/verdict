@@ -1,7 +1,6 @@
 import { Metadata } from "next";
-import Link from "next/link";
 import { DocsPagination } from "@/components/DocsPagination";
-import { ArrowLeft, ArrowRight, Target, PenTool, MousePointerClick, Zap, ShieldCheck, Shield, Rocket } from "lucide-react";
+import { Target, PenTool, MousePointerClick, Zap, ShieldCheck, Shield, Rocket } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "The 7-Pillar Framework | Documentation",

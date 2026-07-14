@@ -2,9 +2,6 @@ import { NextResponse } from 'next/dist/server/web/spec-extension/response';
 import { generateAudit } from '@/lib/engine';
 import { supabaseAdmin } from '@/lib/supabase';
 import { redis } from '@/lib/redis';
-import { withX402 } from "@okxweb3/app-x402-next";
-import { getPaymentServer } from "@/lib/payment";
-
 const handleRequest = async (req: Request) => {
   try {
     const { url, company_name, inferred_description, target_audience } = await req.json();

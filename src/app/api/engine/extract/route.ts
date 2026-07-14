@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/dist/server/web/spec-extension/response';
 import { extractContext } from '@/lib/engine';
 import { redis } from '@/lib/redis';
-import { withX402 } from "@okxweb3/app-x402-next";
-import { getPaymentServer } from "@/lib/payment";
-
 const handleRequest = async (req: Request) => {
   try {
     const { url } = await req.json();
