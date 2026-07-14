@@ -170,7 +170,7 @@ export default function Home() {
         </Link>
         <nav className="flex items-center gap-4">
           <a 
-            href="https://www.okx.ai/agents"
+            href="https://www.okx.ai/agents/4686"
             target="_blank"
             rel="noopener noreferrer"
             className="hidden sm:flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-full bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/20 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-500/20 transition-colors"
@@ -532,7 +532,7 @@ export default function Home() {
                     </ul>
                     
                     <a 
-                      href="https://www.okx.ai/agents"
+                      href="https://www.okx.ai/agents/4686"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 !text-white font-bold rounded-xl text-center transition-all hover:scale-[1.02] active:scale-[0.98] relative z-10 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] border border-orange-400/20 text-sm"

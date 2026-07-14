@@ -64,7 +64,7 @@ export default function PricingPage() {
               <td className="py-4 px-6 font-medium">Platform</td>
               <td className="py-4 px-6 text-slate-500">Current Interface</td>
               <td className="py-4 px-6 text-slate-500">
-                <a href="https://www.okx.ai/agents" target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:underline font-medium">
+                <a href="https://www.okx.ai/agents/4686" target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:underline font-medium">
                   Run via OKX Agent rails
                 </a>
               </td>
