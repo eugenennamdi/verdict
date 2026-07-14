@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Loader2, ChevronRight, Check, Bot, X } from "lucide-react";
+import { Search, Loader2, ChevronRight, Check, Bot, X, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -37,6 +37,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isAuditing, setIsAuditing] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const [extractedData, setExtractedData] = useState<{
     company_name: string;
     target_audience: string;
@@ -78,6 +79,7 @@ export default function Home() {
 
   const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg("");
     setIsLoading(true);
     try {
       let formattedUrl = url.trim();
@@ -116,7 +118,7 @@ export default function Home() {
       });
       setIsAuditing(true);
     } catch (error: unknown) {
-      alert(error instanceof Error ? error.message : 'Something went wrong.');
+      setErrorMsg(error instanceof Error ? error.message : 'Something went wrong.');
     } finally {
       setIsLoading(false);
     }
@@ -156,7 +158,7 @@ export default function Home() {
       
       router.push(`/report/${data.report_id}`);
     } catch (error: unknown) {
-      alert(error instanceof Error ? error.message : 'Something went wrong.');
+      setErrorMsg(error instanceof Error ? error.message : 'Something went wrong.');
       setIsLoading(false);
     }
   };
@@ -244,6 +246,20 @@ export default function Home() {
                     </div>
                   </div>
                 </form>
+
+                <AnimatePresence>
+                  {errorMsg && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="mt-6 p-4 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-xl flex items-start gap-3 text-red-600 dark:text-red-400 text-left"
+                    >
+                      <div className="mt-0.5"><AlertCircle className="w-5 h-5" /></div>
+                      <div className="text-sm font-medium">{errorMsg}</div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* Extracting Context Checklist */}
                 <AnimatePresence>

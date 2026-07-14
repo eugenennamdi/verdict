@@ -74,13 +74,37 @@ export async function extractContext(url: string) {
   if (!markdownContext || markdownContext.length < 50) {
     try {
       const jinaRes = await fetch(`https://r.jina.ai/${url}`, {
-        headers: { 'Accept': 'text/plain' }
+        headers: { 'Accept': 'text/plain' },
+        signal: AbortSignal.timeout(15000)
       });
       if (jinaRes.ok) {
         markdownContext = await jinaRes.text();
       }
     } catch (e) {
-      console.warn("Jina AI fallback failed:", e);
+      console.warn("Jina AI fallback failed or timed out:", e);
+    }
+  }
+
+  // 3. Last Resort Fallback to Native Fetch (Raw HTML)
+  if (!markdownContext || markdownContext.length < 50) {
+    try {
+      const nativeRes = await fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+        },
+        signal: AbortSignal.timeout(10000)
+      });
+      if (nativeRes.ok) {
+        const html = await nativeRes.text();
+        // Extremely crude strip of scripts and styles to avoid massive token count
+        markdownContext = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                              .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+                              .replace(/<[^>]+>/g, ' ')
+                              .replace(/\s+/g, ' ').trim();
+      }
+    } catch (e) {
+      console.warn("Native fetch fallback failed:", e);
     }
   }
 
