@@ -304,8 +304,9 @@ export async function performFullAudit(url: string) {
       body: JSON.stringify({ 
         url, 
         formats: ['markdown'],
-        timeout: 15000 // fail faster to save time
+        timeout: 10000 // fail faster to save time
       }),
+      signal: AbortSignal.timeout(10000)
     });
 
     if (firecrawlRes.ok) {
@@ -319,13 +320,10 @@ export async function performFullAudit(url: string) {
   // Fallback to Jina AI if Firecrawl fails
   if (!markdownContext || markdownContext.length < 50) {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
       const jinaRes = await fetch(`https://r.jina.ai/${url}`, {
         headers: { 'Accept': 'text/plain' },
-        signal: controller.signal
+        signal: AbortSignal.timeout(8000)
       });
-      clearTimeout(timeoutId);
       if (jinaRes.ok) {
         markdownContext = await jinaRes.text();
       }
