@@ -347,6 +347,21 @@ export const POST = async (req: Request) => {
   console.log("Raw PAYMENT-SIGNATURE from Hermes:", req.headers.get("payment-signature"));
   console.log("Cleaned PAYMENT-SIGNATURE:", cleanReq.headers.get("payment-signature"));
   
+  let requiresPayment = true;
+  try {
+    const cloned = cleanReq.clone();
+    const body = await cloned.json();
+    if (body.method === "tools/list" || body.method === "initialize" || body.method === "notifications/initialized") {
+      requiresPayment = false;
+    }
+  } catch {
+    // Ignore
+  }
+
+  if (!requiresPayment) {
+    return handleRequest(cleanReq);
+  }
+
   const paymentServer = await getPaymentServer();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const protectedHandler = withX402(handleRequest as any, routeConfig, paymentServer as any);
@@ -357,24 +372,8 @@ export const POST = async (req: Request) => {
 export const GET = async (req: Request) => {
   const cleanReq = await createCleanReq(req);
   console.log("GET request initiated. ALL HEADERS:", Object.fromEntries(req.headers.entries()));
-  console.log("Raw PAYMENT-SIGNATURE from Hermes on GET:", req.headers.get("payment-signature"));
-  console.log("Cleaned PAYMENT-SIGNATURE on GET:", cleanReq.headers.get("payment-signature"));
   
-  // Also decode and log the payload if it exists
-  const sig = cleanReq.headers.get("payment-signature");
-  if (sig) {
-    try {
-      const decoded = Buffer.from(sig, "base64").toString("utf-8");
-      console.log("Decoded Payload on GET:", decoded);
-    } catch (e) {
-      console.error("Failed to decode on GET:", e);
-    }
-  }
-
-  const paymentServer = await getPaymentServer();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const protectedHandler = withX402(handleRequest as any, routeConfig, paymentServer as any);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return withBodyIf402(cleanReq, protectedHandler as any);
+  // GET is only used for SSE initialization in MCP, should be free
+  return handleRequest(cleanReq);
 };
 
