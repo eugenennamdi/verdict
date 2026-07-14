@@ -13,16 +13,15 @@ const handleRequest = async (req: Request) => {
 
     // Rate Limiting for the Audit phase (1 per 12 hours)
     const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
-    const rateLimitKey = `rate_limit:audit:${ip}`;
+    const rateLimitKey = `rate_limit_demo:audit:${ip}`;
     
     const lastAudit = await redis.get(rateLimitKey);
     
     if (lastAudit) {
-      // TEMPORARILY DISABLED FOR TESTING
-      // return NextResponse.json(
-      //   { error: 'RATE_LIMIT_EXCEEDED' },
-      //   { status: 429 }
-      // );
+      return NextResponse.json(
+        { error: 'RATE_LIMIT_EXCEEDED' },
+        { status: 429 }
+      );
     }
 
     const auditData = await generateAudit(url, { company_name, inferred_description, target_audience });
