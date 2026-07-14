@@ -320,6 +320,20 @@ export default function Home() {
                   <VerdictLogo className="w-16 h-16 text-orange-500 drop-shadow-xl" />
                 </div>
                 
+                <AnimatePresence>
+                  {errorMsg && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="mb-6 p-4 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-xl flex items-start gap-3 text-red-600 dark:text-red-400 text-left"
+                    >
+                      <div className="mt-0.5"><AlertCircle className="w-5 h-5" /></div>
+                      <div className="text-sm font-medium">{errorMsg}</div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                
                 <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none rounded-3xl overflow-hidden text-left">
                   <CardHeader className="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-800 pb-6">
                     <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white">Context Extracted</CardTitle>
