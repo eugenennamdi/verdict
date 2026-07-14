@@ -36,8 +36,8 @@ const createMCPServer = () => {
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     if (request.params.name === "evaluate_startup") {
-      const { url } = request.params.arguments as any;
-      if (!url) {
+      const { url } = request.params.arguments as { url?: string };
+      if (!url || typeof url !== 'string') {
         throw new Error("URL is required");
       }
 
@@ -162,14 +162,14 @@ const handleRequest = async (req: Request) => {
                   status: 200,
                   headers: { "Content-Type": "application/json" }
                 });
-              } catch (parseError) {
+              } catch {
                 return new Response(contentText, {
                   status: 200,
                   headers: { "Content-Type": "application/json" }
                 });
               }
             }
-          } catch (e) {
+          } catch {
             // Ignore parse errors
           }
           
@@ -178,7 +178,7 @@ const handleRequest = async (req: Request) => {
             headers: res.headers
           });
         }
-      } catch (e) {
+      } catch {
         // Not JSON or empty body, ignore and fall through
       }
     }
@@ -195,7 +195,7 @@ const handleRequest = async (req: Request) => {
           json.result.content[0].text = JSON.stringify(contentObj, null, 2);
           return new Response(JSON.stringify(json), { status: res.status, headers: res.headers });
         }
-      } catch (e) {
+      } catch {
         // Ignore parse errors, return original response
       }
     }
@@ -206,6 +206,7 @@ const handleRequest = async (req: Request) => {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const routeConfig: any = {
   accepts: [
     {
@@ -233,7 +234,7 @@ const withBodyIf402 = async (req: Request, handler: (req: Request) => Promise<Re
         });
         newRes.headers.set("content-type", "application/json");
         return newRes;
-      } catch (e) {
+      } catch {
         // Fallback to original response on parsing error
       }
     }
@@ -262,7 +263,7 @@ const createCleanReq = async (req: Request) => {
       if (body && body.payment_tx) {
         paymentTx = body.payment_tx;
       }
-    } catch (e) {
+    } catch {
       // Ignore
     }
   }
@@ -277,7 +278,7 @@ const createCleanReq = async (req: Request) => {
           sigObj.receipt = paymentTx;
           sig = Buffer.from(JSON.stringify(sigObj)).toString("base64");
         }
-      } catch (e) {
+      } catch {
         // Ignore parsing errors
       }
     }
@@ -293,7 +294,7 @@ const createCleanReq = async (req: Request) => {
   return new Proxy(req, {
     get(target, prop) {
       if (prop === 'headers') return newHeaders;
-      const value = (target as any)[prop];
+      const value = (target as unknown as Record<string, unknown>)[prop as string];
       if (typeof value === 'function') {
         return value.bind(target);
       }

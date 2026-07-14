@@ -26,6 +26,7 @@ export async function getPaymentServer(): Promise<x402ResourceServer> {
   resourceServerInstance = new x402ResourceServer(facilitatorClient);
   resourceServerInstance.register("eip155:196", new ExactEvmScheme());
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   resourceServerInstance.onVerifyFailure(async (ctx: any) => {
     console.error("x402 Verification Failed!", ctx.error);
     if (ctx.payload) {
@@ -33,6 +34,7 @@ export async function getPaymentServer(): Promise<x402ResourceServer> {
     }
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   resourceServerInstance.onAfterSettle(async (ctx: any) => {
     if (ctx.result) {
       if (ctx.result.success) {

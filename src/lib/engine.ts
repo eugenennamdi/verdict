@@ -14,7 +14,7 @@ function robustJsonParse(text: string) {
     if (match) {
       try {
         return JSON.parse(match[1]);
-      } catch (e2) {}
+      } catch {}
     }
     // Attempt to find the first '{' and last '}' or '[' and ']'
     const firstBrace = text.indexOf('{');
@@ -36,7 +36,7 @@ function robustJsonParse(text: string) {
     if (start !== -1 && end !== -1 && end > start) {
       try {
         return JSON.parse(text.slice(start, end + 1));
-      } catch (e3) {}
+      } catch {}
     }
     
     throw e;
