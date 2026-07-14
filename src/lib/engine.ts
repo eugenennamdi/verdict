@@ -1,85 +1,96 @@
-import OpenAI from 'openai';
+import { GoogleGenAI, Type } from '@google/genai';
 
-const openai = new OpenAI({
-  baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
+const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY || ''
 });
 
-function robustJsonParse(text: string) {
-  try {
-    return JSON.parse(text);
-  } catch (e) {
-    // Attempt to extract JSON from markdown code blocks
-    const match = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-    if (match) {
-      try {
-        return JSON.parse(match[1]);
-      } catch {}
-    }
-    // Attempt to find the first '{' and last '}' or '[' and ']'
-    const firstBrace = text.indexOf('{');
-    const lastBrace = text.lastIndexOf('}');
-    const firstBracket = text.indexOf('[');
-    const lastBracket = text.lastIndexOf(']');
-    
-    let start = -1;
-    let end = -1;
-    
-    if (firstBrace !== -1 && lastBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
-      start = firstBrace;
-      end = lastBrace;
-    } else if (firstBracket !== -1 && lastBracket !== -1) {
-      start = firstBracket;
-      end = lastBracket;
-    }
-    
-    if (start !== -1 && end !== -1 && end > start) {
-      try {
-        return JSON.parse(text.slice(start, end + 1));
-      } catch {}
-    }
-    
-    throw e;
-  }
-}
+// We keep the models exact to what the user explicitly tested and proved fast
+const MODEL_NAME = 'gemini-3.5-flash';
 
-async function callLLMWithRetry(prompt: string) {
-  let retries = 3;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let lastError: any = null;
-  while (retries > 0) {
-    try {
-      const response = await openai.chat.completions.create({
-        model: 'gemini-3.5-flash',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.0,
-        response_format: { type: 'json_object' }
-      });
-      return response;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
-      lastError = e;
-      // If we get a 503 Service Unavailable or 504 Gateway Timeout or 429 Rate Limit from Gemini
-      if (
-        (e.status && [503, 504, 429].includes(e.status)) || 
-        (e.message && (e.message.includes('503') || e.message.includes('504') || e.message.includes('429')))
-      ) {
-        retries--;
-        if (retries > 0) {
-          await new Promise(r => setTimeout(r, 2000)); // wait 2 seconds and retry
-        }
-      } else {
-        throw e; // throw immediately for other errors
-      }
-    }
+// Define explicit schemas for the structured outputs
+const extractSchema = {
+  type: Type.OBJECT,
+  properties: {
+    is_valid_startup: { type: Type.BOOLEAN },
+    invalid_reason: { type: Type.STRING },
+    company_name: { type: Type.STRING },
+    inferred_description: { type: Type.STRING },
+    target_audience: { type: Type.STRING },
+    primary_cta: { type: Type.STRING }
+  },
+  required: ["is_valid_startup", "invalid_reason", "company_name", "inferred_description", "target_audience", "primary_cta"]
+};
+
+const pillarSchema = {
+  type: Type.OBJECT,
+  properties: {
+    score: { type: Type.INTEGER },
+    confidence: { type: Type.STRING },
+    reason: { type: Type.STRING },
+    strengths: { type: Type.ARRAY, items: { type: Type.STRING } },
+    weaknesses: { type: Type.ARRAY, items: { type: Type.STRING } }
+  },
+  required: ["score", "confidence", "reason", "strengths", "weaknesses"]
+};
+
+const priorityMatrixItemSchema = {
+  type: Type.OBJECT,
+  properties: {
+    task: { type: Type.STRING },
+    impact: { type: Type.STRING },
+    effort: { type: Type.STRING },
+    why: { type: Type.STRING }
+  },
+  required: ["task", "impact", "effort", "why"]
+};
+
+const auditProperties = {
+  company_name: { type: Type.STRING },
+  score_interpretation: { type: Type.STRING },
+  pillars: {
+    type: Type.OBJECT,
+    properties: {
+      positioning: pillarSchema,
+      messaging: pillarSchema,
+      website_ux: pillarSchema,
+      conversion: pillarSchema,
+      trust: pillarSchema,
+      competition: pillarSchema,
+      growth_foundation: pillarSchema
+    },
+    required: ["positioning", "messaging", "website_ux", "conversion", "trust", "competition", "growth_foundation"]
+  },
+  the_verdict: {
+    type: Type.OBJECT,
+    properties: {
+      status: { type: Type.STRING },
+      primary_constraint: { type: Type.STRING },
+      highest_opportunity: { type: Type.STRING },
+      estimated_impact: { type: Type.STRING }
+    },
+    required: ["status", "primary_constraint", "highest_opportunity", "estimated_impact"]
+  },
+  priority_matrix: {
+    type: Type.ARRAY,
+    items: priorityMatrixItemSchema
   }
-  
-  // If we exhausted retries
-  if (lastError && (lastError.status === 503 || (lastError.message && lastError.message.includes('503')))) {
-    throw new Error('The AI service is currently overloaded (503). Please try again in a few moments.');
-  }
-  throw lastError;
-}
+};
+
+const auditSchema = {
+  type: Type.OBJECT,
+  properties: auditProperties,
+  required: ["company_name", "score_interpretation", "pillars", "the_verdict", "priority_matrix"]
+};
+
+const fullAuditSchema = {
+  type: Type.OBJECT,
+  properties: {
+    is_valid_startup: { type: Type.BOOLEAN },
+    invalid_reason: { type: Type.STRING },
+    ...auditProperties
+  },
+  required: ["is_valid_startup", "invalid_reason", "company_name", "score_interpretation", "pillars", "the_verdict", "priority_matrix"]
+};
 
 export async function extractContext(url: string) {
   let markdownContext = '';
@@ -157,46 +168,32 @@ Based on the following markdown scraped from a landing page, your first task is 
 If it is a personal portfolio, blog, github repository, or agency, set "is_valid_startup" to false and provide a professional, elegant rejection message in "invalid_reason" (e.g., "This appears to be a personal portfolio. Verdict is designed specifically for SaaS and startup landing pages. Please provide a valid company URL.").
 If it is a valid startup, extract the exact company name, a brutally honest inferred description of what they actually do (cut through the marketing fluff), and who their real target audience is.
 
-Respond ONLY with a valid JSON object matching this schema. CRITICAL: Ensure your JSON is perfectly valid. Do NOT use unescaped double quotes inside string values. Escape them properly (e.g., \\"word\\").
-{
-  "is_valid_startup": boolean,
-  "invalid_reason": "string (only if false, else empty string)",
-  "company_name": "string (only if true, else empty string)",
-  "inferred_description": "string (only if true, else empty string)",
-  "target_audience": "string (only if true, else empty string)",
-  "primary_cta": "string (extract the main call to action button text)"
-}
-
 Markdown Content:
 ${markdownContext}
   `;
 
-  let extractedData;
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    const aiResponse = await openai.chat.completions.create({
-      model: 'gemini-3.5-flash',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: attempt === 1 ? 0.0 : 0.5 + (attempt * 0.1),
-      response_format: { type: 'json_object' }
-    });
-    const resultText = aiResponse.choices[0]?.message?.content;
-    if (!resultText) {
-      if (attempt === 3) throw new Error('No response from AI engine');
-      continue;
+  // The native Google GenAI SDK automatically handles standard retries internally.
+  const aiResponse = await ai.models.generateContent({
+    model: MODEL_NAME,
+    contents: prompt,
+    config: {
+      temperature: 0.0,
+      responseMimeType: 'application/json',
+      responseSchema: extractSchema,
     }
+  });
 
-    try {
-      extractedData = robustJsonParse(resultText);
-      if (Array.isArray(extractedData) && extractedData.length > 0) {
-        extractedData = extractedData[0];
-      }
-      break; // Success
-    } catch (e) {
-      console.warn(`[extractContext] JSON parsing failed on attempt ${attempt}:`, e);
-      if (attempt === 3) {
-        throw new Error("The AI failed to generate a valid analysis for this website. Please try again.");
-      }
-    }
+  const resultText = aiResponse.text;
+  if (!resultText) {
+    throw new Error('No response from AI engine');
+  }
+
+  let extractedData;
+  try {
+    extractedData = JSON.parse(resultText);
+  } catch (e) {
+    console.warn("[extractContext] JSON parsing failed:", e);
+    throw new Error("The AI failed to generate a valid analysis for this website. Please try again.");
   }
 
   if (extractedData?.is_valid_startup === false) {
@@ -242,60 +239,29 @@ URL: ${url}
 Description: ${inferred_description}
 Target Audience: ${target_audience}
 ---
-
-# OUTPUT SPECIFICATION
-You MUST output a strictly formatted JSON object matching the keys below. Do not include markdown blocks outside the JSON. CRITICAL: Ensure your JSON is perfectly valid. Do NOT use unescaped double quotes inside string values. Escape them properly (e.g., \\"word\\").
-
-{
-  "company_name": "${company_name}",
-  "score_interpretation": "A 1-sentence meaning of the startup's growth state. You MUST use the name ${company_name} in this sentence.",
-  "pillars": {
-    "positioning": { "score": 0, "confidence": "High", "reason": "1-sentence justification", "strengths": ["..."], "weaknesses": ["..."] },
-    "messaging": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] },
-    "website_ux": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] },
-    "conversion": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] },
-    "trust": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] },
-    "competition": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] },
-    "growth_foundation": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] }
-  },
-  "the_verdict": {
-    "status": "e.g., Needs Fundamental Work / Growth Ready",
-    "primary_constraint": "e.g., Trust & Credibility",
-    "highest_opportunity": "e.g., Un-gate pricing and add testimonials",
-    "estimated_impact": "1-sentence explanation of what fixing this achieves."
-  },
-  "priority_matrix": [
-    { "task": "Rewrite hero H1", "impact": "High", "effort": "Low", "why": "Immediate clarity boost" }
-  ]
-}
   `;
 
-  let auditData;
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    const aiResponse = await openai.chat.completions.create({
-      model: 'gemini-3.5-flash',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: attempt === 1 ? 0.0 : 0.5 + (attempt * 0.1),
-      response_format: { type: 'json_object' }
-    });
-    const resultText = aiResponse.choices[0]?.message?.content;
-    if (!resultText) {
-      if (attempt === 3) throw new Error('No response from AI engine');
-      continue;
+  const aiResponse = await ai.models.generateContent({
+    model: MODEL_NAME,
+    contents: prompt,
+    config: {
+      temperature: 0.0,
+      responseMimeType: 'application/json',
+      responseSchema: auditSchema,
     }
+  });
 
-    try {
-      auditData = robustJsonParse(resultText);
-      if (Array.isArray(auditData) && auditData.length > 0) {
-        auditData = auditData[0];
-      }
-      break; // Success
-    } catch (e) {
-      console.warn(`[generateAudit] JSON parsing failed on attempt ${attempt}:`, e);
-      if (attempt === 3) {
-        throw new Error("The AI failed to generate a valid audit for this website. Please try again.");
-      }
-    }
+  const resultText = aiResponse.text;
+  if (!resultText) {
+    throw new Error('No response from AI engine');
+  }
+
+  let auditData;
+  try {
+    auditData = JSON.parse(resultText);
+  } catch (e) {
+    console.warn("[generateAudit] JSON parsing failed:", e);
+    throw new Error("The AI failed to generate a valid audit for this website. Please try again.");
   }
 
   // Calculate overall score from AI's generated pillar scores
@@ -389,65 +355,31 @@ If it is a valid startup, set "is_valid_startup" to true, and evaluate it strict
 # CONFIDENCE
 For each pillar, assign Confidence (High, Medium, Low). High = lots of data; Low = inferred.
 
-Respond ONLY with a valid JSON object matching this schema. CRITICAL: Ensure your JSON is perfectly valid. Do NOT use unescaped double quotes inside string values. Escape them properly (e.g., \\"word\\").
-{
-  "is_valid_startup": boolean,
-  "invalid_reason": "string (only if false, else empty)",
-  "company_name": "string (only if true, else empty)",
-  "inferred_description": "string (brutally honest summary, only if true)",
-  "target_audience": "string (only if true)",
-  "primary_cta": "string (extract the main call to action button text)",
-  "score_interpretation": "A 1-sentence meaning of the startup's growth state. You MUST use the company name in this sentence.",
-  "pillars": {
-    "positioning": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] },
-    "messaging": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] },
-    "website_ux": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] },
-    "conversion": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] },
-    "trust": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] },
-    "competition": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] },
-    "growth_foundation": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] }
-  },
-  "the_verdict": {
-    "status": "e.g., Needs Fundamental Work / Growth Ready",
-    "primary_constraint": "e.g., Trust & Credibility",
-    "highest_opportunity": "e.g., Un-gate pricing and add testimonials",
-    "estimated_impact": "1-sentence explanation of what fixing this achieves."
-  },
-  "priority_matrix": [
-    { "task": "Rewrite hero H1", "impact": "High", "effort": "Low", "why": "Immediate clarity boost" }
-  ]
-}
-
 Markdown Content:
 ${markdownContext}
   `;
 
-  let extractedData;
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    const aiResponse = await openai.chat.completions.create({
-      model: 'gemini-3.5-flash',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: attempt === 1 ? 0.0 : 0.5 + (attempt * 0.1),
-      response_format: { type: 'json_object' }
-    });
-    const resultText = aiResponse.choices[0]?.message?.content;
-    if (!resultText) {
-      if (attempt === 3) throw new Error('No response from AI engine');
-      continue;
+  const aiResponse = await ai.models.generateContent({
+    model: MODEL_NAME,
+    contents: prompt,
+    config: {
+      temperature: 0.0,
+      responseMimeType: 'application/json',
+      responseSchema: fullAuditSchema,
     }
+  });
 
-    try {
-      extractedData = robustJsonParse(resultText);
-      if (Array.isArray(extractedData) && extractedData.length > 0) {
-        extractedData = extractedData[0];
-      }
-      break; // Success
-    } catch (e) {
-      console.warn(`[performFullAudit] JSON parsing failed on attempt ${attempt}:`, e);
-      if (attempt === 3) {
-        throw new Error("The AI failed to generate a valid analysis for this website. Please try again.");
-      }
-    }
+  const resultText = aiResponse.text;
+  if (!resultText) {
+    throw new Error('No response from AI engine');
+  }
+
+  let extractedData;
+  try {
+    extractedData = JSON.parse(resultText);
+  } catch (e) {
+    console.warn("[performFullAudit] JSON parsing failed:", e);
+    throw new Error("The AI failed to generate a valid analysis for this website. Please try again.");
   }
 
   if (extractedData?.is_valid_startup === false) {
