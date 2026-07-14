@@ -358,6 +358,12 @@ export const POST = async (req: Request) => {
     // Ignore
   }
 
+  // If there's a payment signature, add a 3 second delay to allow X Layer to confirm and index the transaction
+  if (requiresPayment && cleanReq.headers.get("payment-signature")) {
+    console.log("Payment signature detected. Waiting 3 seconds for X Layer RPC confirmation...");
+    await new Promise(r => setTimeout(r, 3000));
+  }
+
   if (!requiresPayment) {
     return handleRequest(cleanReq);
   }
