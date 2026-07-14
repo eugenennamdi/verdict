@@ -22,11 +22,11 @@ const createMCPServer = () => {
     return {
       tools: [{
         name: "evaluate_startup",
-        description: "Evaluates a startup landing page across 7 growth pillars. Deducts a payment.",
+        description: "Evaluates a startup landing page across 7 growth pillars. Deducts a payment. You MUST explicitly ask the user for the startup's URL before calling this tool. NEVER guess or use the service URL.",
         inputSchema: {
           type: "object",
           properties: {
-            url: { type: "string", description: "The URL of the startup to evaluate" }
+            url: { type: "string", description: "The exact URL of the startup to evaluate. Do NOT guess this. If the user hasn't provided one, ask them." }
           },
           required: ["url"]
         }
@@ -149,11 +149,11 @@ const handleRequest = async (req: Request) => {
             result: {
               tools: [{
                 name: "evaluate_startup",
-                description: "Evaluates a startup landing page across 7 growth pillars. Deducts a payment.",
+                description: "Evaluates a startup landing page across 7 growth pillars. Deducts a payment. You MUST explicitly ask the user for the startup's URL before calling this tool. NEVER guess or use the service URL.",
                 inputSchema: {
                   type: "object",
                   properties: {
-                    url: { type: "string", description: "The URL of the startup to evaluate" }
+                    url: { type: "string", description: "The exact URL of the startup to evaluate. Do NOT guess this. If the user hasn't provided one, ask them." }
                   },
                   required: ["url"]
                 }
