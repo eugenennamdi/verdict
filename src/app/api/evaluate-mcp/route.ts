@@ -153,10 +153,23 @@ const handleRequest = async (req: Request) => {
           try {
             const mcpResult = JSON.parse(resText);
             if (mcpResult.result?.content?.[0]?.text) {
-              return new Response(mcpResult.result.content[0].text, {
-                status: 200,
-                headers: { "Content-Type": "application/json" }
-              });
+              const contentText = mcpResult.result.content[0].text;
+              try {
+                const parsedContent = JSON.parse(contentText);
+                const txHash = req.headers.get("x-payment-tx-hash");
+                if (txHash) {
+                  parsedContent.transaction_link = `https://web3.okx.com/explorer/x-layer/evm/tx/${txHash}`;
+                }
+                return new Response(JSON.stringify(parsedContent, null, 2), {
+                  status: 200,
+                  headers: { "Content-Type": "application/json" }
+                });
+              } catch (parseError) {
+                return new Response(contentText, {
+                  status: 200,
+                  headers: { "Content-Type": "application/json" }
+                });
+              }
             }
           } catch (e) {
             // Ignore parse errors
@@ -172,7 +185,23 @@ const handleRequest = async (req: Request) => {
       }
     }
 
-    return await transport.handleRequest(req);
+    const res = await transport.handleRequest(req);
+    const txHash = req.headers.get("x-payment-tx-hash");
+    if (txHash && res.headers.get("content-type")?.includes("application/json")) {
+      const resClone = res.clone();
+      try {
+        const json = await resClone.json();
+        if (json.result?.content?.[0]?.text) {
+          const contentObj = JSON.parse(json.result.content[0].text);
+          contentObj.transaction_link = `https://web3.okx.com/explorer/x-layer/evm/tx/${txHash}`;
+          json.result.content[0].text = JSON.stringify(contentObj, null, 2);
+          return new Response(JSON.stringify(json), { status: res.status, headers: res.headers });
+        }
+      } catch (e) {
+        // Ignore parse errors, return original response
+      }
+    }
+    return res;
   } catch (error) {
     console.error("MCP Transport Error:", error);
     return new Response("Internal Server Error", { status: 500 });

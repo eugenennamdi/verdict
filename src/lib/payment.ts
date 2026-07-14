@@ -26,6 +26,27 @@ export async function getPaymentServer(): Promise<x402ResourceServer> {
   resourceServerInstance = new x402ResourceServer(facilitatorClient);
   resourceServerInstance.register("eip155:196", new ExactEvmScheme());
 
+  resourceServerInstance.onVerifyFailure((ctx: any) => {
+    console.error("x402 Verification Failed!", ctx.error);
+    if (ctx.payload) {
+      console.error("Payload:", ctx.payload);
+    }
+  });
+
+  resourceServerInstance.onAfterSettle(async (ctx: any) => {
+    if (ctx.result) {
+      if (ctx.result.success) {
+        console.log("x402 Settlement Successful! txHash:", ctx.result.txHash);
+        const req = ctx.transportContext?.req;
+        if (req && req.headers && ctx.result.txHash) {
+          req.headers.set('x-payment-tx-hash', ctx.result.txHash);
+        }
+      } else {
+        console.error("x402 Settlement Failed:", ctx.result.error);
+      }
+    }
+  });
+
   // MUST run after server starts, before any request is handled
   await resourceServerInstance.initialize();
 
