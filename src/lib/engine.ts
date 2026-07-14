@@ -5,6 +5,44 @@ const openai = new OpenAI({
   apiKey: process.env.GEMINI_API_KEY || ''
 });
 
+function robustJsonParse(text: string) {
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    // Attempt to extract JSON from markdown code blocks
+    const match = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    if (match) {
+      try {
+        return JSON.parse(match[1]);
+      } catch (e2) {}
+    }
+    // Attempt to find the first '{' and last '}' or '[' and ']'
+    const firstBrace = text.indexOf('{');
+    const lastBrace = text.lastIndexOf('}');
+    const firstBracket = text.indexOf('[');
+    const lastBracket = text.lastIndexOf(']');
+    
+    let start = -1;
+    let end = -1;
+    
+    if (firstBrace !== -1 && lastBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
+      start = firstBrace;
+      end = lastBrace;
+    } else if (firstBracket !== -1 && lastBracket !== -1) {
+      start = firstBracket;
+      end = lastBracket;
+    }
+    
+    if (start !== -1 && end !== -1 && end > start) {
+      try {
+        return JSON.parse(text.slice(start, end + 1));
+      } catch (e3) {}
+    }
+    
+    throw e;
+  }
+}
+
 export async function extractContext(url: string) {
   let markdownContext = '';
 
@@ -84,7 +122,10 @@ ${markdownContext}
      throw new Error('No response from glm 5.2');
   }
 
-  const extractedData = JSON.parse(resultText);
+  let extractedData = robustJsonParse(resultText);
+  if (Array.isArray(extractedData) && extractedData.length > 0) {
+    extractedData = extractedData[0];
+  }
 
   if (extractedData.is_valid_startup === false) {
     throw new Error(extractedData.invalid_reason || 'This URL is not a valid startup or company website.');
@@ -171,7 +212,10 @@ You MUST output a strictly formatted JSON object matching the keys below. Do not
      throw new Error('No response from glm 5.2');
   }
 
-  const auditData = JSON.parse(resultText);
+  let auditData = robustJsonParse(resultText);
+  if (Array.isArray(auditData) && auditData.length > 0) {
+    auditData = auditData[0];
+  }
 
   // Calculate overall score from AI's generated pillar scores
   const positioning = auditData.pillars.positioning.score || 0;
