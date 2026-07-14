@@ -101,9 +101,7 @@ const routeConfig: any = {
     {
       scheme: "exact",
       network: "eip155:196",
-      asset: "0x1E4a5963aBFD975d8c9021ce480b42188849D41d", // USDT on X Layer
-      amount: "500000", // 500000 = 0.5 USDT (6 decimals)
-      price: { amount: "500000", asset: "0x1E4a5963aBFD975d8c9021ce480b42188849D41d" } as any,
+      price: "0.5",
       payTo: process.env.PAYMENT_ADDRESS || "0x8713783e9d8391c4bf54f705b355ba775184f906", // Hardcoded to User's Wallet
     }
   ],
