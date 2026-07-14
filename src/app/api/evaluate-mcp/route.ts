@@ -126,80 +126,85 @@ const handleRequest = async (req: Request) => {
       try {
         const body = await clonedReq.json();
         
-        // Check if Hermes is sending a non-standard MCP request (e.g., method: "evaluate" or missing method)
-        const isStandardMcp = body.jsonrpc === "2.0" && body.method === "tools/call" && body.params?.name === "evaluate_startup";
+        // Check if this is an initialization request for stateful MCP clients
+        if (body.method === "initialize" || body.method === "notifications/initialized") {
+          return await transport.handleRequest(req);
+        }
+
+        // For stateless A2MCP agents (like Hermes), just extract the URL and run the audit directly
         const hasUrl = body.target_url || body.url || body.params?.url || body.arguments?.url || body.params?.arguments?.url;
         
-        if (!isStandardMcp && hasUrl) {
-          const fakeReq = new Request(req.url, {
-            method: "POST",
-            headers: req.headers,
-            body: JSON.stringify({
-              jsonrpc: "2.0",
-              method: "tools/call",
-              params: {
-                name: "evaluate_startup",
-                arguments: { url: hasUrl }
-              },
-              id: body.id || 1
-            })
-          });
+        if (hasUrl) {
+          console.log(`Bypassing MCP SDK initialization to evaluate URL directly: ${hasUrl}`);
+          const audit = await performFullAudit(hasUrl);
           
-          const res = await transport.handleRequest(fakeReq);
-          const resText = await res.text();
-          
-          try {
-            const mcpResult = JSON.parse(resText);
-            if (mcpResult.result?.content?.[0]?.text) {
-              const contentText = mcpResult.result.content[0].text;
-              try {
-                const parsedContent = JSON.parse(contentText);
-                const txHash = req.headers.get("x-payment-tx-hash");
-                if (txHash) {
-                  parsedContent.transaction_link = `https://web3.okx.com/explorer/x-layer/evm/tx/${txHash}`;
-                }
-                return new Response(JSON.stringify(parsedContent, null, 2), {
-                  status: 200,
-                  headers: { "Content-Type": "application/json" }
-                });
-              } catch {
-                return new Response(contentText, {
-                  status: 200,
-                  headers: { "Content-Type": "application/json" }
-                });
-              }
-            }
-          } catch {
-            // Ignore parse errors
+          if (!audit) {
+            throw new Error("Failed to generate audit");
           }
-          
-          return new Response(resText, {
-            status: res.status,
-            headers: res.headers
+
+          let reportUrl = null;
+          try {
+            const { data, error } = await supabaseAdmin
+              .from('reports')
+              .insert([{
+                url: hasUrl,
+                company_name: audit.company_name || "Unknown",
+                target_audience: audit.target_audience || "Unknown",
+                growth_readiness_score: audit.overallScore || 0,
+                executive_summary: audit.score_interpretation || "N/A",
+                first_impression_teardown: "N/A",
+                top_5_priorities: audit.priority_matrix || [],
+                key_risks: audit.the_verdict || {},
+                growth_plan_30_day: audit.pillars || {},
+              }])
+              .select('id')
+              .single();
+            if (!error && data?.id) {
+              reportUrl = `https://tryverdict.xyz/report/${data.id}`;
+            }
+          } catch (err) {
+            console.error("Failed to save report to supabase in MCP", err);
+          }
+
+          const parsedContent: Record<string, unknown> = {
+            company_name: audit.company_name,
+            target_audience: audit.target_audience,
+            growth_readiness_score: audit.overallScore,
+            score_interpretation: audit.score_interpretation,
+            verdict: audit.the_verdict,
+            actionable_feedback: audit.priority_matrix,
+            ...(reportUrl ? { report_url: reportUrl } : {})
+          };
+
+          const txHash = req.headers.get("x-payment-tx-hash");
+          if (txHash) {
+            parsedContent.transaction_link = `https://web3.okx.com/explorer/x-layer/evm/tx/${txHash}`;
+          }
+
+          const mcpResponse = {
+            jsonrpc: "2.0",
+            id: body.id || 1,
+            result: {
+              content: [
+                {
+                  type: "text",
+                  text: JSON.stringify(parsedContent, null, 2)
+                }
+              ]
+            }
+          };
+
+          return new Response(JSON.stringify(mcpResponse), {
+            status: 200,
+            headers: { "Content-Type": "application/json" }
           });
         }
-      } catch {
-        // Not JSON or empty body, ignore and fall through
+      } catch (err) {
+        console.error("Direct evaluation error:", err);
       }
     }
 
-    const res = await transport.handleRequest(req);
-    const txHash = req.headers.get("x-payment-tx-hash");
-    if (txHash && res.headers.get("content-type")?.includes("application/json")) {
-      const resClone = res.clone();
-      try {
-        const json = await resClone.json();
-        if (json.result?.content?.[0]?.text) {
-          const contentObj = JSON.parse(json.result.content[0].text);
-          contentObj.transaction_link = `https://web3.okx.com/explorer/x-layer/evm/tx/${txHash}`;
-          json.result.content[0].text = JSON.stringify(contentObj, null, 2);
-          return new Response(JSON.stringify(json), { status: res.status, headers: res.headers });
-        }
-      } catch {
-        // Ignore parse errors, return original response
-      }
-    }
-    return res;
+    return await transport.handleRequest(req);
   } catch (error) {
     console.error("MCP Transport Error:", error);
     return new Response("Internal Server Error", { status: 500 });
