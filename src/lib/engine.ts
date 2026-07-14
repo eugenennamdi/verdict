@@ -1,8 +1,8 @@
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
-  baseURL: "https://integrate.api.nvidia.com/v1",
-  apiKey: process.env.NVIDIA_API_KEY || ''
+  baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
+  apiKey: process.env.GEMINI_API_KEY || ''
 });
 
 export async function extractContext(url: string) {
@@ -71,7 +71,7 @@ Markdown Content:
 ${markdownContext}
   `;
 
-  const modelName = 'z-ai/glm-5.2';
+  const modelName = 'gemini-3.5-flash';
 
   const aiResponse = await openai.chat.completions.create({
     model: modelName,
@@ -157,7 +157,7 @@ You MUST output a strictly formatted JSON object matching the keys below. Do not
 }
   `;
 
-  const modelName = 'z-ai/glm-5.2';
+  const modelName = 'gemini-3.5-flash';
 
   const aiResponse = await openai.chat.completions.create({
     model: modelName,
@@ -300,7 +300,7 @@ Markdown Content:
 ${markdownContext}
   `;
 
-  const modelName = 'z-ai/glm-5.2';
+  const modelName = 'gemini-3.5-flash';
 
   const aiResponse = await openai.chat.completions.create({
     model: modelName,
