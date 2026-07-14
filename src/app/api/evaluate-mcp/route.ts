@@ -280,17 +280,20 @@ const withBodyIf402 = async (req: Request, handler: (req: Request) => Promise<Re
   return res;
 };
 
-const cleanSignature = (sig: string | null) => {
-  if (!sig) return sig;
-  let clean = sig.replace(/^Bearer\s+/i, '');
-  clean = clean.trim().replace(/\s+/g, '');
-  clean = clean.replace(/-/g, '+').replace(/_/g, '/');
-  return clean;
+const extractToken = (headerVal: string | null) => {
+  if (!headerVal) return { prefix: '', token: '' };
+  const trimmed = headerVal.trim();
+  const match = trimmed.match(/^(Bearer|L402|L402-MAC)\s+(.+)$/i);
+  if (match) {
+    return { prefix: match[1] + ' ', token: match[2].replace(/\s+/g, '').replace(/-/g, '+').replace(/_/g, '/') };
+  }
+  return { prefix: '', token: trimmed.replace(/\s+/g, '').replace(/-/g, '+').replace(/_/g, '/') };
 };
 
 const createCleanReq = async (req: Request) => {
   const newHeaders = new Headers(req.headers);
-  let sig = newHeaders.get("payment-signature") || newHeaders.get("PAYMENT-SIGNATURE");
+  const rawSig = newHeaders.get("payment-signature") || newHeaders.get("PAYMENT-SIGNATURE");
+  const rawAuth = newHeaders.get("authorization") || newHeaders.get("Authorization");
   
   // Intercept payment_tx from body if present
   let paymentTx: string | null = null;
@@ -306,27 +309,33 @@ const createCleanReq = async (req: Request) => {
     }
   }
 
-  if (sig) {
-    sig = cleanSignature(sig)!;
+  const processHeader = (rawVal: string | null, headerName: string) => {
+    if (!rawVal) return;
+    let { prefix, token } = extractToken(rawVal);
+    
     if (paymentTx) {
       try {
-        const decoded = Buffer.from(sig, "base64").toString("utf-8");
+        const decoded = Buffer.from(token, "base64").toString("utf-8");
         const sigObj = JSON.parse(decoded);
         if (!sigObj.receipt) {
           sigObj.receipt = paymentTx;
-          sig = Buffer.from(JSON.stringify(sigObj)).toString("base64");
+          token = Buffer.from(JSON.stringify(sigObj)).toString("base64");
         }
       } catch {
         // Ignore parsing errors
       }
     }
-    newHeaders.set("payment-signature", sig);
-  }
-  
-  const authSig = newHeaders.get("authorization") || newHeaders.get("Authorization");
-  if (authSig) {
-    newHeaders.set("authorization", cleanSignature(authSig)!);
-  }
+    
+    // If it's the Authorization header and it has no prefix, default to L402
+    if (headerName.toLowerCase() === 'authorization' && !prefix) {
+      prefix = 'L402 ';
+    }
+    
+    newHeaders.set(headerName, prefix + token);
+  };
+
+  processHeader(rawSig, "payment-signature");
+  processHeader(rawAuth, "authorization");
   
   // Return a proxy that overrides the headers property
   return new Proxy(req, {
