@@ -1,0 +1,11 @@
+import base64
+import json
+import sys
+
+payload = "eyJ4NDAyVmVyc2lvbiI6MiwiZXJyb3IiOiJQYXltZW50IHJlcXVpcmVkIiwicmVzb3VyY2UiOnsidXJsIjoiaHR0cHM6Ly90cnl2ZXJkaWN0Lnh5ei9hcGkvZXZhbHVhdGUtbWNwIiwiZGVzY3JpcHRpb24iOiJWZXJkaWN0IE1DUCBFdmFsdWF0aW9uIFNlcnZlciIsIm1pbWVUeXBlIjoiIn0sImFjY2VwdHMiOlt7InNjaGVtZSI6ImV4YWN0IiwibmV0d29yayI6ImVpcDE1NToxOTYiLCJhbW91bnQiOiI1MDAwMDAiLCJhc3NldCI6IjB4Nzc5ZGVkMGM5ZTEwMjIyMjVmOGUwNjMwYjM1YTliNTRiZTcxMzczNiIsInBheVRvIjoiMHg4NzEzNzgzZTlkODM5MWM0YmY1NGY3MDViMzU1YmE3NzUxODRmOTA2IiwibWF4VGltZW91dFNlY29uZHMiOjMwMCwiZXh0cmEiOnsibmFtZSI6IlVTROKCrjAiLCJ2ZXJzaW9uIjoiMSJ9fV19"
+try:
+    decoded = base64.b64decode(payload)
+    parsed = json.loads(decoded)
+    print("SUCCESS")
+except Exception as e:
+    print("FAILED", str(e))
