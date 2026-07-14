@@ -324,6 +324,9 @@ const createCleanReq = async (req: Request) => {
       if (body && body.payment_tx) {
         paymentTx = body.payment_tx;
       }
+      if (body && body.txHash) {
+        paymentTx = body.txHash;
+      }
     } catch {
       // Ignore
     }
@@ -417,11 +420,17 @@ export const POST = async (req: Request) => {
   console.log("Cleaned PAYMENT-SIGNATURE:", cleanReq.headers.get("payment-signature"));
   
   let requiresPayment = true;
+  let interceptedTxHash: string | null = null;
   try {
     const cloned = cleanReq.clone();
     const body = await cloned.json();
     if (body.method === "tools/list" || body.method === "initialize" || body.method === "notifications/initialized") {
       requiresPayment = false;
+    }
+    if (body.txHash) {
+      interceptedTxHash = body.txHash;
+    } else if (body.payment_tx) {
+      interceptedTxHash = body.payment_tx;
     }
   } catch {
     // Ignore
@@ -438,21 +447,28 @@ export const POST = async (req: Request) => {
   }
 
   // --- HYBRID INTERCEPTOR ---
-  // If the payment signature is just a raw transaction hash (length 66, starts with 0x),
-  // this is a generic AI agent (like Hermes) that doesn't natively support building x402 EIP-712 payloads.
+  // If the payment signature is a raw transaction hash OR if the agent passed txHash/payment_tx in the body.
   // We manually verify it against the X Layer RPC to gracefully allow them to use the service.
   const rawTxHash = (cleanReq.headers.get("payment-signature") || "").trim();
+  let hashToVerify: string | null = null;
+
   if (rawTxHash.startsWith("0x") && rawTxHash.length === 66) {
-    const isValid = await verifyTransactionManually(rawTxHash);
+    hashToVerify = rawTxHash;
+  } else if (interceptedTxHash && interceptedTxHash.startsWith("0x") && interceptedTxHash.length === 66) {
+    hashToVerify = interceptedTxHash;
+  }
+
+  if (hashToVerify) {
+    const isValid = await verifyTransactionManually(hashToVerify);
     if (isValid) {
-      console.log("[Hybrid Interceptor] Bypassing withX402 SDK due to valid raw transaction hash.");
+      console.log("[Hybrid Interceptor] Bypassing withX402 SDK due to valid transaction hash:", hashToVerify);
       
       // Inject the transaction hash into a header so the downstream code knows it's paid
       const proxyReq = new Proxy(cleanReq, {
         get(target, prop) {
           if (prop === 'headers') {
             const h = new Headers(cleanReq.headers);
-            h.set("x-payment-tx-hash", rawTxHash);
+            h.set("x-payment-tx-hash", hashToVerify as string);
             return h;
           }
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
