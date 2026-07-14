@@ -243,20 +243,56 @@ const withBodyIf402 = async (req: Request, handler: (req: Request) => Promise<Re
   return res;
 };
 
-// Next.js API Routes (App Router) wrapped with x402 Payment verification
+const cleanSignature = (sig: string | null) => {
+  if (!sig) return sig;
+  let clean = sig.replace(/^Bearer\s+/i, '');
+  clean = clean.trim().replace(/\s+/g, '');
+  clean = clean.replace(/-/g, '+').replace(/_/g, '/');
+  while (clean.length % 4 !== 0) {
+    clean += '=';
+  }
+  return clean;
+};
+
+const createCleanReq = (req: Request) => {
+  const newHeaders = new Headers(req.headers);
+  const sig = newHeaders.get("payment-signature") || newHeaders.get("PAYMENT-SIGNATURE");
+  if (sig) {
+    newHeaders.set("payment-signature", cleanSignature(sig)!);
+    newHeaders.delete("PAYMENT-SIGNATURE");
+  }
+  
+  // Return a proxy that overrides the headers property
+  return new Proxy(req, {
+    get(target, prop) {
+      if (prop === 'headers') return newHeaders;
+      const value = (target as any)[prop];
+      if (typeof value === 'function') {
+        return value.bind(target);
+      }
+      return value;
+    }
+  });
+};
+
 export const POST = async (req: Request) => {
+  const cleanReq = createCleanReq(req);
+  console.log("Raw PAYMENT-SIGNATURE from Hermes:", req.headers.get("payment-signature"));
+  console.log("Cleaned PAYMENT-SIGNATURE:", cleanReq.headers.get("payment-signature"));
+  
   const paymentServer = await getPaymentServer();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const protectedHandler = withX402(handleRequest as any, routeConfig, paymentServer as any);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return withBodyIf402(req, protectedHandler as any);
+  return withBodyIf402(cleanReq, protectedHandler as any);
 };
 
 export const GET = async (req: Request) => {
+  const cleanReq = createCleanReq(req);
   const paymentServer = await getPaymentServer();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const protectedHandler = withX402(handleRequest as any, routeConfig, paymentServer as any);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return withBodyIf402(req, protectedHandler as any);
+  return withBodyIf402(cleanReq, protectedHandler as any);
 };
 
