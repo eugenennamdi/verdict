@@ -249,11 +249,39 @@ const cleanSignature = (sig: string | null) => {
   return clean;
 };
 
-const createCleanReq = (req: Request) => {
+const createCleanReq = async (req: Request) => {
   const newHeaders = new Headers(req.headers);
-  const sig = newHeaders.get("payment-signature") || newHeaders.get("PAYMENT-SIGNATURE");
+  let sig = newHeaders.get("payment-signature") || newHeaders.get("PAYMENT-SIGNATURE");
+  
+  // Intercept payment_tx from body if present
+  let paymentTx: string | null = null;
+  if (req.method === "POST" && req.body) {
+    try {
+      const cloned = req.clone();
+      const body = await cloned.json();
+      if (body && body.payment_tx) {
+        paymentTx = body.payment_tx;
+      }
+    } catch (e) {
+      // Ignore
+    }
+  }
+
   if (sig) {
-    newHeaders.set("payment-signature", cleanSignature(sig)!);
+    sig = cleanSignature(sig)!;
+    if (paymentTx) {
+      try {
+        const decoded = Buffer.from(sig, "base64").toString("utf-8");
+        const sigObj = JSON.parse(decoded);
+        if (!sigObj.receipt) {
+          sigObj.receipt = paymentTx;
+          sig = Buffer.from(JSON.stringify(sigObj)).toString("base64");
+        }
+      } catch (e) {
+        // Ignore parsing errors
+      }
+    }
+    newHeaders.set("payment-signature", sig);
   }
   
   const authSig = newHeaders.get("authorization") || newHeaders.get("Authorization");
@@ -275,7 +303,7 @@ const createCleanReq = (req: Request) => {
 };
 
 export const POST = async (req: Request) => {
-  const cleanReq = createCleanReq(req);
+  const cleanReq = await createCleanReq(req);
   console.log("POST request initiated. ALL HEADERS:", Object.fromEntries(req.headers.entries()));
   console.log("Raw PAYMENT-SIGNATURE from Hermes:", req.headers.get("payment-signature"));
   console.log("Cleaned PAYMENT-SIGNATURE:", cleanReq.headers.get("payment-signature"));
@@ -288,7 +316,7 @@ export const POST = async (req: Request) => {
 };
 
 export const GET = async (req: Request) => {
-  const cleanReq = createCleanReq(req);
+  const cleanReq = await createCleanReq(req);
   console.log("GET request initiated. ALL HEADERS:", Object.fromEntries(req.headers.entries()));
   console.log("Raw PAYMENT-SIGNATURE from Hermes on GET:", req.headers.get("payment-signature"));
   console.log("Cleaned PAYMENT-SIGNATURE on GET:", cleanReq.headers.get("payment-signature"));

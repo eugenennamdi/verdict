@@ -71,7 +71,7 @@ Markdown Content:
 ${markdownContext}
   `;
 
-  const modelName = 'gemini-3.5-flash';
+  const modelName = 'gemini-pro-latest';
 
   const aiResponse = await openai.chat.completions.create({
     model: modelName,
@@ -157,7 +157,7 @@ You MUST output a strictly formatted JSON object matching the keys below. Do not
 }
   `;
 
-  const modelName = 'gemini-3.5-flash';
+  const modelName = 'gemini-pro-latest';
 
   const aiResponse = await openai.chat.completions.create({
     model: modelName,
@@ -300,7 +300,7 @@ Markdown Content:
 ${markdownContext}
   `;
 
-  const modelName = 'gemini-3.5-flash';
+  const modelName = 'gemini-pro-latest';
 
   const aiResponse = await openai.chat.completions.create({
     model: modelName,
