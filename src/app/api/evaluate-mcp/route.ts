@@ -337,6 +337,13 @@ const createCleanReq = async (req: Request) => {
   processHeader(rawSig, "payment-signature");
   processHeader(rawAuth, "authorization");
   
+  // Ensure that OKX Next.js SDK can find the payment signature.
+  // The SDK strictly looks for 'payment-signature' or 'x-payment' but A2MCP standard uses 'Authorization: L402 <token>'
+  const finalAuth = newHeaders.get("authorization");
+  if (finalAuth && !newHeaders.get("payment-signature")) {
+    newHeaders.set("payment-signature", finalAuth);
+  }
+
   // Return a proxy that overrides the headers and url properties
   return new Proxy(req, {
     get(target, prop) {
