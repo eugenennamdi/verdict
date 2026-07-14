@@ -7,6 +7,7 @@ import { getPaymentServer } from "@/lib/payment";
 import { supabaseAdmin } from "@/lib/supabase";
 
 export const maxDuration = 300; // Max allowed for Vercel Hobby to prevent timeouts
+export const dynamic = 'force-dynamic'; // Prevent Next.js from caching the 402 response
 
 // Define the MCP Server
 const createMCPServer = () => {
@@ -258,6 +259,11 @@ const createCleanReq = (req: Request) => {
     newHeaders.set("payment-signature", cleanSignature(sig)!);
   }
   
+  const authSig = newHeaders.get("authorization") || newHeaders.get("Authorization");
+  if (authSig) {
+    newHeaders.set("authorization", cleanSignature(authSig)!);
+  }
+  
   // Return a proxy that overrides the headers property
   return new Proxy(req, {
     get(target, prop) {
@@ -273,6 +279,7 @@ const createCleanReq = (req: Request) => {
 
 export const POST = async (req: Request) => {
   const cleanReq = createCleanReq(req);
+  console.log("POST request initiated. ALL HEADERS:", Object.fromEntries(req.headers.entries()));
   console.log("Raw PAYMENT-SIGNATURE from Hermes:", req.headers.get("payment-signature"));
   console.log("Cleaned PAYMENT-SIGNATURE:", cleanReq.headers.get("payment-signature"));
   
@@ -285,6 +292,7 @@ export const POST = async (req: Request) => {
 
 export const GET = async (req: Request) => {
   const cleanReq = createCleanReq(req);
+  console.log("GET request initiated. ALL HEADERS:", Object.fromEntries(req.headers.entries()));
   console.log("Raw PAYMENT-SIGNATURE from Hermes on GET:", req.headers.get("payment-signature"));
   console.log("Cleaned PAYMENT-SIGNATURE on GET:", cleanReq.headers.get("payment-signature"));
   
