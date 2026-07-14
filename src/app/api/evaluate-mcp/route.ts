@@ -337,10 +337,15 @@ const createCleanReq = async (req: Request) => {
   processHeader(rawSig, "payment-signature");
   processHeader(rawAuth, "authorization");
   
-  // Return a proxy that overrides the headers property
+  // Return a proxy that overrides the headers and url properties
   return new Proxy(req, {
     get(target, prop) {
       if (prop === 'headers') return newHeaders;
+      // Vercel sometimes forwards internal URLs (e.g. localhost) which causes signature verification to fail 
+      // because the signature was signed exactly for the public resource URL.
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+      if (prop === 'url') return routeConfig.resource;
+      
       const value = (target as unknown as Record<string, unknown>)[prop as string];
       if (typeof value === 'function') {
         return value.bind(target);
