@@ -198,3 +198,149 @@ You MUST output a strictly formatted JSON object matching the keys below. Do not
     overallScore
   };
 }
+
+export async function performFullAudit(url: string) {
+  let markdownContext = '';
+
+  try {
+    const firecrawlRes = await fetch('https://api.firecrawl.dev/v1/scrape', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.FIRECRAWL_API_KEY}`
+      },
+      body: JSON.stringify({ 
+        url, 
+        formats: ['markdown'],
+        timeout: 15000 // fail faster to save time
+      }),
+    });
+
+    if (firecrawlRes.ok) {
+      const scrapedData = await firecrawlRes.json();
+      markdownContext = scrapedData.data?.markdown || '';
+    }
+  } catch (e) {
+    console.warn("Firecrawl scraping failed or timed out:", e);
+  }
+
+  // Fallback to Jina AI if Firecrawl fails
+  if (!markdownContext || markdownContext.length < 50) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      const jinaRes = await fetch(`https://r.jina.ai/${url}`, {
+        headers: { 'Accept': 'text/plain' },
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      if (jinaRes.ok) {
+        markdownContext = await jinaRes.text();
+      }
+    } catch (e) {
+      console.warn("Jina AI fallback failed or timed out:", e);
+    }
+  }
+
+  if (!markdownContext || markdownContext.length < 50) {
+    throw new Error('This website took too long to load or is actively blocking our scraper. Please try another URL.');
+  }
+
+  const prompt = `
+# ROLE & PERSONA
+You are an elite Silicon Valley Growth Consultant, a seasoned YC Partner, and a ruthless, cynical, yet completely fair Judge. Your purpose is to provide a highly accurate diagnostic assessment of a startup based on web-scraped data.
+
+# INSTRUCTIONS
+Based on the following markdown scraped from a landing page, your first task is to determine if this is a valid SaaS, B2B, or B2C startup/company. 
+If it is a personal portfolio, blog, github repository, or agency, set "is_valid_startup" to false and provide a professional rejection message in "invalid_reason".
+If it is a valid startup, set "is_valid_startup" to true, and evaluate it strictly on merit across 7 pillars. For each pillar, assign a precise score from 0 to 100. DO NOT sugarcoat, DO NOT default to 100.
+
+# PILLARS
+1. Positioning (20%) - Is the ICP obvious? Is the value prop specific?
+2. Messaging (15%) - Is it free of buzzwords? Clear outcomes?
+3. Website & UX (15%) - Logical information hierarchy?
+4. Conversion (15%) - Clear CTA? Transparent pricing?
+5. Trust & Credibility (10%) - Testimonials, metrics, team?
+6. Market & Competition (10%) - Differentiated?
+7. Growth Foundation (15%) - Scalable acquisition loop visible?
+
+# CONFIDENCE
+For each pillar, assign Confidence (High, Medium, Low). High = lots of data; Low = inferred.
+
+Respond ONLY with a valid JSON object matching this schema:
+{
+  "is_valid_startup": boolean,
+  "invalid_reason": "string (only if false, else empty)",
+  "company_name": "string (only if true, else empty)",
+  "inferred_description": "string (brutally honest summary, only if true)",
+  "target_audience": "string (only if true)",
+  "primary_cta": "string (extract the main call to action button text)",
+  "score_interpretation": "A 1-sentence meaning of the startup's growth state. You MUST use the company name in this sentence.",
+  "pillars": {
+    "positioning": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] },
+    "messaging": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] },
+    "website_ux": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] },
+    "conversion": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] },
+    "trust": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] },
+    "competition": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] },
+    "growth_foundation": { "score": 0, "confidence": "High", "reason": "...", "strengths": ["..."], "weaknesses": ["..."] }
+  },
+  "the_verdict": {
+    "status": "e.g., Needs Fundamental Work / Growth Ready",
+    "primary_constraint": "e.g., Trust & Credibility",
+    "highest_opportunity": "e.g., Un-gate pricing and add testimonials",
+    "estimated_impact": "1-sentence explanation of what fixing this achieves."
+  },
+  "priority_matrix": [
+    { "task": "Rewrite hero H1", "impact": "High", "effort": "Low", "why": "Immediate clarity boost" }
+  ]
+}
+
+Markdown Content:
+${markdownContext}
+  `;
+
+  const modelName = 'z-ai/glm-5.2';
+
+  const aiResponse = await openai.chat.completions.create({
+    model: modelName,
+    messages: [{ role: 'user', content: prompt }],
+    temperature: 0.0,
+    seed: 42,
+    response_format: { type: 'json_object' }
+  });
+
+  const resultText = aiResponse.choices[0]?.message?.content;
+  if (!resultText) {
+     throw new Error('No response from glm 5.2');
+  }
+
+  const extractedData = JSON.parse(resultText);
+
+  if (extractedData.is_valid_startup === false) {
+    throw new Error(extractedData.invalid_reason || 'This URL is not a valid startup or company website.');
+  }
+
+  const positioning = extractedData.pillars?.positioning?.score || 0;
+  const messaging = extractedData.pillars?.messaging?.score || 0;
+  const website = extractedData.pillars?.website_ux?.score || 0;
+  const conversion = extractedData.pillars?.conversion?.score || 0;
+  const trust = extractedData.pillars?.trust?.score || 0;
+  const competition = extractedData.pillars?.competition?.score || 0;
+  const growth = extractedData.pillars?.growth_foundation?.score || 0;
+
+  const overallScore = Math.round(
+    (positioning * 0.20) + 
+    (messaging * 0.15) + 
+    (website * 0.15) + 
+    (conversion * 0.15) + 
+    (trust * 0.10) + 
+    (competition * 0.10) + 
+    (growth * 0.15)
+  );
+
+  return {
+    ...extractedData,
+    overallScore
+  };
+}

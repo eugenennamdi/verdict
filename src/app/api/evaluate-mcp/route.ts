@@ -1,7 +1,7 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
-import { extractContext, generateAudit } from "@/lib/engine";
+import { performFullAudit } from "@/lib/engine";
 import { withX402 } from "@okxweb3/app-x402-next";
 import { getPaymentServer } from "@/lib/payment";
 import { supabaseAdmin } from "@/lib/supabase";
@@ -12,47 +12,40 @@ export const dynamic = 'force-dynamic'; // Prevent Next.js from caching the 402 
 // Define the MCP Server
 const createMCPServer = () => {
   const server = new Server({
-    name: "Verdict-A2MCP",
-    version: "1.0.0",
+    name: "Verdict Evaluation Server",
+    version: "1.0.0"
   }, {
-    capabilities: {
-      tools: {}
-    }
+    capabilities: { tools: {} }
   });
 
-  // Setup the Tool
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
-      tools: [
-        {
-          name: "evaluate_startup",
-          description: "Evaluates a startup landing page URL and returns a brutal growth readiness audit.",
-          inputSchema: {
-            type: "object",
-            properties: {
-              url: { type: "string", description: "The URL of the startup landing page (e.g. https://stripe.com)" }
-            },
-            required: ["url"]
-          }
+      tools: [{
+        name: "evaluate_startup",
+        description: "Evaluates a startup landing page across 7 growth pillars. Deducts a payment.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            url: { type: "string", description: "The URL of the startup to evaluate" }
+          },
+          required: ["url"]
         }
-      ]
+      }]
     };
   });
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     if (request.params.name === "evaluate_startup") {
-      const url = String(request.params.arguments?.url);
+      const { url } = request.params.arguments as any;
       if (!url) {
         throw new Error("URL is required");
       }
 
       try {
-        const extracted = await extractContext(url);
-        if (!extracted) {
-          throw new Error("Failed to extract context from URL");
-        }
-
-        const audit = await generateAudit(url, extracted);
+        console.log(`Evaluating URL: ${url}`);
+        
+        // Single optimized LLM call to fit within Vercel's 60s limit for Hobby plans
+        const audit = await performFullAudit(url);
         if (!audit) {
           throw new Error("Failed to generate audit");
         }
@@ -65,8 +58,8 @@ const createMCPServer = () => {
             .insert([
               {
                 url: url,
-                company_name: extracted.company_name || "Unknown",
-                target_audience: extracted.target_audience || "Unknown",
+                company_name: audit.company_name || "Unknown",
+                target_audience: audit.target_audience || "Unknown",
                 growth_readiness_score: audit.overallScore || 0,
                 executive_summary: audit.score_interpretation || "N/A",
                 first_impression_teardown: "N/A",
@@ -89,8 +82,8 @@ const createMCPServer = () => {
             {
               type: "text",
               text: JSON.stringify({
-                company_name: extracted.company_name,
-                target_audience: extracted.target_audience,
+                company_name: audit.company_name,
+                target_audience: audit.target_audience,
                 growth_readiness_score: audit.overallScore,
                 score_interpretation: audit.score_interpretation,
                 verdict: audit.the_verdict,
