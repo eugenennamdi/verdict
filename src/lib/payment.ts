@@ -26,7 +26,7 @@ export async function getPaymentServer(): Promise<x402ResourceServer> {
   resourceServerInstance = new x402ResourceServer(facilitatorClient);
   resourceServerInstance.register("eip155:196", new ExactEvmScheme());
 
-  resourceServerInstance.onVerifyFailure((ctx: any) => {
+  resourceServerInstance.onVerifyFailure(async (ctx: any) => {
     console.error("x402 Verification Failed!", ctx.error);
     if (ctx.payload) {
       console.error("Payload:", ctx.payload);
