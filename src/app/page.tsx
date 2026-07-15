@@ -101,6 +101,9 @@ export default function Home() {
            setIsLoading(false);
            return;
         }
+        if (data.error === 'MODEL_HIGH_DEMAND') {
+          throw new Error("The AI model is currently experiencing high demand. Please wait a few minutes, refresh the page, and try again.");
+        }
         throw new Error(data.error || 'Failed to extract context. Please try another URL.');
       }
       
@@ -146,6 +149,9 @@ export default function Home() {
            setShowPaywall(true);
            setIsLoading(false);
            return;
+        }
+        if (data.error === 'MODEL_HIGH_DEMAND') {
+          throw new Error("The AI model is currently experiencing high demand. Please wait a few minutes, refresh the page, and try again.");
         }
         throw new Error(data.error || 'Failed to generate audit.');
       }

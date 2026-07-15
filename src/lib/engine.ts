@@ -107,8 +107,9 @@ export async function extractContext(url: string) {
       body: JSON.stringify({ 
         url, 
         formats: ['markdown'],
-        timeout: 25000 // fail faster to trigger fallback
+        timeout: 10000 // fail faster to trigger fallback
       }),
+      signal: AbortSignal.timeout(10000)
     });
 
     if (firecrawlRes.ok) {
@@ -124,7 +125,7 @@ export async function extractContext(url: string) {
     try {
       const jinaRes = await fetch(`https://r.jina.ai/${url}`, {
         headers: { 'Accept': 'text/plain' },
-        signal: AbortSignal.timeout(15000)
+        signal: AbortSignal.timeout(8000)
       });
       if (jinaRes.ok) {
         markdownContext = await jinaRes.text();
@@ -142,7 +143,7 @@ export async function extractContext(url: string) {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
           'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
         },
-        signal: AbortSignal.timeout(10000)
+        signal: AbortSignal.timeout(5000)
       });
       if (nativeRes.ok) {
         const html = await nativeRes.text();
@@ -172,16 +173,24 @@ Markdown Content:
 ${markdownContext}
   `;
 
-  // The native Google GenAI SDK automatically handles standard retries internally.
-  const aiResponse = await ai.models.generateContent({
-    model: MODEL_NAME,
-    contents: prompt,
-    config: {
-      temperature: 0.0,
-      responseMimeType: 'application/json',
-      responseSchema: extractSchema,
+  let aiResponse;
+  try {
+    aiResponse = await ai.models.generateContent({
+      model: MODEL_NAME,
+      contents: prompt,
+      config: {
+        temperature: 0.0,
+        responseMimeType: 'application/json',
+        responseSchema: extractSchema,
+      }
+    });
+  } catch (e: any) {
+    const errorMsg = e?.message || String(e);
+    if (errorMsg.includes('503') || errorMsg.includes('high demand') || errorMsg.includes('UNAVAILABLE')) {
+      throw new Error("MODEL_HIGH_DEMAND");
     }
-  });
+    throw e;
+  }
 
   const resultText = aiResponse.text;
   if (!resultText) {
@@ -241,15 +250,24 @@ Target Audience: ${target_audience}
 ---
   `;
 
-  const aiResponse = await ai.models.generateContent({
-    model: MODEL_NAME,
-    contents: prompt,
-    config: {
-      temperature: 0.0,
-      responseMimeType: 'application/json',
-      responseSchema: auditSchema,
+  let aiResponse;
+  try {
+    aiResponse = await ai.models.generateContent({
+      model: MODEL_NAME,
+      contents: prompt,
+      config: {
+        temperature: 0.0,
+        responseMimeType: 'application/json',
+        responseSchema: auditSchema,
+      }
+    });
+  } catch (e: any) {
+    const errorMsg = e?.message || String(e);
+    if (errorMsg.includes('503') || errorMsg.includes('high demand') || errorMsg.includes('UNAVAILABLE')) {
+      throw new Error("MODEL_HIGH_DEMAND");
     }
-  });
+    throw e;
+  }
 
   const resultText = aiResponse.text;
   if (!resultText) {

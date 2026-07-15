@@ -93,9 +93,12 @@ export default function ReportPage() {
             <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-100 dark:border-slate-800 transition-all duration-300 flex-shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
-                src={`https://www.google.com/s2/favicons?domain=${String(report.url)}&sz=128`} 
+                src={`https://img.logo.dev/${String(report.url).replace(/^https?:\/\//, '').replace(/\/$/, '')}?token=pk_IkDdNxBYR5a1TvnkuL0tsQ`} 
                 alt={`${String(report.company_name)} logo`} 
-                className="w-14 h-14 rounded-xl group-hover:scale-105 transition-transform" 
+                className="w-14 h-14 rounded-xl group-hover:scale-105 transition-transform bg-white object-contain" 
+                onError={(e) => {
+                  e.currentTarget.src = `https://www.google.com/s2/favicons?domain=${String(report.url)}&sz=128`;
+                }}
               />
             </div>
             <div className="flex flex-col justify-center pt-1">
