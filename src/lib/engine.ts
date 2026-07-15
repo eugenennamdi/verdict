@@ -5,7 +5,47 @@ const ai = new GoogleGenAI({
 });
 
 // We keep the models exact to what the user explicitly tested and proved fast
-const MODEL_NAME = 'gemini-3.5-flash';
+const PRIMARY_MODEL = 'gemini-3.5-flash';
+const FALLBACK_MODEL = 'gemini-3.1-flash-lite';
+
+async function generateWithFallback(prompt: string, schema: any) {
+  try {
+    return await ai.models.generateContent({
+      model: PRIMARY_MODEL,
+      contents: prompt,
+      config: {
+        temperature: 0.0,
+        responseMimeType: 'application/json',
+        responseSchema: schema,
+      }
+    });
+  } catch (e: any) {
+    const errorMsg = e?.message || String(e);
+    const isHighDemand = errorMsg.includes('503') || errorMsg.includes('high demand') || errorMsg.includes('UNAVAILABLE') || errorMsg.includes('429');
+    
+    if (isHighDemand) {
+      console.warn(`[Engine] Primary model ${PRIMARY_MODEL} unavailable, falling back to ${FALLBACK_MODEL}...`);
+      try {
+        return await ai.models.generateContent({
+          model: FALLBACK_MODEL,
+          contents: prompt,
+          config: {
+            temperature: 0.0,
+            responseMimeType: 'application/json',
+            responseSchema: schema,
+          }
+        });
+      } catch (fallbackError: any) {
+        const fallbackMsg = fallbackError?.message || String(fallbackError);
+        if (fallbackMsg.includes('503') || fallbackMsg.includes('high demand') || fallbackMsg.includes('UNAVAILABLE') || fallbackMsg.includes('429')) {
+          throw new Error("MODEL_HIGH_DEMAND");
+        }
+        throw fallbackError;
+      }
+    }
+    throw e;
+  }
+}
 
 // Define explicit schemas for the structured outputs
 const extractSchema = {
@@ -173,24 +213,7 @@ Markdown Content:
 ${markdownContext}
   `;
 
-  let aiResponse;
-  try {
-    aiResponse = await ai.models.generateContent({
-      model: MODEL_NAME,
-      contents: prompt,
-      config: {
-        temperature: 0.0,
-        responseMimeType: 'application/json',
-        responseSchema: extractSchema,
-      }
-    });
-  } catch (e: any) {
-    const errorMsg = e?.message || String(e);
-    if (errorMsg.includes('503') || errorMsg.includes('high demand') || errorMsg.includes('UNAVAILABLE')) {
-      throw new Error("MODEL_HIGH_DEMAND");
-    }
-    throw e;
-  }
+  const aiResponse = await generateWithFallback(prompt, extractSchema);
 
   const resultText = aiResponse.text;
   if (!resultText) {
@@ -250,24 +273,7 @@ Target Audience: ${target_audience}
 ---
   `;
 
-  let aiResponse;
-  try {
-    aiResponse = await ai.models.generateContent({
-      model: MODEL_NAME,
-      contents: prompt,
-      config: {
-        temperature: 0.0,
-        responseMimeType: 'application/json',
-        responseSchema: auditSchema,
-      }
-    });
-  } catch (e: any) {
-    const errorMsg = e?.message || String(e);
-    if (errorMsg.includes('503') || errorMsg.includes('high demand') || errorMsg.includes('UNAVAILABLE')) {
-      throw new Error("MODEL_HIGH_DEMAND");
-    }
-    throw e;
-  }
+  const aiResponse = await generateWithFallback(prompt, auditSchema);
 
   const resultText = aiResponse.text;
   if (!resultText) {
@@ -377,15 +383,7 @@ Markdown Content:
 ${markdownContext}
   `;
 
-  const aiResponse = await ai.models.generateContent({
-    model: MODEL_NAME,
-    contents: prompt,
-    config: {
-      temperature: 0.0,
-      responseMimeType: 'application/json',
-      responseSchema: fullAuditSchema,
-    }
-  });
+  const aiResponse = await generateWithFallback(prompt, fullAuditSchema);
 
   const resultText = aiResponse.text;
   if (!resultText) {
