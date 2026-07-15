@@ -93,6 +93,12 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: formattedUrl }),
       });
+      
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error("The AI engine timed out or returned an invalid response. Please try again.");
+      }
+      
       const data = await res.json();
       
       if (!res.ok) {
@@ -141,6 +147,11 @@ export default function Home() {
           inferred_description: extractedData?.core_value_prop
         }),
       });
+      
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error("The AI engine timed out or returned an invalid response. Please try again.");
+      }
       
       const data = await res.json();
       

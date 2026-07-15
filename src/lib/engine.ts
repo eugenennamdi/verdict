@@ -8,9 +8,16 @@ const ai = new GoogleGenAI({
 const PRIMARY_MODEL = 'gemini-3.5-flash';
 const FALLBACK_MODEL = 'gemini-3.1-flash-lite';
 
+const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error('TIMEOUT_ERROR')), ms))
+  ]);
+};
+
 async function generateWithFallback(prompt: string, schema: any) {
   try {
-    return await ai.models.generateContent({
+    return await withTimeout(ai.models.generateContent({
       model: PRIMARY_MODEL,
       contents: prompt,
       config: {
@@ -18,15 +25,15 @@ async function generateWithFallback(prompt: string, schema: any) {
         responseMimeType: 'application/json',
         responseSchema: schema,
       }
-    });
+    }), 15000);
   } catch (e: any) {
     const errorMsg = e?.message || String(e);
-    const isHighDemand = errorMsg.includes('503') || errorMsg.includes('high demand') || errorMsg.includes('UNAVAILABLE') || errorMsg.includes('429');
+    const isHighDemand = errorMsg.includes('503') || errorMsg.includes('high demand') || errorMsg.includes('UNAVAILABLE') || errorMsg.includes('429') || errorMsg.includes('TIMEOUT_ERROR');
     
     if (isHighDemand) {
-      console.warn(`[Engine] Primary model ${PRIMARY_MODEL} unavailable, falling back to ${FALLBACK_MODEL}...`);
+      console.warn(`[Engine] Primary model ${PRIMARY_MODEL} unavailable/timed out, falling back to ${FALLBACK_MODEL}...`);
       try {
-        return await ai.models.generateContent({
+        return await withTimeout(ai.models.generateContent({
           model: FALLBACK_MODEL,
           contents: prompt,
           config: {
@@ -34,10 +41,10 @@ async function generateWithFallback(prompt: string, schema: any) {
             responseMimeType: 'application/json',
             responseSchema: schema,
           }
-        });
+        }), 15000);
       } catch (fallbackError: any) {
         const fallbackMsg = fallbackError?.message || String(fallbackError);
-        if (fallbackMsg.includes('503') || fallbackMsg.includes('high demand') || fallbackMsg.includes('UNAVAILABLE') || fallbackMsg.includes('429')) {
+        if (fallbackMsg.includes('503') || fallbackMsg.includes('high demand') || fallbackMsg.includes('UNAVAILABLE') || fallbackMsg.includes('429') || fallbackMsg.includes('TIMEOUT_ERROR')) {
           throw new Error("MODEL_HIGH_DEMAND");
         }
         throw fallbackError;
