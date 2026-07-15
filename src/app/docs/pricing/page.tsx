@@ -84,7 +84,7 @@ export default function PricingPage() {
       <ul>
         <li>Spinning up cloud-based headless browsers (Firecrawl) to bypass bot protection and render heavy React/Vue applications.</li>
         <li>Aggregating the entire DOM into a massive markdown context window.</li>
-        <li>Executing rigorous, multi-stage reasoning and parsing using our proprietary engine powered by <strong><a href="https://huggingface.co/zai-org/GLM-5.2" target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:underline">GLM-5.2</a></strong>.</li>
+        <li>Executing rigorous, multi-stage reasoning and parsing using our proprietary engine powered by <strong><a href="https://deepmind.google/models/gemini/flash/" target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:underline">Gemini 3.5 Flash</a></strong>.</li>
       </ul>
       <p>
         We refused to gate this behind a flat monthly fee that penalizes infrequent users. By deploying our core engine as an Autonomous Agent on the OKX.AI network, we allow power users to pay exactly for what they compute, while keeping a free playground available for early-stage founders.
