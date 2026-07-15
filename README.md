@@ -33,32 +33,39 @@ Most AI tools try to be overly polite. Verdict is intentionally designed with an
 ## Core Features
 
 - **Deep Context Extraction:** Uses Firecrawl to render headless DOMs, bypassing simple HTML scraping to actually "see" the page as a user does.
-- **Growth Readiness Framework (GRF):** A proprietary scoring system evaluating Trust Deficits, Value Clarity, and Intent Friction.
+- **The 7-Pillar Framework:** Our proprietary scoring system evaluating Positioning & ICP, Messaging & Copy, UX & Friction, Conversion Triggers, Trust & Social Proof, Defensibility (Moat), and overall Growth Readiness.
 - **Gemini Intelligence:** Powered by high-context, ultra-fast reasoning models to generate comprehensive, multi-page strategy reports.
 - **Secure by Design:** Backend execution is entirely decoupled from the frontend, secured via Supabase Service Role Keys (RLS bypass) and IP-based Upstash Redis rate limiting.
 - **Sleek Presentation Layer:** Fully responsive, dark-mode optimized, beautifully animated reports that users want to share.
 
 ---
 
-## Roadmap: The Autonomous Growth Agency 
-
-Verdict is not just a landing page auditor. We are building a fully autonomous growth agency packaged as a simple tool. 
-
-### Phase 1: The Reality Check (Live)
-Landing page audits, UX friction analysis, and the Growth Readiness Score.
-
-### Phase 2: Campaign Architecture
-You input your goal ("We need 500 beta signups in 30 days with $2k budget"). Verdict reverse-engineers a growth campaign, writes the ad copy, and builds a launch playbook.
-
-### Phase 3: Social & Distribution Audits
-Deep-dive audits of your social media presence (X/LinkedIn). Are you shouting into the void, or building an audience? Verdict analyzes your hook-rate and content velocity to build scalable organic flywheels.
-
-### Phase 4: The VC & Accelerator API
-VCs and accelerators plug Verdict into their application portals to automatically score and filter the landing pages and growth models of startups applying for funding. 
-
----
-
 ## Architecture
+
+Verdict is engineered as a robust, dual-track pipeline serving both human users and machine-to-machine agents.
+
+### The Dual-Track Execution Rails
+- **Human Web App (Next.js):** A highly optimized, asynchronous Next.js 14 App Router application handling UI state, visual loading phases, and error interception.
+- **A2MCP OKX.AI Agent (`/api/evaluate-mcp`):** A headless, machine-to-machine endpoint designed specifically for the OKX.AI Agent Ecosystem. It allows external autonomous agents to trigger complete audits natively, secured behind an **x402 Payment Challenge**.
+
+### Context Normalization & Extraction
+Modern SaaS landing pages are heavily client-side rendered and protected by WAFs (Cloudflare/Datadome). 
+- The engine spins up headless browsers via the **Firecrawl API** to bypass basic bot protection, execute JavaScript, and wait for DOM stabilization. 
+- It aggregates the fully rendered DOM into a massive markdown context window. 
+- A resilient waterfall strategy ensures that if Firecrawl hangs, the engine gracefully falls back to **Jina AI**, and finally to a native fetch implementation.
+
+### Cognitive Processing (Gemini 3.5 Flash)
+The extracted markdown is passed through a multi-stage reasoning pipeline powered by **Gemini 3.5 Flash**:
+- **Phase 1 (De-fluffing):** The model normalizes the text, aggressively stripping away marketing jargon to determine the *true* core value proposition and ensuring the URL is a valid startup.
+- **Phase 2 (Scoring & Enforcement):** The model is constrained by strict JSON Schemas (Structured Outputs) and aggressive system prompts. This forces it to act as a cynical, pattern-matching investor, assessing the data against the **7-Pillar Framework**.
+
+### Rate Limiting & Financial Infrastructure
+Running headless browsers and large LLM context windows is compute-heavy.
+- **The Paywall (Human Path):** Protected by **Upstash Redis**, strictly limiting IPs to a single free audit to prevent abuse and compute drain. Upon limit exhaustion, a client-side paywall modal is rendered.
+- **Decentralized Payments (Agent Path):** The OKX.AI API endpoint enforces an x402 payment challenge. Agents must execute a smart contract transaction on the **X-Layer Blockchain** (using the OKX Web3 SDK) to pay the 0.5 USDT compute fee per execution, unlocking scalable, decentralized monetization.
+
+### Persistence & Delivery
+The final structured audit, complete with priority matrices and pillar scores, is persisted to a **Supabase PostgreSQL** database. The client is then routed to a dynamic `report/[id]` page, instantly rendering the beautifully animated, highly shareable report.
 
 ```mermaid
 flowchart LR
@@ -117,3 +124,21 @@ flowchart LR
 - **Web Scraping:** Firecrawl
 - **Database:** Supabase (PostgreSQL)
 - **Rate Limiting:** Upstash Redis
+
+---
+
+## Roadmap: The Autonomous Growth Agency 
+
+Verdict is not just a landing page auditor. We are building a fully autonomous growth agency packaged as a simple tool. 
+
+### Phase 1: The Reality Check (Live)
+Landing page audits, UX friction analysis, and the Growth Readiness Score.
+
+### Phase 2: Campaign Architecture
+You input your goal ("We need 500 beta signups in 30 days with $2k budget"). Verdict reverse-engineers a growth campaign, writes the ad copy, and builds a launch playbook.
+
+### Phase 3: Social & Distribution Audits
+Deep-dive audits of your social media presence (X/LinkedIn). Are you shouting into the void, or building an audience? Verdict analyzes your hook-rate and content velocity to build scalable organic flywheels.
+
+### Phase 4: The VC & Accelerator API
+VCs and accelerators plug Verdict into their application portals to automatically score and filter the landing pages and growth models of startups applying for funding. 
