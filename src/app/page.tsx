@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Footer } from "@/components/footer";
+import { AgentOnboardingModal } from "@/components/AgentOnboardingModal";
 
 const springTransition = { type: "spring" as const, stiffness: 400, damping: 30 };
 
@@ -37,6 +38,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isAuditing, setIsAuditing] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [extractedData, setExtractedData] = useState<{
     company_name: string;
@@ -193,15 +195,13 @@ export default function Home() {
           <span className="font-black tracking-tight text-xl text-slate-900 dark:text-white">VERDICT</span>
         </Link>
         <nav className="flex items-center gap-4">
-          <a 
-            href="https://www.okx.ai/agents/4686"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button 
+            onClick={() => setIsAgentModalOpen(true)}
             className="hidden sm:flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-full bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/20 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-500/20 transition-colors"
           >
             <Bot className="w-4 h-4" />
             For Agents
-          </a>
+          </button>
           <Link 
             href="/docs" 
             className="text-sm font-bold px-5 py-2.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
@@ -598,6 +598,11 @@ export default function Home() {
           </>
         )}
       </AnimatePresence>
+
+      <AgentOnboardingModal 
+        isOpen={isAgentModalOpen} 
+        onClose={() => setIsAgentModalOpen(false)} 
+      />
 
       <Footer />
     </div>
