@@ -58,21 +58,17 @@ export function AgentOnboardingModal({ isOpen, onClose }: AgentOnboardingModalPr
               <path d="M191.19,144.8v0c-1.2.09-7.4,0.46-21.23,0.46-11,0-18.81-.33-21.55-0.46v0c-42.51-1.87-74.24-9.27-74.24-18.13s31.73-16.25,74.24-18.15v28.91c2.78,0.2,10.74.67,21.74,0.67,13.2,0,19.81-.55,21-0.66v-28.9c42.42,1.89,74.08,9.29,74.08,18.13s-31.65,16.24-74.08,18.12h0Zm0-39.25V79.68h59.2V40.23H89.21V79.68H148.4v25.86c-48.11,2.21-84.29,11.74-84.29,23.16s36.18,20.94,84.29,23.16v82.9h42.78V151.83c48-2.21,84.12-11.73,84.12-23.14s-36.09-20.93-84.12-23.15h0Zm0,0h0Z" fill="white" fillRule="evenodd" />
             </svg>
           </div>
-          <div className="w-14 h-14 shrink-0 drop-shadow-lg">
-            <svg viewBox="0 0 100 100" className="w-full h-full text-black dark:text-white" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="50" r="50" fill="currentColor" />
-              <rect x="41" y="23" width="18" height="18" fill="white" className="dark:fill-black" />
-              <rect x="23" y="41" width="18" height="18" fill="white" className="dark:fill-black" />
-              <rect x="59" y="41" width="18" height="18" fill="white" className="dark:fill-black" />
-              <rect x="41" y="59" width="18" height="18" fill="white" className="dark:fill-black" />
-            </svg>
-          </div>
+          <img 
+            src="https://img.logo.dev/okx.com?token=pk_fsrRlj9QScutnJ7gOFZ85w&format=webp&retina=true" 
+            alt="OKB" 
+            className="w-14 h-14 rounded-full shrink-0 drop-shadow-lg border border-slate-200 dark:border-white/20 bg-white" 
+          />
         </div>
       ),
       highlight: true
     },
     {
-      title: "Ready to Audit",
+      title: "Ready to Audit?",
       description: (
         <>
           Copy the prompt on our <a href="https://www.okx.ai/agents/4686" target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:text-orange-600 underline underline-offset-4 decoration-orange-500/30 font-bold">ASP page</a>, paste it into your agent, and watch it work autonomously!
