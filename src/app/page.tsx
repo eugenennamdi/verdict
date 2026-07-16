@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { usePostHog } from "posthog-js/react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Loader2, ChevronRight, Check, Bot, X, AlertCircle } from "lucide-react";
@@ -34,6 +35,7 @@ const VerdictLogo = ({ className }: { className?: string }) => (
 
 export default function Home() {
   const router = useRouter();
+  const posthog = usePostHog();
   const [url, setUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isAuditing, setIsAuditing] = useState(false);
@@ -118,6 +120,10 @@ export default function Home() {
       // API call finished! Force all checkmarks to green
       setLoadingPhase(3);
       
+      posthog?.capture('url_analyzed', {
+        url: formattedUrl
+      });
+      
       // Wait 1 second for user to register the success
       await new Promise(resolve => setTimeout(resolve, 1000));
       
@@ -138,6 +144,11 @@ export default function Home() {
   const handleExtract = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    
+    posthog?.capture('audit_started', {
+      url,
+      company: extractedData?.company_name
+    });
     
     try {
       const res = await fetch('/api/engine/audit', {
@@ -174,6 +185,11 @@ export default function Home() {
       
       // Wait 1 second exactly before redirecting so they see the final checkmark
       await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      posthog?.capture('audit_completed', {
+        report_id: data.report_id,
+        url
+      });
       
       router.push(`/report/${data.report_id}`);
     } catch (error: unknown) {

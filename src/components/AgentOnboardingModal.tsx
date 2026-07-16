@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { usePostHog } from 'posthog-js/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal, Rocket, X, ArrowRight, ArrowLeft } from 'lucide-react';
 
@@ -28,12 +29,15 @@ interface AgentOnboardingModalProps {
 export function AgentOnboardingModal({ isOpen, onClose }: AgentOnboardingModalProps) {
   const [step, setStep] = useState(0);
 
+  const posthog = usePostHog();
+
   // Reset step when modal opens
   useEffect(() => {
     if (isOpen) {
       setStep(0);
+      posthog?.capture('agent_modal_opened');
     }
-  }, [isOpen]);
+  }, [isOpen, posthog]);
 
   const steps = [
     {
@@ -180,7 +184,10 @@ export function AgentOnboardingModal({ isOpen, onClose }: AgentOnboardingModalPr
                       href="https://www.okx.ai/agents/4686"
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={onClose}
+                      onClick={() => {
+                        posthog?.capture('marketplace_link_clicked');
+                        onClose();
+                      }}
                       className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-full font-bold hover:from-orange-400 hover:to-orange-500 transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] active:scale-95"
                     >
                       Continue to OKX.AI
