@@ -5,20 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Verdict ASP Flow</title>
   
-  <!-- Tailwind for styling -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Geist Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  
-  <!-- GSAP for Professional Animation -->
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
   <style>
     body {
       font-family: 'Geist', sans-serif;
-      background-color: #0B0F19; /* Verdict Dark Slate */
-      color: white;
+      background-color: #f9f9f9;
+      color: #0f172a;
       margin: 0;
       padding: 0;
       overflow: hidden;
@@ -27,361 +22,318 @@
       position: relative;
     }
 
-    .bg-grid {
-      position: absolute;
-      inset: 0;
-      background-size: 80px 80px;
-      background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
-                        linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
-      z-index: 0;
-    }
+    .font-mono { font-family: 'Geist Mono', monospace; }
 
     /* Absolute Center Container */
-    .flow-container {
+    #canvas-container {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 1200px;
-      z-index: 10;
     }
 
-    /* Nodes */
+    /* Terminal */
+    #terminal {
+      position: absolute;
+      width: 900px;
+      height: 600px;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+      border: 1px solid #e2e8f0;
+      z-index: 20;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Nodes (Hidden initially) */
     .node {
-      width: 280px;
-      height: 280px;
-      border-radius: 48px;
+      position: absolute;
+      background: white;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+      border: 1px solid #e2e8f0;
+      border-radius: 32px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-      position: relative;
-      z-index: 20;
-      opacity: 0; /* Hidden initially for GSAP */
-    }
-    
-    .node-agent {
-      background: white;
-      color: #0B0F19;
-    }
-    
-    .node-verdict {
-      background: #0B0F19;
-      border: 4px solid #1e293b;
-      color: white;
+      z-index: 10;
+      opacity: 0;
+      transform: scale(0.9);
     }
 
-    .glow-ring {
+    .sub-node {
       position: absolute;
-      inset: -4px;
-      border-radius: 48px;
-      border: 4px solid #f97316;
+      background: white;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+      border: 1px solid #e2e8f0;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+      z-index: 10;
       opacity: 0;
+      transform: scale(0.9) translateX(-20px);
+    }
+
+    /* SVG Lines */
+    #svg-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
       pointer-events: none;
     }
-
-    /* Line */
-    .line-container {
-      flex-grow: 1;
-      height: 4px;
-      position: relative;
-      margin: 0 -20px;
-      z-index: 5;
-    }
-    .line-dash {
-      height: 100%;
-      border-bottom: 6px dashed #334155;
-      width: 0; /* Animated by GSAP */
-    }
-
-    /* Messages */
-    .msg {
-      position: absolute;
-      top: 50%;
-      background: white;
-      color: #0B0F19;
-      padding: 12px 24px;
-      border-radius: 99px;
-      font-weight: 700;
-      font-size: 22px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-      opacity: 0;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transform: translateY(-50%);
-      z-index: 30;
-    }
-    .msg-dark {
-      background: #1e293b;
-      color: white;
-      border: 2px solid #334155;
-    }
-    .msg-token {
-      background: #f97316;
-      color: white;
-      border: none;
-    }
-
-    /* Action Card */
-    .card-container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 800px;
-      z-index: 40;
+    
+    .svg-path {
+      stroke: #cbd5e1;
+      stroke-width: 4;
+      stroke-dasharray: 8 8;
+      fill: none;
       opacity: 0; /* Animated by GSAP */
     }
-    .action-card {
-      background: white;
-      border-radius: 32px;
-      padding: 48px;
-      color: #0B0F19;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.6);
-    }
     
-    .card-header {
-      font-size: 32px;
-      font-weight: 900;
-      margin-bottom: 32px;
-      border-bottom: 2px solid #e2e8f0;
-      padding-bottom: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .check-item {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      font-size: 26px;
-      font-weight: 600;
-      color: #64748b;
-      margin-bottom: 24px;
-      opacity: 0;
-    }
-    .check-item:last-child { margin-bottom: 0; }
-    
-    .circle {
-      width: 40px; height: 40px; border-radius: 50%; border: 4px solid #cbd5e1;
-      display: flex; justify-content: center; align-items: center;
-      background: transparent;
-    }
-    .circle svg { opacity: 0; width: 24px; height: 24px; color: white; stroke-width: 4; }
-
     /* Outro */
     #outro-scene {
       position: absolute; inset: 0; display: flex; flex-direction: column; 
       justify-content: center; align-items: center; z-index: 50;
+      background: #f9f9f9;
       opacity: 0;
+      pointer-events: none;
     }
-    .outro-logo {
-      width: 160px; height: 160px; background: #0B0F19; border: 4px solid #f97316;
-      border-radius: 40px; display: flex; justify-content: center; align-items: center;
-      margin-bottom: 40px;
-    }
-
-    /* Floating Icons */
-    .icon-svg { width: 24px; height: 24px; }
   </style>
 </head>
 <body>
 
-  <div class="bg-grid"></div>
+  <div id="canvas-container">
 
-  <div id="main-scene" class="w-full h-full relative">
-    
-    <!-- Flow Container -->
-    <div class="flow-container" id="flow">
+    <!-- The SVG Connectors -->
+    <svg id="svg-layer">
+      <!-- To Verdict Node -->
+      <path id="path-main" class="svg-path" d="M 400 540 L 700 540" />
       
-      <!-- Your Agent Node -->
-      <div class="node node-agent" id="node-agent">
-        <svg class="w-28 h-28 text-slate-900 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <rect x="5" y="8" width="14" height="12" rx="3" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="9.5" cy="13.5" r="1.5" fill="currentColor"/>
-          <circle cx="14.5" cy="13.5" r="1.5" fill="currentColor"/>
-          <path d="M10 17h4" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M2 13h3" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M19 13h3" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <div class="text-3xl font-black">Your Agent</div>
+      <!-- Verdict to Sub-Nodes -->
+      <path class="svg-path path-sub" d="M 940 540 C 1020 540, 1020 340, 1100 340" />
+      <path class="svg-path path-sub" d="M 940 540 L 1100 540" />
+      <path class="svg-path path-sub" d="M 940 540 C 1020 540, 1020 740, 1100 740" />
+
+      <!-- Sub-Nodes to Final Node -->
+      <path class="svg-path path-final" d="M 1400 340 C 1480 340, 1480 540, 1550 540" />
+      <path class="svg-path path-final" d="M 1400 540 L 1550 540" />
+      <path class="svg-path path-final" d="M 1400 740 C 1480 740, 1480 540, 1550 540" />
+    </svg>
+
+    <!-- Terminal Window -->
+    <div id="terminal">
+      <div class="h-14 bg-slate-50 flex items-center px-6 border-b border-slate-100 relative shrink-0">
+        <div class="flex gap-2 absolute left-6">
+          <div class="w-3.5 h-3.5 rounded-full bg-[#ff5f56]"></div>
+          <div class="w-3.5 h-3.5 rounded-full bg-[#ffbd2e]"></div>
+          <div class="w-3.5 h-3.5 rounded-full bg-[#27c93f]"></div>
+        </div>
+        <div id="term-title" class="w-full text-center text-sm font-medium text-slate-500 font-mono">claude</div>
       </div>
-
-      <!-- Connecting Line -->
-      <div class="line-container">
-        <div class="line-dash" id="line-dash"></div>
+      
+      <div class="p-10 font-mono text-[18px] text-slate-800 leading-relaxed relative flex-grow">
         
-        <!-- Messages -->
-        <div id="msg1" class="msg" style="left: 0;">
-          <svg class="icon-svg text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-          MCP Request: Analyze Startup via OKX.AI
-        </div>
-        
-        <div id="msg2" class="msg msg-dark" style="right: 0; left: auto;">
-          <svg class="icon-svg text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-          Payment Required: 0.5 USDT
+        <!-- Typewriter Content -->
+        <div id="text-content">
+          <div class="mb-4">
+            <span id="l1" class="text-orange-600 font-semibold"></span>
+            <div id="s1" class="hidden mt-1 text-slate-500"></div>
+          </div>
+          
+          <div class="mb-4">
+            <span id="l2" class="text-orange-600 font-semibold"></span>
+            <div id="s2" class="hidden mt-1 text-slate-500"></div>
+          </div>
+          
+          <div class="mb-8">
+            <span id="l3" class="text-orange-600 font-semibold"></span>
+            <div id="s3" class="hidden mt-1 text-slate-500"></div>
+          </div>
+
+          <div class="mb-2"><span id="l4" class="text-slate-800 font-medium"></span></div>
+          <div class="mb-1"><span id="l5" class="text-slate-800 font-medium"></span></div>
+          <div class="ml-4 mb-1 text-slate-500"><span id="l6"></span></div>
+          <div class="ml-4 mb-1 text-slate-500"><span id="l7"></span></div>
+          <div class="ml-4 mb-1 text-slate-500"><span id="l8"></span></div>
+          <div class="ml-4 mb-1 text-slate-500"><span id="l9"></span></div>
         </div>
 
-        <div id="msg3" class="msg msg-token" style="left: 0;">
-          <svg viewBox="0 0 339.43 295.27" class="icon-svg text-white bg-[#26A17B] rounded-full p-1" fill="currentColor">
-            <path d="M191.19,144.8v0c-1.2.09-7.4,0.46-21.23,0.46-11,0-18.81-.33-21.55-0.46v0c-42.51-1.87-74.24-9.27-74.24-18.13s31.73-16.25,74.24-18.15v28.91c2.78,0.2,10.74.67,21.74,0.67,13.2,0,19.81-.55,21-0.66v-28.9c42.42,1.89,74.08,9.29,74.08,18.13s-31.65,16.24-74.08,18.12h0Zm0-39.25V79.68h59.2V40.23H89.21V79.68H148.4v25.86c-48.11,2.21-84.29,11.74-84.29,23.16s36.18,20.94,84.29,23.16v82.9h42.78V151.83c48-2.21,84.12-11.73,84.12-23.14s-36.09-20.93-84.12-23.15h0Zm0,0h0Z" fill="white" />
+        <!-- Hidden Robot Icon (Shows when terminal shrinks into a node) -->
+        <div id="term-icon" class="absolute inset-0 flex items-center justify-center opacity-0">
+          <svg class="w-24 h-24 text-slate-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="5" y="8" width="14" height="12" rx="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="9.5" cy="13.5" r="1.5" fill="currentColor"/><circle cx="14.5" cy="13.5" r="1.5" fill="currentColor"/>
+            <path d="M10 17h4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 13h3" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 13h3" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          0.5 USDT + Signature
-        </div>
-
-        <div id="msg4" class="msg msg-dark" style="right: 0; left: auto;">
-          <svg class="icon-svg text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-          Payment Confirmed. Target URL?
-        </div>
-
-        <div id="msg5" class="msg" style="left: 0;">
-          <svg class="icon-svg text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-          Target: https://startup.com
-        </div>
-
-      </div>
-
-      <!-- Verdict Engine Node -->
-      <div class="node node-verdict" id="node-verdict">
-        <div class="glow-ring" id="verdict-glow"></div>
-        <svg class="w-28 h-28 mb-4 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter">
-          <path d="M4 5L12 19L20 5" />
-        </svg>
-        <div class="text-3xl font-black tracking-tight">VERDICT</div>
-        <div class="text-lg text-slate-400 mt-2 font-medium">ASP Engine</div>
-      </div>
-    </div>
-
-    <!-- Action Card (Appears Below) -->
-    <div class="card-container" id="card-container" style="transform: translate(-50%, 40px);">
-      <div class="action-card">
-        <div class="card-header">
-          <span>Verdict Agentic Audit</span>
-          <span class="text-xl font-bold text-slate-400 bg-slate-100 px-4 py-2 rounded-full" id="card-status">Executing...</span>
-        </div>
-        
-        <div class="check-item" id="chk1">
-          <div class="circle"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></div>
-          DOM Extracted & Bot Protection Bypassed
-        </div>
-
-        <div class="check-item" id="chk2">
-          <div class="circle"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></div>
-          Foundational Pillar Scorecards Analyzed
-        </div>
-
-        <div class="check-item" id="chk3">
-          <div class="circle"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></div>
-          Growth Readiness Score Computed
-        </div>
-
-        <div class="check-item" id="chk4">
-          <div class="circle"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg></div>
-          Actionable Fixes Generated
         </div>
       </div>
     </div>
 
-  </div>
-
-  <!-- SCENE 6: Outro -->
-  <div id="outro-scene">
-    <div class="outro-logo" id="outro-logo">
-      <svg class="w-24 h-24 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4">
+    <!-- Verdict Node -->
+    <div id="node-verdict" class="node w-[240px] h-[240px]" style="left: 700px; top: 420px;">
+      <svg class="w-20 h-20 mb-4 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4">
         <path d="M4 5L12 19L20 5" />
       </svg>
+      <div class="text-2xl font-black text-slate-900">VERDICT</div>
+      <div class="text-sm font-medium text-slate-400">ASP Engine</div>
     </div>
-    <div class="text-7xl font-black mb-6 tracking-tight" id="outro-text">Equip your agent.</div>
-    <div class="text-3xl font-medium text-slate-400" id="outro-sub">Available via OKX.AI API</div>
+
+    <!-- Sub Nodes -->
+    <div class="sub-node w-[300px] h-[100px]" id="sub1" style="left: 1100px; top: 290px;">
+      <div class="w-10 h-10 shrink-0 rounded-full bg-slate-100 flex items-center justify-center"><span class="text-slate-500 font-bold">1</span></div>
+      <div class="font-semibold text-slate-700 leading-tight">Extracting DOM (stripe.com)</div>
+    </div>
+    
+    <div class="sub-node w-[300px] h-[100px]" id="sub2" style="left: 1100px; top: 490px;">
+      <div class="w-10 h-10 shrink-0 rounded-full bg-slate-100 flex items-center justify-center"><span class="text-slate-500 font-bold">2</span></div>
+      <div class="font-semibold text-slate-700 leading-tight">Analyzing 7-Pillars Framework</div>
+    </div>
+
+    <div class="sub-node w-[300px] h-[100px]" id="sub3" style="left: 1100px; top: 690px;">
+      <div class="w-10 h-10 shrink-0 rounded-full bg-slate-100 flex items-center justify-center"><span class="text-slate-500 font-bold">3</span></div>
+      <div class="font-semibold text-slate-700 leading-tight">Computing Readiness Score</div>
+    </div>
+
+    <!-- Final Node -->
+    <div id="node-final" class="node w-[220px] h-[220px] bg-orange-50 border-2 border-orange-200 shadow-orange-500/10" style="left: 1550px; top: 430px;">
+      <svg class="w-16 h-16 text-orange-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      <div class="font-bold text-slate-800 text-center px-4">audit_report.json</div>
+    </div>
+
+    <!-- Outro -->
+    <div id="outro-scene">
+      <div id="outro-logo" class="w-32 h-32 bg-white shadow-2xl border-4 border-orange-500 rounded-[32px] flex justify-center items-center mb-10">
+        <svg class="w-16 h-16 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4">
+          <path d="M4 5L12 19L20 5" />
+        </svg>
+      </div>
+      <div id="outro-text" class="text-6xl font-black text-slate-900 mb-4 tracking-tight">Verdict: The Agent Service Provider</div>
+      <div id="outro-sub" class="text-2xl font-semibold text-slate-500">Powered by OKX.AI</div>
+    </div>
+
   </div>
 
   <script>
-    // GSAP Timeline setup
-    // Editframe relies on the timeline rendering smoothly. We set total duration ~25s.
-    const tl = gsap.timeline();
+    // -----------------------------------------------------
+    // PHASE 1: Terminal Typewriter Effect
+    // -----------------------------------------------------
+    const wait = (ms) => new Promise(r => setTimeout(r, ms));
+    
+    async function typeText(elementId, text, speed = 25) {
+      const el = document.getElementById(elementId);
+      for(let i = 0; i < text.length; i++) {
+        el.innerHTML += text[i];
+        await wait(speed);
+      }
+    }
+    
+    async function showSystem(elementId, text) {
+      const el = document.getElementById(elementId);
+      el.innerHTML = text;
+      el.style.display = 'block';
+    }
 
-    // 1. Initial Fade In of Nodes
-    tl.to("#node-agent", { opacity: 1, scale: 1, y: 0, duration: 1, ease: "back.out(1.5)" }, "+=0.5")
-      .to("#node-verdict", { opacity: 1, scale: 1, y: 0, duration: 1, ease: "back.out(1.5)" }, "-=0.7")
-      .to("#line-dash", { width: "100%", duration: 1.2, ease: "power2.inOut" }, "-=0.5");
-
-    // 2. Message Passing
-    // Msg 1 (L->R): MCP Request
-    tl.to("#msg1", { opacity: 1, x: 80, duration: 0.3 })
-      .to("#msg1", { x: 500, duration: 1.2, ease: "power1.inOut" })
-      .to("#msg1", { opacity: 0, x: 580, duration: 0.3 });
-
-    // Msg 2 (R->L): Payment Required
-    tl.to("#msg2", { opacity: 1, x: -80, duration: 0.3 }, "+=0.2")
-      .to("#msg2", { x: -500, duration: 1.2, ease: "power1.inOut" })
-      .to("#msg2", { opacity: 0, x: -580, duration: 0.3 });
-
-    // Msg 3 (L->R): Token + Signature
-    tl.to("#msg3", { opacity: 1, x: 80, duration: 0.3 }, "+=0.2")
-      .to("#msg3", { x: 500, duration: 1.2, ease: "power1.inOut" })
-      .to("#msg3", { opacity: 0, x: 580, duration: 0.3 });
-
-    // Node Activates (Verdict accepts payment)
-    tl.to("#node-verdict", { borderColor: "#f97316", duration: 0.3 }, "-=0.3")
-      .to("#verdict-glow", { opacity: 1, duration: 0.3 }, "-=0.3")
-      .to("#verdict-glow", { scale: 1.2, opacity: 0, duration: 1, ease: "power2.out" })
-      .to("#verdict-glow", { scale: 1, duration: 0 }); // reset
-
-    // Msg 4 (R->L): Confirmed. Target URL?
-    tl.to("#msg4", { opacity: 1, x: -80, duration: 0.3 }, "-=0.5")
-      .to("#msg4", { x: -500, duration: 1.2, ease: "power1.inOut" })
-      .to("#msg4", { opacity: 0, x: -580, duration: 0.3 });
-
-    // Msg 5 (L->R): URL
-    tl.to("#msg5", { opacity: 1, x: 80, duration: 0.3 }, "+=0.2")
-      .to("#msg5", { x: 500, duration: 1.2, ease: "power1.inOut" })
-      .to("#msg5", { opacity: 0, x: 580, duration: 0.3 });
-
-    // 3. Slide everything up to make room for Action Card
-    tl.to("#flow", { y: -200, duration: 1.2, ease: "power3.inOut" }, "+=0.2")
-      .to("#card-container", { opacity: 1, y: 0, duration: 1, ease: "back.out(1.2)" }, "-=0.8");
-
-    // 4. Action Card Checkmarks Tick Down
-    const checks = ["#chk1", "#chk2", "#chk3", "#chk4"];
-    checks.forEach((chk, i) => {
-      // Slide in text
-      tl.to(chk, { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, `+=${i === 0 ? 0.2 : 0.4}`)
-        // Change text color to dark
-        .to(chk, { color: "#0B0F19", duration: 0.3 }, "+=0.1")
-        // Fill circle orange
-        .to(`${chk} .circle`, { backgroundColor: "#f97316", borderColor: "#f97316", duration: 0.3 }, "-=0.3")
-        // Show checkmark icon
-        .to(`${chk} .circle svg`, { opacity: 1, duration: 0.2 }, "-=0.1");
-    });
-
-    // Mark as complete
-    tl.to("#card-status", { backgroundColor: "#22c55e", color: "white", textContent: "Completed", duration: 0.5 }, "+=0.5");
-
-    // 5. Outro Transition
-    tl.to("#main-scene", { opacity: 0, duration: 1 }, "+=1.5")
-      .to("#outro-scene", { opacity: 1, duration: 1 }, "-=0.5")
-      .fromTo("#outro-logo", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.5)" })
-      .fromTo("#outro-text", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" }, "-=0.4")
-      .fromTo("#outro-sub", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" }, "-=0.6");
+    async function runScript() {
+      await wait(500); // initial load pause
       
-    // Add continuous pulse to outro logo using a repeating tween
-    tl.add(() => {
-      gsap.to("#outro-logo", {
-        boxShadow: "0 0 0 30px rgba(249, 115, 22, 0)",
-        borderColor: "rgba(249, 115, 22, 1)",
-        repeat: -1,
-        duration: 2,
-        ease: "power1.out",
-        clearProps: "boxShadow" // resets smoothly
-      });
-    });
+      // Line 1
+      await typeText('l1', '> npx skills add okx/onchainos-skills --yes -g', 30);
+      await wait(300);
+      await showSystem('s1', 'Agent skills for OKX Onchain OS are now available. ... <span class="text-green-500">yes</span>');
+      
+      // Line 2
+      await wait(400);
+      await typeText('l2', '> Log in to Agentic Wallet on Onchain OS with my email', 25);
+      await wait(300);
+      await showSystem('s2', 'Wallet connected. Identity verified.');
+
+      // Line 3
+      await wait(400);
+      await typeText('l3', '> Register me as a User on OKX.AI using OKX Agent Identity', 25);
+      await wait(300);
+      await showSystem('s3', 'Registered on OKX.AI successfully.');
+
+      // Line 4 (Prompt)
+      await wait(600);
+      await typeText('l4', '> I want to run a growth audit on my startup (stripe.com).', 20);
+      await wait(200);
+      await typeText('l5', '> I’d like to use the service provided by Agent 4686:', 20);
+      await typeText('l6', '> Service title: Startup Growth Audit', 15);
+      await typeText('l7', '> Service type: A2MCP', 15);
+      await typeText('l8', '> Endpoint: https://tryverdict.xyz/api/evaluate-mcp', 15);
+      await typeText('l9', '> Please use OKX Agent Payments Protocol to send a request.', 15);
+
+      // Wait a moment for viewer to read, then start GSAP flowchart animation
+      await wait(1500);
+      startFlowchartTransition();
+    }
+
+    // -----------------------------------------------------
+    // PHASE 2: GSAP Architecture Flowchart
+    // -----------------------------------------------------
+    function startFlowchartTransition() {
+      const tl = gsap.timeline();
+
+      // 1. Terminal shrinks and becomes a node on the left
+      tl.to("#text-content", { opacity: 0, duration: 0.3 })
+        .to("#term-title", { opacity: 0, duration: 0.2 }, "<")
+        // Animate terminal box physically to left side, shrinking to node size
+        // Current center is 960x540. Left node should be at X: 160, Y: 420. Width/Height 240.
+        // But #terminal is centered using display:flex currently? No, it's absolute!
+        // We set its initial state via Tailwind/CSS as absolute centered... wait, it doesn't have top/left set.
+        // Let's set its position strictly first so it animates cleanly.
+        .set("#terminal", { left: "50%", top: "50%", xPercent: -50, yPercent: -50 })
+        .to("#terminal", { 
+          width: 240, height: 240, 
+          left: 160, top: 420, 
+          xPercent: 0, yPercent: 0, 
+          borderRadius: 48, 
+          duration: 1.2, 
+          ease: "power3.inOut" 
+        })
+        .to("#term-icon", { opacity: 1, duration: 0.4 }, "-=0.2");
+
+      // 2. Draw line to Verdict Node & pop it in
+      tl.to("#path-main", { opacity: 1, duration: 0.4 })
+        .to("#node-verdict", { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.5)" });
+
+      // 3. Draw lines to Sub Nodes & pop them in
+      tl.to(".path-sub", { opacity: 1, duration: 0.3, stagger: 0.1 }, "+=0.3")
+        .to(".sub-node", { opacity: 1, scale: 1, x: 0, duration: 0.5, stagger: 0.15, ease: "back.out(1.2)" }, "-=0.2");
+
+      // 4. Draw lines to Final Node & pop it in
+      tl.to(".path-final", { opacity: 1, duration: 0.3, stagger: 0.1 }, "+=0.4")
+        .to("#node-final", { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.5)" }, "-=0.1");
+        
+      // 5. Final Node pulses to indicate completion
+      tl.to("#node-final", { 
+        borderColor: "#f97316", 
+        boxShadow: "0 0 0 20px rgba(249, 115, 22, 0.2)",
+        duration: 0.5 
+      })
+      .to("#node-final", { boxShadow: "0 0 0 0 rgba(249, 115, 22, 0)", duration: 0.5 });
+
+      // 6. Outro Transition
+      tl.to("#canvas-container", { opacity: 0, duration: 1 }, "+=1.5")
+        .to("#outro-scene", { opacity: 1, duration: 1 })
+        .fromTo("#outro-logo", { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.5)" })
+        .fromTo("#outro-text", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" }, "-=0.4")
+        .fromTo("#outro-sub", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" }, "-=0.6");
+    }
+
+    // Start everything!
+    window.onload = runScript;
 
   </script>
 </body>
