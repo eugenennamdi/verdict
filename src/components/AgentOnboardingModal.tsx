@@ -128,7 +128,7 @@ export function AgentOnboardingModal({ isOpen, onClose }: AgentOnboardingModalPr
                   transition={{ duration: 0.2 }}
                   className="flex-1 flex flex-col items-center text-center justify-center"
                 >
-                  <div className={`mb-8 p-6 rounded-3xl ${steps[step].highlight ? 'bg-orange-50 dark:bg-orange-500/10' : 'bg-slate-50 dark:bg-slate-800/50'}`}>
+                  <div className={`mb-8 p-6 rounded-3xl`}>
                     {steps[step].icon}
                   </div>
                   
