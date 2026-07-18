@@ -8,7 +8,7 @@
 
 [![Built for OKX.AI Genesis Hackathon](https://img.shields.io/badge/Built%20for-OKX.AI%20Genesis%20Hackathon-000000)](https://web3.okx.com/xlayer/build-x-hackathon)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 [![Gemini-3.5-Flash](https://img.shields.io/badge/LLM-Gemini--3.5--Flash-blue)](https://deepmind.google/technologies/gemini/flash/)
 
 When founders ask for feedback, they usually get polite nods from friends or superficial critiques from basic AI wrappers ("Looks great! Maybe add a clearer CTA?"). 
@@ -34,8 +34,11 @@ Most AI tools try to be overly polite. Verdict is intentionally designed with an
 
 - **Deep Context Extraction:** Uses Firecrawl to render headless DOMs, bypassing simple HTML scraping to actually "see" the page as a user does.
 - **The 7-Pillar Framework:** Our proprietary scoring system evaluating Positioning & ICP, Messaging & Copy, UX & Friction, Conversion Triggers, Trust & Social Proof, Defensibility (Moat), and overall Growth Readiness.
-- **Gemini Intelligence:** Powered by high-context, ultra-fast reasoning models to generate comprehensive, multi-page strategy reports.
-- **Secure by Design:** Backend execution is entirely decoupled from the frontend, secured via Supabase Service Role Keys (RLS bypass) and IP-based Upstash Redis rate limiting.
+- **Deterministic AI Engine:** Powered by Gemini 3.5 Flash running at `temperature: 0.0` with strict Structured JSON Schemas. It enforces a ruthless YC-partner persona that judges based on *actual evidence* rather than hallucinations.
+- **Secure Mathematical Scoring:** The LLM only extracts raw metrics. The final weighted Growth Readiness Score is computed programmatically by the backend to guarantee absolute fairness and mathematical integrity.
+- **Agentic Onboarding:** Seamlessly onboard autonomous agents (Claude, Hermes, Openclaw) by equipping them with the Onchain OS toolkit and a secure Agentic Wallet for micro-payments.
+- **Soulbound Onchain Attestation (NFT):** Solves the "fake AI report" problem. When an audit finishes, the AI acts as an autonomous smart-contract auditor, minting an immutable, non-transferable ERC-721 Soulbound NFT (`VERDICT`) directly onto the X-Layer blockchain as cryptographic proof of the score.
+- **Secure by Design:** Backend execution is entirely decoupled from the frontend, secured via Supabase Service Role Keys and IP-based Upstash Redis rate limiting.
 - **Sleek Presentation Layer:** Fully responsive, dark-mode optimized, beautifully animated reports that users want to share.
 
 ---
@@ -45,7 +48,7 @@ Most AI tools try to be overly polite. Verdict is intentionally designed with an
 Verdict is engineered as a robust, dual-track pipeline serving both human users and machine-to-machine agents.
 
 ### The Dual-Track Execution Rails
-- **Human Web App (Next.js):** A highly optimized, asynchronous Next.js 14 App Router application handling UI state, visual loading phases, and error interception.
+- **Human Web App (Next.js):** A highly optimized, asynchronous Next.js 16 App Router application handling UI state, visual loading phases, and error interception. Includes a sleek "For Agents" onboarding flow.
 - **A2MCP OKX.AI Agent (`/api/evaluate-mcp`):** A headless, machine-to-machine endpoint designed specifically for the OKX.AI Agent Ecosystem. It allows external autonomous agents to trigger complete audits natively, secured behind an **x402 Payment Challenge**.
 
 ### Context Normalization & Extraction
@@ -57,15 +60,22 @@ Modern SaaS landing pages are heavily client-side rendered and protected by WAFs
 ### Cognitive Processing (Gemini 3.5 Flash)
 The extracted markdown is passed through a multi-stage reasoning pipeline powered by **Gemini 3.5 Flash**:
 - **Phase 1 (De-fluffing):** The model normalizes the text, aggressively stripping away marketing jargon to determine the *true* core value proposition and ensuring the URL is a valid startup.
-- **Phase 2 (Scoring & Enforcement):** The model is constrained by strict JSON Schemas (Structured Outputs) and aggressive system prompts. This forces it to act as a cynical, pattern-matching investor, assessing the data against the **7-Pillar Framework**.
+- **Phase 2 (Scoring & Enforcement):** Operating at `temperature: 0.0`, the model is physically constrained by strict JSON Schemas (Structured Outputs) and aggressive system prompts. This forces it to act as a cynical, pattern-matching investor, assessing the data against the **7-Pillar Framework** based purely on available evidence. The final score is then calculated algorithmically by the backend using strict rubric weights.
 
 ### Rate Limiting & Financial Infrastructure
 Running headless browsers and large LLM context windows is compute-heavy.
 - **The Paywall (Human Path):** Protected by **Upstash Redis**, strictly limiting IPs to a single free audit to prevent abuse and compute drain. Upon limit exhaustion, a client-side paywall modal is rendered.
 - **Decentralized Payments (Agent Path):** The OKX.AI API endpoint enforces an x402 payment challenge. Agents must execute a smart contract transaction on the **X-Layer Blockchain** (using the OKX Web3 SDK) to pay the 0.5 USDT compute fee per execution, unlocking scalable, decentralized monetization.
 
-### Persistence & Delivery
-The final structured audit, complete with priority matrices and pillar scores, is persisted to a **Supabase PostgreSQL** database. The client is then routed to a dynamic `report/[id]` page, instantly rendering the beautifully animated, highly shareable report.
+### Persistence, Delivery & Soulbound Attestations
+The final structured audit, complete with priority matrices and pillar scores, is persisted to a **Supabase PostgreSQL** database. 
+
+Crucially, we solve the "fake AI report" trust deficit through cryptographic attestation. Rather than just logging a generic event to the blockchain, our backend Relayer interacts with a custom **ERC-721 Smart Contract (`VerdictAttestation`)** deployed on the **X-Layer**.
+- The AI engine autonomously mints a **Soulbound (Non-Transferable) NFT** for every completed audit.
+- The NFT's `tokenURI` points permanently to the exact URL of the dynamic report (`report/[id]`).
+- When users or judges click the "Attested Onchain" badge on the report, they are taken to the OKX Explorer where they see a clear **"Tokens Transferred: Verdict Attestation (VERDICT)"** banner, proving the AI issued a permanent digital certificate.
+
+The client is then routed to the dynamic `report/[id]` page, instantly rendering the beautifully animated, highly shareable report.
 
 ```mermaid
 flowchart LR
@@ -116,7 +126,7 @@ flowchart LR
 
 ## Tech Stack
 
-- **Framework:** Next.js 14 (App Router)
+- **Framework:** Next.js 16 (App Router)
 - **Language:** TypeScript (Strict Mode)
 - **Styling:** Tailwind CSS + Radix UI + Lucide Icons
 - **Payments / A2MCP:** OKX Web3 SDK (x402 standard) + X-Layer

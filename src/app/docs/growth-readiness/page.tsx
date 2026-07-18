@@ -17,12 +17,6 @@ export default function GrowthReadinessPage() {
         The ultimate metric in the Verdict platform is your Growth Readiness Score. It determines whether your startup is actually ready to scale, or if you&apos;re about to burn your marketing budget.
       </p>
 
-      <div className="bg-orange-500/10 border border-orange-500/20 rounded-2xl p-6 mb-12 flex gap-4 items-center">
-        <Rocket className="w-6 h-6 text-orange-500 shrink-0" />
-        <p className="text-orange-700 dark:text-orange-400 font-medium m-0 leading-relaxed">
-          The Growth Readiness Score is a weighted aggregate of the other 6 pillars (Positioning, Messaging, UX, Conversion, Trust, and Defensibility). It evaluates how prepared the business is to convert cold traffic into revenue.
-        </p>
-      </div>
 
       <h2>Interpreting the Score</h2>
       <div className="mt-8 not-prose overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-2xl bg-white dark:bg-slate-900 shadow-sm">

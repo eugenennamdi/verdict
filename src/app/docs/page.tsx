@@ -15,11 +15,11 @@ export default function DocsIntroPage() {
         The startup ecosystem is plagued by &quot;delusion by echo chamber.&quot; Founders spend months building products, wrapping them in generic marketing fluff, and wondering why they aren&apos;t scaling.
       </p>
 
-      <div className="bg-orange-500/10 border border-orange-500/20 rounded-2xl p-8 mb-12">
+      <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 mb-12 shadow-sm">
         <p className="text-slate-900 dark:text-white font-medium m-0 mb-4 text-lg leading-relaxed">
           When founders ask for feedback, they get polite nods from friends or superficial critiques from AI wrappers that simply say, &quot;Your website looks great! Maybe add a clearer CTA?&quot;
         </p>
-        <p className="text-orange-500 font-black text-xl m-0 tracking-tight">
+        <p className="text-slate-900 dark:text-white font-black text-xl m-0 tracking-tight">
           Verdict is the antidote.
         </p>
       </div>

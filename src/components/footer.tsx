@@ -38,10 +38,10 @@ export function Footer() {
 
         {/* Center: Social & Brand Links */}
         <div className="flex-shrink-0 flex items-center justify-center gap-4 text-slate-500 dark:text-slate-400">
-          <a href="/verdict-brand-assets.zip" className="text-sm font-medium hover:text-slate-900 dark:hover:text-white transition-colors" download>
-            Brand Assets
+          <a href="/docs" className="text-sm font-medium hover:text-slate-900 dark:hover:text-white transition-colors">
+            Documentation
           </a>
-          
+
           <div className="w-px h-4 bg-slate-200 dark:bg-slate-800"></div>
 
           <div className="flex items-center gap-1">

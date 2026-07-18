@@ -588,6 +588,23 @@ export const GET = async (req: Request) => {
   const cleanReq = await createCleanReq(req);
   console.log("GET request initiated. ALL HEADERS:", Object.fromEntries(req.headers.entries()));
   
+  // Intercept OKX.AI platform verification pings
+  // The MCP WebStandardStreamableHTTPServerTransport throws a 406 Not Acceptable 
+  // if a GET request does not explicitly contain Accept: text/event-stream.
+  // We need to return 200 OK for standard health checks from the platform.
+  const acceptHeader = cleanReq.headers.get("accept") || "";
+  if (!acceptHeader.includes("text/event-stream")) {
+    console.log("Bypassing MCP SSE initialization for non-SSE GET request. Returning 200 OK.");
+    return new Response(JSON.stringify({ 
+      status: "online", 
+      message: "Verdict A2MCP Endpoint is active.",
+      x402: routeConfig 
+    }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+
   // GET is only used for SSE initialization in MCP, should be free
   return handleRequest(cleanReq);
 };

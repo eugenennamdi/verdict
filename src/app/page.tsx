@@ -40,7 +40,6 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [isAuditing, setIsAuditing] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
-  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [extractedData, setExtractedData] = useState<{
     company_name: string;
@@ -48,6 +47,8 @@ export default function Home() {
     core_value_prop: string;
     primary_cta: string;
   } | null>(null);
+
+  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
 
   const [loadingPhase, setLoadingPhase] = useState(0);
 
@@ -210,7 +211,7 @@ export default function Home() {
           <VerdictLogo className="w-8 h-8 text-orange-500 group-hover:scale-105 transition-transform" />
           <span className="font-black tracking-tight text-xl text-slate-900 dark:text-white">VERDICT</span>
         </Link>
-        <nav className="flex items-center gap-4">
+        <div className="flex items-center gap-4">
           <button 
             onClick={() => setIsAgentModalOpen(true)}
             className="hidden sm:flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-full bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/20 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-500/20 transition-colors"
@@ -218,13 +219,7 @@ export default function Home() {
             <Bot className="w-4 h-4" />
             For Agents
           </button>
-          <Link 
-            href="/docs" 
-            className="text-sm font-bold px-5 py-2.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
-          >
-            Documentation
-          </Link>
-        </nav>
+        </div>
       </header>
 
       <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10">
@@ -488,6 +483,7 @@ export default function Home() {
           </AnimatePresence>
         </div>
       </div>      
+
       {/* Rate Limit / Teaser Wall Modal */}
       <AnimatePresence>
         {showPaywall && (

@@ -15,7 +15,7 @@ const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
   ]);
 };
 
-async function generateWithFallback(prompt: string, schema: any) {
+async function generateWithFallback(prompt: string, schema: unknown) {
   try {
     return await withTimeout(ai.models.generateContent({
       model: PRIMARY_MODEL,
@@ -25,9 +25,9 @@ async function generateWithFallback(prompt: string, schema: any) {
         responseMimeType: 'application/json',
         responseSchema: schema,
       }
-    }), 15000);
-  } catch (e: any) {
-    const errorMsg = e?.message || String(e);
+    }), 35000);
+  } catch (e: unknown) {
+    const errorMsg = e instanceof Error ? e.message : String(e);
     const isHighDemand = errorMsg.includes('503') || errorMsg.includes('high demand') || errorMsg.includes('UNAVAILABLE') || errorMsg.includes('429') || errorMsg.includes('TIMEOUT_ERROR');
     
     if (isHighDemand) {
@@ -41,9 +41,9 @@ async function generateWithFallback(prompt: string, schema: any) {
             responseMimeType: 'application/json',
             responseSchema: schema,
           }
-        }), 15000);
-      } catch (fallbackError: any) {
-        const fallbackMsg = fallbackError?.message || String(fallbackError);
+        }), 35000);
+      } catch (fallbackError: unknown) {
+        const fallbackMsg = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
         if (fallbackMsg.includes('503') || fallbackMsg.includes('high demand') || fallbackMsg.includes('UNAVAILABLE') || fallbackMsg.includes('429') || fallbackMsg.includes('TIMEOUT_ERROR')) {
           throw new Error("MODEL_HIGH_DEMAND");
         }

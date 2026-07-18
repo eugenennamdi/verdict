@@ -1,15 +1,16 @@
 import Link from "next/link";
-import { ArrowLeft, BookOpen, Cpu, Target, CheckCircle2, Rocket, Bot } from "lucide-react";
+import { ArrowLeft, BookOpen, Cpu, Layers, CheckCircle2, Rocket, Bot, Palette } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 
 export default function DocsLayout({ children }: { children: React.ReactNode }) {
   const navItems = [
     { name: "Introduction", href: "/docs", icon: BookOpen },
     { name: "Architecture", href: "/docs/architecture", icon: Cpu },
-    { name: "The 7-Pillar Framework", href: "/docs/framework", icon: Target },
+    { name: "The 7-Pillar Framework", href: "/docs/framework", icon: Layers },
     { name: "Scoring & Enforcement", href: "/docs/scoring", icon: CheckCircle2 },
     { name: "Growth Readiness Score", href: "/docs/growth-readiness", icon: Rocket },
     { name: "Agent & Pricing (OKX.AI)", href: "/docs/pricing", icon: Bot },
+    { name: "Brand Assets", href: "/docs/brand-assets", icon: Palette },
   ];
 
   return (

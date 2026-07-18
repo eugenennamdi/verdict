@@ -7,10 +7,19 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, AlertTriangle, Target, TrendingUp, ArrowRight, ArrowUpRight, AlertCircle } from "lucide-react";
+import { Loader2, AlertTriangle, Target, TrendingUp, ArrowRight, ArrowUpRight, AlertCircle, ImageDown } from "lucide-react";
 import { motion } from "framer-motion";
 
 const springTransition = { type: "spring" as const, stiffness: 200, damping: 20 };
+
+const XLayerLogo = ({ className }: { className?: string }) => (
+  <img 
+    src="https://static.okx.com/cdn/assets/imgs/243/230501A8E74482AB.png" 
+    alt="X Layer" 
+    className={className} 
+    crossOrigin="anonymous" 
+  />
+);
 
 const MotionCard = motion(Card);
 
@@ -21,6 +30,47 @@ export default function ReportPage() {
   const [report, setReport] = useState<Record<string, unknown> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const downloadImage = async () => {
+    setIsDownloading(true);
+    await new Promise(resolve => setTimeout(resolve, 150));
+    try {
+      const element = document.getElementById('report-content');
+      if (!element) return;
+      
+      const { toJpeg } = await import('html-to-image');
+
+      const filter = (node: HTMLElement) => {
+        if (node?.getAttribute && node.getAttribute('data-export-ignore') === 'true') {
+          return false;
+        }
+        return true;
+      };
+
+      const dataUrl = await toJpeg(element, { 
+        quality: 0.95, 
+        pixelRatio: 1.2, // Keeps text crisp but prevents mobile/Safari canvas crash
+        style: {
+          transform: 'none',
+          margin: '0',
+          position: 'relative'
+        },
+        filter: filter,
+        backgroundColor: document.documentElement.classList.contains('dark') ? '#020617' : '#f8fafc' 
+      });
+      
+      // Direct image download to device
+      const link = document.createElement('a');
+      link.download = `${report?.company_name || 'Verdict'}_Growth_Audit.jpg`;
+      link.href = dataUrl;
+      link.click();
+    } catch (e) {
+      console.error("Image generation failed", e);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -76,9 +126,11 @@ export default function ReportPage() {
   const priorityMatrix = (report.top_5_priorities || []) as Record<string, unknown>[];
 
   return (
-    <div className="min-h-screen text-slate-900 dark:text-white p-4 md:p-8 lg:p-12 selection:bg-orange-500/20 selection:text-orange-900 relative">
+    <>
+      <div className="min-h-screen bg-slate-50 dark:bg-[#020617]">
+        <div className="text-slate-900 dark:text-white p-6 md:p-12 lg:p-16 selection:bg-orange-500/20 selection:text-orange-900 relative" id="report-content">
       {/* Premium Mesh Background */}
-      <div className="absolute inset-0 z-0 opacity-40 dark:opacity-20 pointer-events-none bg-mesh" />
+      <div className="absolute inset-0 z-0 opacity-40 dark:opacity-20 pointer-events-none bg-mesh" data-html2canvas-ignore="true" data-export-ignore="true" />
 
       <div className="max-w-6xl mx-auto space-y-16 relative z-10">
         
@@ -109,7 +161,7 @@ export default function ReportPage() {
                 href={String(report.url).startsWith('http') ? String(report.url) : `https://${String(report.url)}`} 
                 target="_blank" 
                 rel="noreferrer" 
-                className="inline-flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors font-semibold text-sm w-fit"
+                className={`inline-flex items-center gap-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors font-semibold text-sm w-fit ${isDownloading ? 'invisible' : 'visible'}`}
               >
                 <span className="underline decoration-slate-300 dark:decoration-slate-700 underline-offset-4 group-hover:decoration-slate-400 dark:group-hover:decoration-slate-500 transition-colors">
                   {String(report.url).replace(/^https?:\/\//, '').replace(/\/$/, '')}
@@ -118,14 +170,36 @@ export default function ReportPage() {
               </a>
             </div>
           </div>
-          
-          <div className="bg-white dark:bg-slate-900 px-8 py-6 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 flex flex-col items-center min-w-[200px]">
-            <span className="text-[10px] uppercase font-black text-slate-400 dark:text-slate-500 tracking-widest mb-1 flex items-center gap-1.5">
-              <TrendingUp className="w-3.5 h-3.5" /> Growth Readiness
-            </span>
-            <div className="flex items-baseline gap-1">
-              <span className={`text-6xl font-black tracking-tighter ${getScoreColor(Number(report.fdi_overall_score))}`}>{String(report.fdi_overall_score)}</span>
-              <span className="text-2xl font-bold text-slate-300 dark:text-slate-600">/100</span>
+          <div className="flex flex-col sm:flex-row items-center gap-4 min-w-[200px]">
+            <div className="bg-white dark:bg-slate-900 px-8 py-6 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 flex flex-col items-center w-full">
+              <span className="text-[10px] uppercase font-black text-slate-400 dark:text-slate-500 tracking-widest mb-1 flex items-center gap-1.5 relative group cursor-help">
+                <TrendingUp className="w-3.5 h-3.5" /> Growth Readiness
+                <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl z-50 text-left font-medium leading-relaxed normal-case hidden md:block">
+                  <strong className="block mb-1 text-orange-400 dark:text-orange-500 uppercase tracking-widest">How we score:</strong>
+                  Positioning (20%)<br/>
+                  Messaging (15%)<br/>
+                  Website &amp; UX (15%)<br/>
+                  Conversion (15%)<br/>
+                  Growth Foundation (15%)<br/>
+                  Trust &amp; Credibility (10%)<br/>
+                  Market &amp; Competition (10%)
+                </span>
+              </span>
+              <div className="flex items-baseline gap-1">
+                <span className={`text-6xl font-black tracking-tighter ${getScoreColor(Number(report.fdi_overall_score))}`}>{String(report.fdi_overall_score)}</span>
+                <span className="text-2xl font-bold text-slate-300 dark:text-slate-600">/100</span>
+              </div>
+              {Boolean(report.attestation_hash) && (
+                <a
+                  href={`https://www.okx.com/explorer/xlayer-test/tx/${report.attestation_hash}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-4 flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white transition-all bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm group"
+                >
+                  <XLayerLogo className="w-4 h-4 group-hover:scale-110 transition-transform drop-shadow-sm" />
+                  Attested Onchain
+                </a>
+              )}
             </div>
           </div>
         </motion.div>
@@ -330,18 +404,48 @@ export default function ReportPage() {
           </Card>
         </motion.div>
 
+        {/* Download Button Section */}
         <motion.div 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-center pt-16 pb-20"
+          className="flex justify-start pt-8 pb-4"
+          data-export-ignore="true"
+        >
+          <button 
+            onClick={downloadImage}
+            disabled={isDownloading}
+            className="group flex items-center gap-2 justify-center h-8 px-4 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-orange-500 dark:hover:bg-orange-500 hover:text-white dark:hover:text-white transition-all font-bold text-xs shadow-sm active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            {isDownloading ? (
+              <>
+                Saving...
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              </>
+            ) : (
+              <>
+                Save Report
+                <ImageDown className="w-3.5 h-3.5 opacity-70 group-hover:opacity-100 transition-opacity" />
+              </>
+            )}
+          </button>
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="text-center pt-8 pb-20"
+          data-export-ignore="true"
         >
            <Link href="/" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors font-bold uppercase tracking-widest text-xs">
              Submit another startup <ArrowRight className="w-4 h-4" />
            </Link>
         </motion.div>
       </div>
+      </div>
+      </div>
       <Footer />
-    </div>
+    </>
   );
 }

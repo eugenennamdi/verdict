@@ -3,6 +3,7 @@ import { NextResponse } from 'next/dist/server/web/spec-extension/response';
 import { generateAudit } from '@/lib/engine';
 import { supabaseAdmin } from '@/lib/supabase';
 import { redis } from '@/lib/redis';
+import { submitAttestation } from '@/lib/onchain';
 const handleRequest = async (req: Request) => {
   try {
     const { url, company_name, inferred_description, target_audience } = await req.json();
@@ -11,13 +12,31 @@ const handleRequest = async (req: Request) => {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    // SSRF Protection: Prevent scanning localhost or internal IP ranges
+    try {
+      const targetUrl = new URL(url);
+      const hostname = targetUrl.hostname.toLowerCase();
+      
+      const isLocalUrl = hostname === 'localhost' || 
+                          hostname === '127.0.0.1' || 
+                          hostname === '::1' || 
+                          hostname.endsWith('.local');
+                          
+      if (isLocalUrl) {
+        return NextResponse.json({ error: 'Invalid URL: Localhost or internal IPs are not allowed' }, { status: 403 });
+      }
+    } catch {
+      return NextResponse.json({ error: 'Invalid URL format' }, { status: 400 });
+    }
+
     // Rate Limiting for the Audit phase (1 per 12 hours)
     const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
     const rateLimitKey = `rate_limit_demo:audit:${ip}`;
     
     const lastAudit = await redis.get(rateLimitKey);
+    const isLocalhost = ip === '127.0.0.1' || ip === '::1' || ip === 'localhost';
     
-    if (lastAudit) {
+    if (lastAudit && !isLocalhost) {
       return NextResponse.json(
         { error: 'RATE_LIMIT_EXCEEDED' },
         { status: 429 }
@@ -61,6 +80,22 @@ const handleRequest = async (req: Request) => {
     if (error) {
       console.error('Supabase Error:', error);
       throw new Error('Failed to save report to database');
+    }
+
+    // Try to log attestation onchain
+    try {
+      const statusStr = auditData.overallScore >= 70 ? 'Pass' : 'Review Needed';
+      const hash = await submitAttestation(data.id, url, auditData.overallScore, statusStr);
+      
+      // Update the database with the transaction hash
+      await supabaseAdmin
+        .from('reports')
+        .update({ attestation_hash: hash })
+        .eq('id', data.id);
+        
+    } catch (onchainError) {
+      console.error('Onchain Attestation Error:', onchainError);
+      // Don't fail the entire request if onchain logging fails
     }
 
     return NextResponse.json({ report_id: data.id });

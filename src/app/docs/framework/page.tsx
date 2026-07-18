@@ -10,38 +10,45 @@ export default function FrameworkPage() {
   const pillars = [
     {
       title: "1. Positioning & ICP",
+      weight: "20%",
       icon: Target,
       description: "Is it violently obvious who this is for? Generic products for 'everyone' fail. We check if you have a razor-sharp Ideal Customer Profile (ICP)."
     },
     {
       title: "2. Messaging & Copy",
+      weight: "15%",
       icon: PenTool,
       description: "Are you using 'AI-powered synergistic workflows' or do you actually explain what the product does? We penalize corporate word salad heavily."
     },
     {
       title: "3. UX & Friction",
+      weight: "15%",
       icon: MousePointerClick,
       description: "Is the time-to-value immediate, or do you force users to 'Book a Demo' for a $10/mo tool? We grade the friction of your onboarding flow."
     },
     {
       title: "4. Conversion Triggers",
+      weight: "15%",
       icon: Zap,
       description: "What is the psychological hook? We look for urgency, scarcity, and clear, undeniable ROI promises that force a user to act now."
     },
     {
       title: "5. Trust & Social Proof",
+      weight: "10%",
       icon: ShieldCheck,
       description: "Do you have real testimonials, recognizable logos, and case studies, or are you just asking users to trust you blindly?"
     },
     {
       title: "6. Defensibility (Moat)",
+      weight: "10%",
       icon: Shield,
       description: "Is this a thin GPT wrapper that can be cloned in a weekend, or is there proprietary data, network effects, or deep technical IP?"
     },
     {
-      title: "7. Growth Readiness",
+      title: "7. Growth Foundation",
+      weight: "15%",
       icon: Rocket,
-      description: "The final aggregated score. Is this company ready to pour money into paid ads and scale, or do they need to fix fundamental flaws first?"
+      description: "Is there a scalable acquisition loop visible, or are you relying on unscalable manual sales? We check for virality, SEO foundations, and clear growth engines."
     }
   ];
 
@@ -57,7 +64,10 @@ export default function FrameworkPage() {
         {pillars.map((pillar) => {
           const Icon = pillar.icon;
           return (
-            <div key={pillar.title} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm hover:border-orange-500/50 transition-colors">
+            <div key={pillar.title} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm hover:border-orange-500/50 transition-colors relative group">
+              <div className="absolute top-4 right-4 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs font-bold px-2 py-1 rounded-md group-hover:bg-orange-50 dark:group-hover:bg-orange-500/10 group-hover:text-orange-500 transition-colors">
+                {pillar.weight}
+              </div>
               <div className="bg-orange-500/10 w-12 h-12 flex items-center justify-center rounded-xl mb-4 text-orange-500">
                 <Icon className="w-6 h-6" />
               </div>
@@ -68,15 +78,6 @@ export default function FrameworkPage() {
         })}
       </div>
 
-      <h2>The Output Format</h2>
-      <p>
-        For each of the first 6 pillars, the engine generates:
-      </p>
-      <ul>
-        <li>A numerical score (0-10 or 0-20 depending on the weighting).</li>
-        <li>A <strong>harsh reality</strong> statement (what you are doing wrong).</li>
-        <li>An <strong>actionable fix</strong> (how to fix it today).</li>
-      </ul>
 
       <DocsPagination 
         prev={{ title: "Architecture", href: "/docs/architecture" }}

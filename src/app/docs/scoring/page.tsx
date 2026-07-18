@@ -16,7 +16,7 @@ export default function ScoringPage() {
 
       <h2>The Rubric</h2>
       <p>
-        For each of the first 6 pillars (Positioning, Messaging, UX, Conversion, Trust, Defensibility), the engine assigns a score from <strong>0 to 10</strong> based on the following criteria:
+        For each of the 7 pillars, the engine assigns a base score from <strong>0 to 10</strong> (which is then multiplied by its assigned weight) based on the following criteria:
       </p>
 
       <ul>
@@ -39,7 +39,7 @@ export default function ScoringPage() {
 
       <h2>The Overall Score (0-100)</h2>
       <p>
-        The final <strong>Growth Readiness Score</strong> is a calculated weighted average of the 6 pillars, mapped to a 0-100 scale. It represents the company&apos;s overall readiness to scale and deploy capital into growth channels.
+        The final <strong>Growth Readiness Score</strong> is a calculated weighted aggregate of the 7 pillars, mapped to a 0-100 scale. It represents the company&apos;s overall readiness to scale and deploy capital into growth channels.
       </p>
 
       <DocsPagination 

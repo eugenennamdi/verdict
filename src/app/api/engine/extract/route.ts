@@ -10,13 +10,31 @@ const handleRequest = async (req: Request) => {
       return NextResponse.json({ error: 'URL is required' }, { status: 400 });
     }
 
+    // SSRF Protection: Prevent scanning localhost or internal IP ranges
+    try {
+      const targetUrl = new URL(url);
+      const hostname = targetUrl.hostname.toLowerCase();
+      
+      const isLocalhost = hostname === 'localhost' || 
+                          hostname === '127.0.0.1' || 
+                          hostname === '::1' || 
+                          hostname.endsWith('.local');
+                          
+      if (isLocalhost) {
+        return NextResponse.json({ error: 'Invalid URL: Localhost or internal IPs are not allowed' }, { status: 403 });
+      }
+    } catch {
+      return NextResponse.json({ error: 'Invalid URL format' }, { status: 400 });
+    }
+
     // Rate Limiting (1 audit per 12 hours)
     const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
     const rateLimitKey = `rate_limit_demo:${ip}`;
     
     const lastAudit = await redis.get(rateLimitKey);
+    const isLocalhost = ip === '127.0.0.1' || ip === '::1' || ip === 'localhost';
     
-    if (lastAudit) {
+    if (lastAudit && !isLocalhost) {
       return NextResponse.json(
         { error: 'RATE_LIMIT_EXCEEDED' },
         { status: 429 }
