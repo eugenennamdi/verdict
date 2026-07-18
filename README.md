@@ -119,6 +119,7 @@ flowchart LR
   C <-->|Analyze Context| E
   C <-->|Enforce Limit| F
   C -->|Save Report| G
+  C -->|Mint NFT Attestation| J
   C -->|Return ID| A
 ```
 
