@@ -191,7 +191,7 @@ export default function ReportPage() {
               </div>
               {Boolean(report.attestation_hash) && (
                 <a
-                  href={`https://www.okx.com/explorer/xlayer-test/tx/${report.attestation_hash}`}
+                  href={`https://www.okx.com/explorer/xlayer/tx/${report.attestation_hash}`}
                   target="_blank"
                   rel="noreferrer"
                   className="mt-4 flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white transition-all bg-slate-100 dark:bg-slate-800/50 hover:bg-slate-200 dark:hover:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm group"
