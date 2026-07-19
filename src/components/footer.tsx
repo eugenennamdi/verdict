@@ -2,10 +2,12 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { Moon, Sun, Monitor } from "lucide-react";
+import { Moon, Sun, Monitor, Activity } from "lucide-react";
+import { UsageStats } from "./usage-stats";
 
 export function Footer() {
   const [mounted, setMounted] = useState(false);
+  const [isStatsOpen, setIsStatsOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
   // useEffect only runs on the client, so now we can safely show the UI
@@ -16,28 +18,29 @@ export function Footer() {
   }, []);
 
   return (
-    <footer className="w-full py-6 px-6 mt-auto bg-transparent transition-colors">
-      <div className="max-w-6xl mx-auto flex items-center justify-between gap-4 relative w-full">
+    <>
+    <footer className="w-full py-8 sm:py-6 px-6 mt-auto bg-transparent transition-colors">
+      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-8 sm:gap-4 relative w-full">
         
         {/* Left: Author */}
-        <div className="flex-1 flex items-center justify-start text-[13px] font-medium text-slate-500 dark:text-slate-400">
-          <span className="hidden sm:inline">Built by</span>
+        <div className="order-3 sm:order-1 w-full sm:w-auto flex items-center justify-center sm:justify-start text-[13px] font-medium text-slate-500 dark:text-slate-400">
+          <span>Built by</span>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img 
             src="https://eugenennamdi.com/favicon.png" 
             alt="Eugene Nnamdi" 
-            className="w-5 h-5 rounded-full sm:mx-2 shadow-sm object-cover"
+            className="w-5 h-5 rounded-full mx-2 shadow-sm object-cover"
             onError={(e) => {
                (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjxwYXRoIGQ9Ik0xMiAxMGEyIDIgMCAxIDAgMC00IDIgMiAwIDAgMCAwIDR6Ii8+PHBhdGggZD0iTTcuNCAxOGE1IDUgMCAwIDEgOS4yIDB6Ii8+PC9zdmc+';
             }}
           />
-          <a href="https://eugenennamdi.com" target="_blank" rel="noreferrer" className="text-slate-900 dark:text-white hover:underline decoration-slate-300 dark:decoration-slate-600 underline-offset-4 ml-2 sm:ml-0 mr-1 hidden sm:inline">
+          <a href="https://eugenennamdi.com" target="_blank" rel="noreferrer" className="text-slate-900 dark:text-white hover:underline decoration-slate-300 dark:decoration-slate-600 underline-offset-4">
             Eugene Nnamdi
           </a>
         </div>
 
         {/* Center: Social & Brand Links */}
-        <div className="flex-shrink-0 flex items-center justify-center gap-4 text-slate-500 dark:text-slate-400">
+        <div className="order-1 sm:order-2 w-full sm:w-auto flex items-center justify-center gap-4 text-slate-500 dark:text-slate-400">
           <a href="/docs" className="text-sm font-medium hover:text-slate-900 dark:hover:text-white transition-colors">
             Documentation
           </a>
@@ -66,8 +69,17 @@ export function Footer() {
         </div>
         </div>
 
-        {/* Right: Theme Toggler */}
-        <div className="flex-1 flex items-center justify-end">
+        {/* Right: Theme Toggler & Stats */}
+        <div className="order-2 sm:order-3 w-full sm:w-auto flex items-center justify-center sm:justify-end gap-6 sm:gap-8">
+          <button 
+            onClick={() => setIsStatsOpen(true)}
+            className="flex items-center gap-2 p-1.5 px-3 rounded-2xl bg-slate-200/50 dark:bg-slate-800/30 text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 transition-all"
+            title="Real-time Platform Usage"
+          >
+            <Activity className="w-4 h-4" />
+            <span className="hidden sm:inline uppercase tracking-widest text-[10px]">Live Stats</span>
+          </button>
+
           {mounted ? (
             <div className="flex items-center gap-1 p-1 rounded-2xl bg-slate-200/50 dark:bg-slate-800/30">
               <button 
@@ -99,5 +111,7 @@ export function Footer() {
 
       </div>
     </footer>
+    <UsageStats isOpen={isStatsOpen} onClose={() => setIsStatsOpen(false)} />
+    </>
   );
 }

@@ -214,10 +214,11 @@ export default function Home() {
         <div className="flex items-center gap-4">
           <button 
             onClick={() => setIsAgentModalOpen(true)}
-            className="hidden sm:flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-full bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/20 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-500/20 transition-colors"
+            className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/20 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-500/20 transition-colors"
           >
-            <Bot className="w-4 h-4" />
-            For Agents
+            <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">For Agents</span>
+            <span className="sm:hidden">Agents</span>
           </button>
         </div>
       </header>
