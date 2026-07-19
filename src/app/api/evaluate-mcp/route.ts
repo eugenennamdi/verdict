@@ -5,6 +5,7 @@ import { performFullAudit } from "@/lib/engine";
 import { withX402 } from "@okxweb3/app-x402-next";
 import { getPaymentServer } from "@/lib/payment";
 import { supabaseAdmin } from "@/lib/supabase";
+import { submitAttestation } from "@/lib/onchain";
 
 export const maxDuration = 300; // Max allowed for Vercel Hobby to prevent timeouts
 export const dynamic = 'force-dynamic'; // Prevent Next.js from caching the 402 response
@@ -82,6 +83,14 @@ const createMCPServer = () => {
             .single();
           if (!error && data?.id) {
             reportUrl = `https://tryverdict.xyz/report/${data.id}`;
+            
+            try {
+              const statusStr = audit.overallScore >= 70 ? 'Pass' : 'Review Needed';
+              const hash = await submitAttestation(data.id, url, audit.overallScore, statusStr);
+              await supabaseAdmin.from('reports').update({ attestation_hash: hash }).eq('id', data.id);
+            } catch (onchainError) {
+              console.error('Onchain Attestation Error in MCP:', onchainError);
+            }
           }
         } catch (err) {
           console.error("Failed to save report to supabase in MCP", err);
@@ -202,6 +211,14 @@ const handleRequest = async (req: Request) => {
               .single();
             if (!error && data?.id) {
               reportUrl = `https://tryverdict.xyz/report/${data.id}`;
+              
+              try {
+                const statusStr = audit.overallScore >= 70 ? 'Pass' : 'Review Needed';
+                const hash = await submitAttestation(data.id, hasUrl, audit.overallScore, statusStr);
+                await supabaseAdmin.from('reports').update({ attestation_hash: hash }).eq('id', data.id);
+              } catch (onchainError) {
+                console.error('Onchain Attestation Error in MCP:', onchainError);
+              }
             }
           } catch (err) {
             console.error("Failed to save report to supabase in MCP", err);
