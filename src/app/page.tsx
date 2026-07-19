@@ -234,9 +234,25 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, filter: "blur(4px)" }}
                 transition={springTransition}
-                className="w-full max-w-2xl mx-auto"
+                className="w-full max-w-2xl mx-auto relative"
               >
-                <div className="space-y-6 mb-12">
+                <div className="absolute -top-14 left-1/2 -translate-x-1/2 w-full flex justify-center">
+                  <a 
+                    href="https://www.producthunt.com/products/verdict-7" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 bg-transparent shadow-sm hover:shadow transition-all hover:-translate-y-0.5 group backdrop-blur-md w-max"
+                  >
+                    <svg className="w-3.5 h-3.5 text-[#FF6154]" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M13.626 12.067C14.717 12.067 15.602 11.182 15.602 10.091C15.602 9 14.717 8.115 13.626 8.115H10.515V12.067H13.626ZM10.515 14.509V18.172H8.082V5.65H13.626C16.06 5.65 18.035 7.625 18.035 10.058C18.035 12.491 16.06 14.466 13.626 14.466H10.515V14.509ZM12 0C5.372 0 0 5.372 0 12C0 18.628 5.372 24 12 24C18.628 24 24 18.628 24 12C24 5.372 18.628 0 12 0Z" />
+                    </svg>
+                    <span className="text-[11px] font-medium text-slate-600 dark:text-slate-400 tracking-tight whitespace-nowrap">
+                      We&apos;re live on <span className="font-bold text-slate-900 dark:text-white">Product Hunt</span>
+                    </span>
+                  </a>
+                </div>
+
+                <div className="space-y-6 mb-12 text-center">
                   <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 dark:text-white leading-[1.1]">
                     Find the bottleneck <br className="hidden md:block" />
                     killing your growth in <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-amber-400">60 seconds.</span>
