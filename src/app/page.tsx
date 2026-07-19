@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Footer } from "@/components/footer";
-import { AgentOnboardingModal } from "@/components/AgentOnboardingModal";
 
 const springTransition = { type: "spring" as const, stiffness: 400, damping: 30 };
 
@@ -202,24 +201,25 @@ export default function Home() {
   return (
     <div className="min-h-[100dvh] flex-1 w-full flex flex-col relative">
       
-      {/* Premium Mesh Background */}
-      <div className="absolute inset-0 z-0 opacity-40 dark:opacity-20 pointer-events-none bg-mesh" />
+      {/* Premium Mesh Background & Noise */}
+      <div className="absolute inset-0 z-0 opacity-60 dark:opacity-40 pointer-events-none bg-mesh mix-blend-multiply dark:mix-blend-screen" />
+      <div className="absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.04] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
 
       {/* Header */}
-      <header className="sticky top-4 z-50 w-[calc(100%-2rem)] max-w-6xl mx-auto px-6 py-4 flex justify-between items-center glass-panel rounded-full transition-all duration-300 mb-8 mt-4">
+      <header className="absolute top-0 left-0 right-0 z-50 w-full max-w-7xl mx-auto px-6 sm:px-12 py-8 flex justify-between items-center transition-all duration-300">
         <Link href="/" className="flex items-center gap-2 group cursor-pointer">
           <VerdictLogo className="w-8 h-8 text-orange-500 group-hover:scale-105 transition-transform" />
           <span className="font-black tracking-tight text-xl text-slate-900 dark:text-white">VERDICT</span>
         </Link>
         <div className="flex items-center gap-4">
-          <button 
-            onClick={() => setIsAgentModalOpen(true)}
-            className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-orange-50 dark:bg-orange-500/10 border border-orange-200 dark:border-orange-500/20 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-500/20 transition-colors"
+          <Link 
+            href="/agents"
+            className="group flex items-center gap-2 text-[13px] font-bold px-5 py-2.5 rounded-lg bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/50 text-orange-500 hover:bg-white/80 dark:hover:bg-slate-800/80 hover:text-orange-600 dark:hover:text-orange-400 transition-all shadow-sm"
           >
-            <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <Bot className="w-4 h-4 transition-opacity" />
             <span className="hidden sm:inline">For Agents</span>
             <span className="sm:hidden">Agents</span>
-          </button>
+          </Link>
         </div>
       </header>
 
@@ -236,12 +236,12 @@ export default function Home() {
                 transition={springTransition}
                 className="w-full max-w-2xl mx-auto relative"
               >
-                <div className="w-full flex justify-center mb-6 md:mb-0 md:absolute md:-top-14 md:left-1/2 md:-translate-x-1/2">
+                <div className="w-full flex justify-center mb-8">
                   <a 
                     href="https://www.producthunt.com/products/verdict-7" 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 bg-transparent shadow-sm hover:shadow transition-all hover:-translate-y-0.5 group backdrop-blur-md w-max"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 bg-transparent shadow-sm transition-all group backdrop-blur-md w-max"
                   >
                     <svg className="w-3.5 h-3.5 text-[#FF6154]" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M13.626 12.067C14.717 12.067 15.602 11.182 15.602 10.091C15.602 9 14.717 8.115 13.626 8.115H10.515V12.067H13.626ZM10.515 14.509V18.172H8.082V5.65H13.626C16.06 5.65 18.035 7.625 18.035 10.058C18.035 12.491 16.06 14.466 13.626 14.466H10.515V14.509ZM12 0C5.372 0 0 5.372 0 12C0 18.628 5.372 24 12 24C18.628 24 24 18.628 24 12C24 5.372 18.628 0 12 0Z" />
@@ -249,10 +249,11 @@ export default function Home() {
                     <span className="text-[11px] font-medium text-slate-600 dark:text-slate-400 tracking-tight whitespace-nowrap">
                       We&apos;re live on <span className="font-bold text-slate-900 dark:text-white">Product Hunt</span>
                     </span>
+                    <ChevronRight className="w-3 h-3 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
                   </a>
                 </div>
 
-                <div className="space-y-6 mb-12 text-center">
+                <div className="space-y-6 mb-12 text-center mt-4">
                   <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 dark:text-white leading-[1.1]">
                     Find the bottleneck <br className="hidden md:block" />
                     killing your growth in <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-amber-400">60 seconds.</span>
@@ -263,9 +264,9 @@ export default function Home() {
                 </div>
 
                 <form onSubmit={handleAnalyze}>
-                  <div className="relative flex items-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 focus-within:border-slate-400 dark:focus-within:border-slate-600 overflow-hidden shadow-2xl shadow-slate-200/50 dark:shadow-none transition-all duration-300">
+                  <div className="group relative flex items-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-xl border-2 border-slate-200/50 dark:border-slate-800/50 hover:border-slate-300 dark:hover:border-slate-700 focus-within:border-slate-300 dark:focus-within:border-slate-700 focus-within:-translate-y-0.5 overflow-hidden transition-all duration-300 p-1">
                     <div className="pl-5">
-                      <Search className="w-5 h-5 text-slate-400 dark:text-slate-500" />
+                      <Search className="w-5 h-5 text-slate-400 dark:text-slate-500 group-focus-within:text-slate-500 dark:group-focus-within:text-slate-400 transition-colors duration-300" />
                     </div>
                     <Input 
                       type="text"
@@ -277,16 +278,22 @@ export default function Home() {
                       autoCapitalize="none"
                       spellCheck="false"
                       disabled={isLoading}
-                      className="border-0 bg-transparent dark:bg-transparent disabled:bg-transparent dark:disabled:bg-transparent text-lg py-7 focus-visible:ring-0 focus-visible:ring-offset-0 text-slate-900 dark:text-white placeholder:text-slate-400 shadow-none font-medium rounded-none"
+                      className="border-0 bg-transparent dark:bg-transparent disabled:bg-transparent dark:disabled:bg-transparent text-lg sm:text-xl py-6 focus-visible:ring-0 focus-visible:ring-offset-0 text-slate-900 dark:text-white placeholder:text-slate-400 shadow-none font-medium rounded-none w-full"
                     />
-                    <div className="pr-2">
+                    <div className="pr-1">
                       <Button 
                         type="submit" 
                         disabled={isLoading}
-                        className="bg-orange-500 hover:bg-orange-600 text-white font-bold tracking-wide rounded-xl px-6 h-11 transition-all active:scale-95 w-[140px] sm:w-36 flex items-center justify-center relative overflow-hidden shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] [-webkit-tap-highlight-color:transparent]"
+                        className="bg-orange-500 hover:bg-orange-600 text-white font-bold tracking-wide rounded-xl px-6 sm:px-8 h-12 transition-all active:scale-[0.98] w-[140px] sm:w-[160px] flex items-center justify-center relative [-webkit-tap-highlight-color:transparent] group/btn"
                       >
-                        {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />}
-                        Analyze
+                        {isLoading ? (
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                          <>
+                            <span className="text-sm sm:text-base mr-1 sm:mr-2">Analyze</span>
+                            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 group-hover/btn:translate-x-1 transition-transform" />
+                          </>
+                        )}
                       </Button>
                     </div>
                   </div>
@@ -316,32 +323,28 @@ export default function Home() {
                       className="overflow-hidden"
                     >
                       <div className="flex justify-center mt-8">
-                        <div className="w-full max-w-md bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl p-6 flex flex-col items-start space-y-5 border border-slate-200 dark:border-slate-700/50 shadow-sm dark:shadow-2xl relative overflow-hidden">
+                        <div className="w-full max-w-md bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl p-6 pt-14 flex flex-col items-start space-y-5 border-2 border-slate-200/50 dark:border-slate-800/50 shadow-sm relative overflow-hidden">
                           {/* Terminal Header */}
-                          <div className="absolute top-0 left-0 w-full h-10 flex items-center px-4">
-                            <div className="flex gap-1.5">
-                              <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                              <div className="w-3 h-3 rounded-full bg-amber-400"></div>
-                              <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
-                            </div>
-                            <span className="text-[11px] uppercase font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 ml-4">Verdict Engine v0</span>
+                          <div className="absolute top-0 left-0 w-full h-10 flex items-center px-4 border-b border-slate-100 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-900/50">
+                            <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
+                            <span className="text-[10px] uppercase font-mono font-bold tracking-widest text-slate-400 dark:text-slate-500 ml-3">Verdict Engine v0</span>
                           </div>
 
-                          <div className="pt-8 w-full flex flex-col space-y-4">
+                          <div className="w-full flex flex-col space-y-4">
                             {analyzeLoadingPhrases.map((phrase, idx) => (
-                               <div key={idx} className={`flex items-center gap-4 transition-all duration-500 font-mono ${loadingPhase >= idx ? 'opacity-100 translate-x-0' : 'opacity-20 -translate-x-2'}`}>
+                               <div key={idx} className={`flex items-center gap-4 transition-all duration-500 font-mono ${loadingPhase >= idx ? 'opacity-100 translate-x-0' : 'opacity-30 -translate-x-2'}`}>
                                   {loadingPhase > idx ? (
-                                     <div className="w-5 h-5 rounded-sm bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/30">
-                                        <Check className="w-3.5 h-3.5 text-emerald-500" strokeWidth={3} />
+                                     <div className="w-5 h-5 rounded flex items-center justify-center shrink-0 bg-slate-900 dark:bg-white text-white dark:text-slate-900">
+                                        <Check className="w-3.5 h-3.5" strokeWidth={3} />
                                      </div>
                                   ) : loadingPhase === idx ? (
                                      <div className="w-5 h-5 flex items-center justify-center shrink-0">
-                                        <div className="w-2 h-4 bg-orange-500 animate-pulse"></div>
+                                        <Loader2 className="w-4 h-4 text-orange-500 animate-spin" />
                                      </div>
                                   ) : (
-                                     <div className="w-5 h-5 rounded-sm border border-slate-300 dark:border-slate-700 shrink-0" />
+                                     <div className="w-5 h-5 rounded border-2 border-slate-200 dark:border-slate-800 shrink-0" />
                                   )}
-                                  <span className={`text-[13px] ${loadingPhase >= idx ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-600'}`}>
+                                  <span className={`text-[13px] ${loadingPhase >= idx ? 'text-slate-900 dark:text-white font-medium' : 'text-slate-400 dark:text-slate-600'}`}>
                                     {phrase}
                                   </span>
                                </div>
@@ -389,38 +392,38 @@ export default function Home() {
                   <CardContent className="pt-6">
                     <form onSubmit={handleExtract} className="space-y-6">
                       <div className="space-y-3">
-                        <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Company Name</label>
+                        <label className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Company Name</label>
                         <Input 
                           value={extractedData?.company_name || ""} 
                           onChange={e => setExtractedData({...extractedData!, company_name: e.target.value})}
-                          className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-base py-6 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200 dark:focus-visible:border-slate-800"
+                          className="bg-transparent border-2 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-base py-6 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-900 dark:focus-visible:border-white rounded-xl transition-colors"
                         />
                       </div>
                       
                       <div className="space-y-3">
-                        <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Target Audience</label>
+                        <label className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Target Audience</label>
                         <Input 
                           value={extractedData?.target_audience || ""} 
                           onChange={e => setExtractedData({...extractedData!, target_audience: e.target.value})}
-                          className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-base py-6 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200 dark:focus-visible:border-slate-800"
+                          className="bg-transparent border-2 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-base py-6 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-900 dark:focus-visible:border-white rounded-xl transition-colors"
                         />
                       </div>
 
                       <div className="space-y-3">
-                        <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Inferred Description</label>
+                        <label className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Inferred Description</label>
                         <Textarea 
                           value={extractedData?.core_value_prop || ""} 
                           onChange={e => setExtractedData({...extractedData!, core_value_prop: e.target.value})}
-                          className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-base py-4 min-h-[100px] focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200 dark:focus-visible:border-slate-800"
+                          className="bg-transparent border-2 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-base py-4 min-h-[100px] focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-900 dark:focus-visible:border-white rounded-xl transition-colors"
                         />
                       </div>
 
                       <div className="space-y-3">
-                        <label className="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Primary CTA</label>
+                        <label className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Primary CTA</label>
                         <Input 
                           value={extractedData?.primary_cta || ""} 
                           onChange={e => setExtractedData({...extractedData!, primary_cta: e.target.value})}
-                          className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-base py-6 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200 dark:focus-visible:border-slate-800"
+                          className="bg-transparent border-2 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-base py-6 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-900 dark:focus-visible:border-white rounded-xl transition-colors"
                         />
                       </div>
 
@@ -430,7 +433,7 @@ export default function Home() {
                           variant="outline"
                           onClick={() => setIsAuditing(false)}
                           disabled={isLoading}
-                          className="h-12 px-6 rounded-xl border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                          className="h-12 px-6 rounded-xl border-2 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
                         >
                           Cancel
                         </Button>
@@ -456,32 +459,28 @@ export default function Home() {
                           className="overflow-hidden border-t border-slate-100 dark:border-slate-800 pt-8 mt-2"
                         >
                           <div className="flex justify-center mt-6">
-                            <div className="w-full max-w-md bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl p-6 flex flex-col items-start space-y-5 border border-slate-200 dark:border-slate-700/50 shadow-sm dark:shadow-2xl relative overflow-hidden">
+                            <div className="w-full max-w-md bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl p-6 pt-14 flex flex-col items-start space-y-5 border-2 border-slate-200/50 dark:border-slate-800/50 shadow-sm relative overflow-hidden">
                               {/* Terminal Header */}
-                              <div className="absolute top-0 left-0 w-full h-10 flex items-center px-4">
-                                <div className="flex gap-1.5">
-                                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                                  <div className="w-3 h-3 rounded-full bg-amber-400"></div>
-                                  <div className="w-3 h-3 rounded-full bg-emerald-400"></div>
-                                </div>
-                                <span className="text-[11px] uppercase font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 ml-4">Verdict Engine v0</span>
+                              <div className="absolute top-0 left-0 w-full h-10 flex items-center px-4 border-b border-slate-100 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-900/50">
+                                <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
+                                <span className="text-[10px] uppercase font-mono font-bold tracking-widest text-slate-400 dark:text-slate-500 ml-3">Verdict Engine v0</span>
                               </div>
 
-                              <div className="pt-8 w-full flex flex-col space-y-4">
+                              <div className="w-full flex flex-col space-y-4">
                                 {generateLoadingPhrases.map((phrase, idx) => (
-                                   <div key={idx} className={`flex items-center gap-4 transition-all duration-500 font-mono ${loadingPhase >= idx ? 'opacity-100 translate-x-0' : 'opacity-20 -translate-x-2'}`}>
+                                   <div key={idx} className={`flex items-center gap-4 transition-all duration-500 font-mono ${loadingPhase >= idx ? 'opacity-100 translate-x-0' : 'opacity-30 -translate-x-2'}`}>
                                       {loadingPhase > idx ? (
-                                         <div className="w-5 h-5 rounded-sm bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/30">
-                                            <Check className="w-3.5 h-3.5 text-emerald-500" strokeWidth={3} />
+                                         <div className="w-5 h-5 rounded flex items-center justify-center shrink-0 bg-slate-900 dark:bg-white text-white dark:text-slate-900">
+                                            <Check className="w-3.5 h-3.5" strokeWidth={3} />
                                          </div>
                                       ) : loadingPhase === idx ? (
                                          <div className="w-5 h-5 flex items-center justify-center shrink-0">
-                                            <div className="w-2 h-4 bg-orange-500 animate-pulse"></div>
+                                            <Loader2 className="w-4 h-4 text-orange-500 animate-spin" />
                                          </div>
                                       ) : (
-                                         <div className="w-5 h-5 rounded-sm border border-slate-300 dark:border-slate-700 shrink-0" />
+                                         <div className="w-5 h-5 rounded border-2 border-slate-200 dark:border-slate-800 shrink-0" />
                                       )}
-                                      <span className={`text-[13px] ${loadingPhase >= idx ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-600'}`}>
+                                      <span className={`text-[13px] ${loadingPhase >= idx ? 'text-slate-900 dark:text-white font-medium' : 'text-slate-400 dark:text-slate-600'}`}>
                                         {phrase}
                                       </span>
                                    </div>
@@ -628,10 +627,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      <AgentOnboardingModal 
-        isOpen={isAgentModalOpen} 
-        onClose={() => setIsAgentModalOpen(false)} 
-      />
+
 
       <Footer />
     </div>

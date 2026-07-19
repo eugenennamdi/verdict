@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Moon, Sun, Monitor, Activity } from "lucide-react";
 import { UsageStats } from "./usage-stats";
 
-export function Footer() {
+export function Footer({ minimal = false }: { minimal?: boolean }) {
   const [mounted, setMounted] = useState(false);
   const [isStatsOpen, setIsStatsOpen] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -20,9 +20,10 @@ export function Footer() {
   return (
     <>
     <footer className="w-full py-8 sm:py-6 px-6 mt-auto bg-transparent transition-colors">
-      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-8 sm:gap-4 relative w-full">
+      <div className={`max-w-6xl mx-auto flex flex-col sm:flex-row items-center gap-8 sm:gap-4 relative w-full ${minimal ? 'justify-end' : 'justify-between'}`}>
         
         {/* Left: Author */}
+        {!minimal && (
         <div className="order-3 sm:order-1 w-full sm:w-auto flex items-center justify-center sm:justify-start text-[13px] font-medium text-slate-500 dark:text-slate-400">
           <span>Built by</span>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -38,8 +39,10 @@ export function Footer() {
             Eugene Nnamdi
           </a>
         </div>
+        )}
 
         {/* Center: Social & Brand Links */}
+        {!minimal && (
         <div className="order-1 sm:order-2 w-full sm:w-auto flex items-center justify-center gap-4 text-slate-500 dark:text-slate-400">
           <a href="/docs" className="text-sm font-medium hover:text-slate-900 dark:hover:text-white transition-colors">
             Documentation
@@ -66,11 +69,13 @@ export function Footer() {
           >
             <svg viewBox="0 0 24 24" aria-hidden="true" className="w-4 h-4 fill-current"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path></svg>
           </a>
+          </div>
         </div>
-        </div>
+        )}
 
         {/* Right: Theme Toggler & Stats */}
-        <div className="order-2 sm:order-3 w-full sm:w-auto flex items-center justify-center sm:justify-end gap-6 sm:gap-8">
+        <div className={`order-2 sm:order-3 w-full sm:w-auto flex items-center justify-center sm:justify-end gap-6 sm:gap-8 ${minimal ? 'ml-auto' : ''}`}>
+          {!minimal && (
           <button 
             onClick={() => setIsStatsOpen(true)}
             className="flex items-center gap-2 p-1.5 px-3 rounded-2xl bg-slate-200/50 dark:bg-slate-800/30 text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 transition-all"
@@ -79,6 +84,7 @@ export function Footer() {
             <Activity className="w-4 h-4" />
             <span className="hidden sm:inline uppercase tracking-widest text-[10px]">Live Stats</span>
           </button>
+          )}
 
           {mounted ? (
             <div className="flex items-center gap-1 p-1 rounded-2xl bg-slate-200/50 dark:bg-slate-800/30">

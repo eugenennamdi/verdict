@@ -38,8 +38,9 @@ Most AI tools try to be overly polite. Verdict is intentionally designed with an
 - **Secure Mathematical Scoring:** The LLM only extracts raw metrics. The final weighted Growth Readiness Score is computed programmatically by the backend to guarantee absolute fairness and mathematical integrity.
 - **Agentic Onboarding:** Seamlessly onboard autonomous agents (Claude, Hermes, Openclaw) by equipping them with the Onchain OS toolkit and a secure Agentic Wallet for micro-payments.
 - **Soulbound Onchain Attestation (NFT):** Solves the "fake AI report" problem. When an audit finishes, the AI acts as an autonomous smart-contract auditor, minting an immutable, non-transferable ERC-721 Soulbound NFT (`VERDICT`) directly onto the X-Layer blockchain as cryptographic proof of the score.
+- **Exec-Ready Image Export Engine:** A robust service that generates pixel-perfect, branded image exports of the report on the fly, allowing founders to immediately save and share their full audit across social channels or with their team.
 - **Secure by Design:** Backend execution is entirely decoupled from the frontend, secured via Supabase Service Role Keys and IP-based Upstash Redis rate limiting.
-- **Sleek Presentation Layer:** Fully responsive, dark-mode optimized, beautifully animated reports that users want to share.
+- **Sleek Presentation Layer:** Fully responsive, dark-mode optimized, beautifully animated reports featuring a premium, Apple-esque UI overhaul.
 
 ---
 
@@ -48,7 +49,7 @@ Most AI tools try to be overly polite. Verdict is intentionally designed with an
 Verdict is engineered as a robust, dual-track pipeline serving both human users and machine-to-machine agents.
 
 ### The Dual-Track Execution Rails
-- **Human Web App (Next.js):** A highly optimized, asynchronous Next.js 16 App Router application handling UI state, visual loading phases, and error interception. Includes a sleek "For Agents" onboarding flow.
+- **Human Web App (Next.js):** A highly optimized, asynchronous Next.js 16 App Router application handling UI state, visual loading phases, and error interception. 
 - **A2MCP OKX.AI Agent (`/api/evaluate-mcp`):** A headless, machine-to-machine endpoint designed specifically for the OKX.AI Agent Ecosystem. It allows external autonomous agents to trigger complete audits natively, secured behind an **x402 Payment Challenge**.
 
 ### Context Normalization & Extraction
@@ -65,7 +66,11 @@ The extracted markdown is passed through a multi-stage reasoning pipeline powere
 ### Rate Limiting & Financial Infrastructure
 Running headless browsers and large LLM context windows is compute-heavy.
 - **The Paywall (Human Path):** Protected by **Upstash Redis**, strictly limiting IPs to a single free audit to prevent abuse and compute drain. Upon limit exhaustion, a client-side paywall modal is rendered.
-- **Decentralized Payments (Agent Path):** The OKX.AI API endpoint enforces an x402 payment challenge. Agents must execute a smart contract transaction on the **X-Layer Blockchain** (using the OKX Web3 SDK) to pay the 0.5 USDT compute fee per execution, unlocking scalable, decentralized monetization.
+- **Decentralized Payments (x402 Agent Path):** The OKX.AI API endpoint (`/api/evaluate-mcp`) enforces a strict **x402 payment challenge** for machine-to-machine monetization. 
+  1. **Request:** An external AI agent calls the endpoint to request an audit.
+  2. **Challenge:** The server intercepts and responds with an `HTTP 402 Payment Required` status, providing the payment amount (0.5 USDT), token address, and the X-Layer recipient address in the headers.
+  3. **Autonomous Settlement:** The agent autonomously signs and executes the transaction on the **X-Layer Blockchain** using the OKX Web3 SDK.
+  4. **Execution:** Once the payment is verified onchain, the server unlocks the compute and returns the finalized structured JSON audit to the agent.
 
 ### Persistence, Delivery & Soulbound Attestations
 The final structured audit, complete with priority matrices and pillar scores, is persisted to a **Supabase PostgreSQL** database. 
@@ -73,7 +78,7 @@ The final structured audit, complete with priority matrices and pillar scores, i
 Crucially, we solve the "fake AI report" trust deficit through cryptographic attestation. Rather than just logging a generic event to the blockchain, our backend Relayer interacts with a custom **ERC-721 Smart Contract (`VerdictAttestation`)** deployed on the **X-Layer**.
 - The AI engine autonomously mints a **Soulbound (Non-Transferable) NFT** for every completed audit.
 - The NFT's `tokenURI` points permanently to the exact URL of the dynamic report (`report/[id]`).
-- When users or judges click the "Attested Onchain" badge on the report, they are taken to the OKX Explorer where they see a clear **"Tokens Transferred: Verdict Attestation (VERDICT)"** banner, proving the AI issued a permanent digital certificate.
+- When users click the "Attested Onchain" badge on the report, they are taken to the OKX Explorer where they see a clear **"Tokens Transferred: Verdict Attestation (VERDICT)"** banner, proving the AI issued a permanent digital certificate.
 
 The client is then routed to the dynamic `report/[id]` page, instantly rendering the beautifully animated, highly shareable report.
 
@@ -142,8 +147,8 @@ flowchart LR
 
 Verdict is not just a landing page auditor. We are building a fully autonomous growth agency packaged as a simple tool. 
 
-### Phase 1: The Reality Check (Live)
-Landing page audits, UX friction analysis, and the Growth Readiness Score.
+### Phase 1: The Autonomous Auditor (Live)
+Fully operational end-to-end pipeline: Deep DOM extraction via Firecrawl, the 7-Pillar Growth Readiness Framework analysis via Gemini 3.5 Flash, cryptographic score attestations (Soulbound NFTs on X-Layer), and the x402 Agent Payment Gateway.
 
 ### Phase 2: Campaign Architecture
 You input your goal ("We need 500 beta signups in 30 days with $2k budget"). Verdict reverse-engineers a growth campaign, writes the ad copy, and builds a launch playbook.

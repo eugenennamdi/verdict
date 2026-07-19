@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, AlertTriangle, Target, TrendingUp, ArrowRight, ArrowUpRight, AlertCircle, ImageDown } from "lucide-react";
+import { Loader2, AlertTriangle, Target, TrendingUp, ArrowLeft, ArrowUpRight, AlertCircle, ImageDown, Share2, Link2, Check } from "lucide-react";
 import { motion } from "framer-motion";
 
 const springTransition = { type: "spring" as const, stiffness: 200, damping: 20 };
@@ -31,6 +31,20 @@ export default function ReportPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleShareX = () => {
+    const text = `Verdict (@tryverdict) just ran a brutal AI audit on ${report?.company_name || 'this startup'}.\n\nScore: ${report?.fdi_overall_score}/100 (Attested onchain via @XLayerOfficial)\n\nRead the full breakdown:`;
+    const url = window.location.href;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(twitterUrl, '_blank');
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
 
   const downloadImage = async () => {
     setIsDownloading(true);
@@ -134,6 +148,17 @@ export default function ReportPage() {
 
       <div className="max-w-6xl mx-auto space-y-16 relative z-10">
         
+        {/* Top Navigation */}
+        <div className="mb-8" data-export-ignore="true">
+           <Link 
+             href="/" 
+             className="group inline-flex items-center gap-2 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors font-medium text-sm"
+           >
+             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+             Start new audit
+           </Link>
+        </div>
+        
         {/* Header section */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -145,12 +170,9 @@ export default function ReportPage() {
             <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-100 dark:border-slate-800 transition-all duration-300 flex-shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
-                src={`https://img.logo.dev/${String(report.url).replace(/^https?:\/\//, '').replace(/\/$/, '')}?token=pk_IkDdNxBYR5a1TvnkuL0tsQ`} 
+                src={`/api/proxy-logo?domain=${encodeURIComponent(String(report.url))}`} 
                 alt={`${String(report.company_name)} logo`} 
                 className="w-14 h-14 rounded-xl group-hover:scale-105 transition-transform bg-white object-contain" 
-                onError={(e) => {
-                  e.currentTarget.src = `https://www.google.com/s2/favicons?domain=${String(report.url)}&sz=128`;
-                }}
               />
             </div>
             <div className="flex flex-col justify-center pt-1">
@@ -204,76 +226,64 @@ export default function ReportPage() {
           </div>
         </motion.div>
 
-        <motion.p 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-lg text-slate-500 dark:text-slate-400 font-medium max-w-4xl leading-relaxed"
-        >
-          {String(report.executive_summary)}
-        </motion.p>
-
-        {/* Highlighted Verdict Box */}
+        {/* Hero Bento */}
         {verdict && (
-          <MotionCard 
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={springTransition}
-            className="glass-panel overflow-hidden relative rounded-3xl"
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
           >
-            <CardHeader className="pb-4 relative z-10 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
-              <CardTitle className="text-xl font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-                <AlertCircle className="text-slate-800 dark:text-slate-200 w-7 h-7" /> The Verdict
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-8 relative z-10">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="flex flex-col gap-6">
-                  {/* Status Box - Blue */}
-                  <div className="bg-blue-50/60 dark:bg-blue-900/20 p-6 rounded-2xl border border-blue-100/50 dark:border-blue-800/30 flex-1 flex flex-col justify-center transition-all hover:bg-blue-50/80">
-                    <p className="text-[10px] text-blue-600 dark:text-blue-400 uppercase tracking-widest font-black mb-2 flex items-center gap-1.5">
-                      <Target className="w-3 h-3 text-blue-600 dark:text-blue-400" /> Status
-                    </p>
-                    <p className="font-bold text-lg text-slate-900 dark:text-white tracking-tight leading-snug">
-                      {String(verdict.status)}
-                    </p>
-                  </div>
-                  
-                  {/* Primary Constraint Box - Rose */}
-                  <div className="bg-rose-50/60 dark:bg-rose-900/20 p-6 rounded-2xl border border-rose-100/50 dark:border-rose-800/30 flex-1 flex flex-col justify-center transition-all hover:bg-rose-50/80">
-                    <p className="text-[10px] text-rose-600 dark:text-rose-400 uppercase tracking-widest font-black mb-2 flex items-center gap-1.5">
-                      <AlertTriangle className="w-3 h-3 text-rose-600 dark:text-rose-400" /> Primary Constraint
-                    </p>
-                    <p className="font-bold text-lg text-slate-900 dark:text-white tracking-tight leading-snug">
-                      {String(verdict.primary_constraint)}
-                    </p>
-                  </div>
-                </div>
-                
-                {/* Highest Opportunity Box - Emerald */}
-                <div className="lg:col-span-2 bg-emerald-50/60 dark:bg-emerald-900/20 p-8 rounded-2xl border border-emerald-100/50 dark:border-emerald-800/30 flex flex-col justify-center transition-all hover:bg-emerald-50/80">
-                  <p className="text-[10px] text-emerald-600 dark:text-emerald-400 uppercase tracking-widest font-black mb-4 flex items-center gap-1.5">
-                    <TrendingUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> Highest Opportunity
-                  </p>
-                  <p className="font-black text-2xl text-slate-900 dark:text-white tracking-tight leading-snug">
-                    {String(verdict.highest_opportunity)}
-                  </p>
-                  <p className="text-base font-medium text-slate-500 dark:text-slate-400 mt-4 leading-relaxed">
-                    {String(verdict.estimated_impact)}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </MotionCard>
+            {/* Executive Summary Box (Span 2) */}
+            <div className="md:col-span-2 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-800/50 p-8 rounded-3xl flex flex-col justify-center transition-colors hover:bg-white/80 dark:hover:bg-slate-900/80">
+               <h3 className="text-[10px] uppercase tracking-widest font-black text-slate-400 dark:text-slate-500 mb-4 flex items-center gap-2">
+                 <AlertCircle className="w-3 h-3" /> Executive Summary
+               </h3>
+               <p className="text-xl text-slate-800 dark:text-slate-200 font-medium leading-relaxed">
+                 {String(report.executive_summary)}
+               </p>
+            </div>
+
+            {/* Status Box */}
+            <div className="bg-blue-50/40 dark:bg-blue-900/10 border border-blue-100/50 dark:border-blue-800/30 p-8 rounded-3xl flex flex-col justify-center transition-colors hover:bg-blue-50/80 dark:hover:bg-blue-900/20">
+               <h3 className="text-[10px] uppercase tracking-widest font-black text-blue-600 dark:text-blue-400 mb-3 flex items-center gap-2">
+                 <Target className="w-3 h-3" /> Status
+               </h3>
+               <p className="font-black text-4xl tracking-tight text-slate-900 dark:text-white">
+                 {String(verdict.status)}
+               </p>
+            </div>
+
+            {/* Primary Constraint */}
+            <div className="bg-rose-50/40 dark:bg-rose-900/10 border border-rose-100/50 dark:border-rose-800/30 p-8 rounded-3xl flex flex-col transition-colors hover:bg-rose-50/80 dark:hover:bg-rose-900/20">
+               <h3 className="text-[10px] uppercase tracking-widest font-black text-rose-600 dark:text-rose-400 mb-3 flex items-center gap-2">
+                 <AlertTriangle className="w-3 h-3" /> Primary Constraint
+               </h3>
+               <p className="font-bold text-lg text-slate-900 dark:text-white leading-snug">
+                 {String(verdict.primary_constraint)}
+               </p>
+            </div>
+
+            {/* Highest Opportunity (Span 2) */}
+            <div className="md:col-span-2 bg-emerald-50/40 dark:bg-emerald-900/10 border border-emerald-100/50 dark:border-emerald-800/30 p-8 rounded-3xl flex flex-col transition-colors hover:bg-emerald-50/80 dark:hover:bg-emerald-900/20">
+               <h3 className="text-[10px] uppercase tracking-widest font-black text-emerald-600 dark:text-emerald-400 mb-3 flex items-center gap-2">
+                 <TrendingUp className="w-3 h-3" /> Highest Opportunity
+               </h3>
+               <p className="font-black text-2xl text-slate-900 dark:text-white tracking-tight leading-snug mb-2">
+                 {String(verdict.highest_opportunity)}
+               </p>
+               <p className="text-sm font-medium text-emerald-800/70 dark:text-emerald-200/70 leading-relaxed">
+                 {String(verdict.estimated_impact)}
+               </p>
+            </div>
+          </motion.div>
         )}
 
         {/* GRF Pillars Grid (Bento Box) */}
         <motion.div
            initial={{ opacity: 0, y: 30 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           viewport={{ once: true, margin: "-100px" }}
-           transition={springTransition}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ ...springTransition, delay: 0.3 }}
         >
           <div className="flex items-center gap-3 mb-8 mt-12">
             <div className="w-1.5 h-6 bg-white dark:bg-slate-900 rounded-full" />
@@ -290,11 +300,11 @@ export default function ReportPage() {
               return (
                 <MotionCard 
                   key={i} 
-                  whileHover={{ y: -4, scale: 1.01 }}
+                  whileHover={{ y: -2, scale: 1.01 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="glass-panel shadow-sm transition-all rounded-3xl"
+                  className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-800/50 shadow-sm transition-all rounded-3xl overflow-hidden hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-md"
                 >
-                  <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 rounded-t-3xl">
+                  <CardHeader className="pb-4 border-b border-slate-100/50 dark:border-slate-800/50 bg-slate-50/30 dark:bg-slate-900/30">
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">{formatKey(key)}</CardTitle>
                       <div className="flex items-center gap-3">
@@ -312,31 +322,31 @@ export default function ReportPage() {
                       indicatorClassName={`${getScoreProgressColor(Number(pillar.score))} rounded-full`}
                     />
                   </CardHeader>
-                  <CardContent className="p-8 space-y-8">
-                    <div className="bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 p-5 rounded-2xl">
-                      <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">&quot;{String(pillar.reason)}&quot;</p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-8">
-                      <div className="space-y-4">
+                  <CardContent className="p-6 space-y-5">
+                    <p className="text-[15px] text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
+                      {String(pillar.reason)}
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-5 pt-4 border-t border-slate-100 dark:border-slate-800/50">
+                      <div className="flex-1 space-y-3">
                         <h4 className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Strengths
+                          Strengths
                         </h4>
-                        <ul className="space-y-3">
+                        <ul className="space-y-2">
                           {(pillar.strengths as string[] | undefined)?.map((s: string, idx: number) => (
-                            <li key={idx} className="text-sm text-slate-500 dark:text-slate-400 font-medium flex items-start gap-2.5 leading-snug">
-                              <span className="text-emerald-600 dark:text-emerald-400 font-bold mt-0.5">+</span> {s}
+                            <li key={idx} className="text-[13px] text-slate-600 dark:text-slate-400 font-medium flex items-start gap-2 leading-tight">
+                              <span className="text-emerald-500 font-bold shrink-0 mt-0.5">+</span> <span>{s}</span>
                             </li>
                           ))}
                         </ul>
                       </div>
-                      <div className="space-y-4">
+                      <div className="flex-1 space-y-3">
                         <h4 className="text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-rose-500" /> Weaknesses
+                          Weaknesses
                         </h4>
                         <ul className="space-y-2">
                           {(pillar.weaknesses as string[] | undefined)?.map((w: string, idx: number) => (
-                            <li key={idx} className="text-sm text-slate-500 dark:text-slate-400 font-medium flex items-start gap-2 leading-tight">
-                              <span className="text-rose-600 dark:text-rose-400 font-bold mt-0.5">-</span> {w}
+                            <li key={idx} className="text-[13px] text-slate-600 dark:text-slate-400 font-medium flex items-start gap-2 leading-tight">
+                              <span className="text-rose-500 font-bold shrink-0 mt-0.5">-</span> <span>{w}</span>
                             </li>
                           ))}
                         </ul>
@@ -352,9 +362,8 @@ export default function ReportPage() {
         {/* Priority Matrix */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={springTransition}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...springTransition, delay: 0.4 }}
           className="mt-12"
         >
           <div className="flex items-center gap-3 mb-8">
@@ -362,90 +371,112 @@ export default function ReportPage() {
             <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Priority Matrix</h2>
           </div>
           
-          <Card className="glass-panel shadow-sm rounded-3xl overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold bg-slate-50/80 dark:bg-slate-900/80 border-b border-slate-100 dark:border-slate-800">
-                  <tr>
-                    <th className="px-8 py-5">Task</th>
-                    <th className="px-8 py-5">Impact</th>
-                    <th className="px-8 py-5">Effort</th>
-                    <th className="px-8 py-5">Why it matters</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {priorityMatrix.map((item: Record<string, unknown>, i: number) => (
-                    <tr key={i} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                      <td className="px-8 py-5 font-bold text-slate-900 dark:text-white">{String(item.task)}</td>
-                      <td className="px-8 py-5">
-                        <Badge variant="outline" className={`font-bold border-0 shadow-sm
-                          ${item.impact === 'High' ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30' : ''}
-                          ${item.impact === 'Medium' ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30' : ''}
-                          ${item.impact === 'Low' ? 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800' : ''}
-                        `}>
-                          {String(item.impact)}
-                        </Badge>
-                      </td>
-                      <td className="px-8 py-5">
-                        <Badge variant="outline" className={`font-bold border-0 shadow-sm
-                          ${item.effort === 'High' ? 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/30' : ''}
-                          ${item.effort === 'Medium' ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30' : ''}
-                          ${item.effort === 'Low' ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30' : ''}
-                        `}>
-                          {String(item.effort)}
-                        </Badge>
-                      </td>
-                      <td className="px-8 py-5 text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{String(item.why)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
+          <div className="flex flex-col gap-4">
+            {priorityMatrix.map((item: Record<string, unknown>, i: number) => (
+              <div 
+                key={i} 
+                className="group bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-800/50 p-6 rounded-2xl flex flex-col md:flex-row md:items-center gap-6 transition-all hover:bg-white/80 dark:hover:bg-slate-900/80 hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700"
+              >
+                <div className="flex-1">
+                  <h4 className="font-bold text-lg text-slate-900 dark:text-white mb-2 transition-colors">
+                    {String(item.task)}
+                  </h4>
+                  <p className="text-[15px] text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
+                    {String(item.why)}
+                  </p>
+                </div>
+                <div className="flex flex-row md:flex-col gap-3 shrink-0 bg-slate-50/50 dark:bg-slate-950/50 p-3 rounded-xl border border-slate-100/50 dark:border-slate-800/50">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] uppercase tracking-widest font-black text-slate-400 dark:text-slate-500 w-14 text-right">Impact</span>
+                    <Badge variant="outline" className={`font-bold border-0 shadow-sm w-20 justify-center
+                      ${item.impact === 'High' ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30' : ''}
+                      ${item.impact === 'Medium' ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30' : ''}
+                      ${item.impact === 'Low' ? 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800' : ''}
+                    `}>
+                      {String(item.impact)}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] uppercase tracking-widest font-black text-slate-400 dark:text-slate-500 w-14 text-right">Effort</span>
+                    <Badge variant="outline" className={`font-bold border-0 shadow-sm w-20 justify-center
+                      ${item.effort === 'High' ? 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/30' : ''}
+                      ${item.effort === 'Medium' ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30' : ''}
+                      ${item.effort === 'Low' ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30' : ''}
+                    `}>
+                      {String(item.effort)}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </motion.div>
 
-        {/* Download Button Section */}
+        {/* Hybrid Action Pill Section (Floating Dock) */}
         <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="flex justify-start pt-8 pb-4"
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 200, damping: 20, delay: 0.5 }}
+          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 pointer-events-auto"
           data-export-ignore="true"
         >
-          <button 
-            onClick={downloadImage}
-            disabled={isDownloading}
-            className="group flex items-center gap-2 justify-center h-8 px-4 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-orange-500 dark:hover:bg-orange-500 hover:text-white dark:hover:text-white transition-all font-bold text-xs shadow-sm active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            {isDownloading ? (
-              <>
-                Saving...
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              </>
-            ) : (
-              <>
-                Save Report
-                <ImageDown className="w-3.5 h-3.5 opacity-70 group-hover:opacity-100 transition-opacity" />
-              </>
-            )}
-          </button>
+          <div className="flex items-center p-1.5 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/50 shadow-2xl dark:shadow-slate-900/50">
+            
+            {/* Save Report */}
+            <button 
+              onClick={downloadImage}
+              disabled={isDownloading}
+              className="group flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all font-bold text-xs sm:text-sm text-slate-700 dark:text-slate-300 disabled:opacity-50"
+            >
+              {isDownloading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span className="hidden sm:inline">Saving...</span>
+                  <span className="sm:hidden">Saving</span>
+                </>
+              ) : (
+                <>
+                  <ImageDown className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity" />
+                  <span className="hidden sm:inline">Save Report</span>
+                  <span className="sm:hidden">Save</span>
+                </>
+              )}
+            </button>
+
+            {/* Vertical Divider */}
+            <div className="w-px h-6 bg-slate-200 dark:bg-slate-800 mx-1" />
+
+            {/* Copy Link */}
+            <button 
+              onClick={handleCopyLink}
+              className="group flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all font-bold text-xs sm:text-sm text-slate-700 dark:text-slate-300"
+            >
+              {isCopied ? <Check className="w-4 h-4 text-emerald-500" /> : <Link2 className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity" />}
+              <span className="hidden sm:inline">{isCopied ? 'Copied!' : 'Copy Link'}</span>
+              <span className="sm:hidden">{isCopied ? 'Copied' : 'Copy'}</span>
+            </button>
+
+            {/* Vertical Divider */}
+            <div className="w-px h-6 bg-slate-200 dark:bg-slate-800 mx-1" />
+
+            {/* Share on X */}
+            <button 
+              onClick={handleShareX}
+              className="group flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all font-bold text-xs sm:text-sm text-slate-700 dark:text-slate-300"
+            >
+              <Share2 className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity" />
+              <span className="hidden sm:inline">Share on X</span>
+              <span className="sm:hidden">Share</span>
+            </button>
+
+          </div>
         </motion.div>
 
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="text-center pt-8 pb-20"
-          data-export-ignore="true"
-        >
-           <Link href="/" className="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors font-bold uppercase tracking-widest text-xs">
-             Submit another startup <ArrowRight className="w-4 h-4" />
-           </Link>
-        </motion.div>
+
       </div>
       </div>
       </div>
-      <Footer />
+      <Footer minimal={true} />
     </>
   );
 }
