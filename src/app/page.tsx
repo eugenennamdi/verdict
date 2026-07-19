@@ -236,7 +236,7 @@ export default function Home() {
                 transition={springTransition}
                 className="w-full max-w-2xl mx-auto relative"
               >
-                <div className="absolute -top-14 left-1/2 -translate-x-1/2 w-full flex justify-center">
+                <div className="w-full flex justify-center mb-6 md:mb-0 md:absolute md:-top-14 md:left-1/2 md:-translate-x-1/2">
                   <a 
                     href="https://www.producthunt.com/products/verdict-7" 
                     target="_blank" 

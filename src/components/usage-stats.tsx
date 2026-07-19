@@ -100,9 +100,9 @@ export function UsageStats({ isOpen, onClose }: UsageStatsProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed inset-0 z-[101] p-4 md:p-6 overflow-y-auto flex items-center justify-center pointer-events-none"
+            className="fixed inset-0 z-[101] p-4 md:p-6 overflow-y-auto flex flex-col items-center pointer-events-none"
           >
-            <div className="w-full max-w-6xl mx-auto pointer-events-auto relative">
+            <div className="w-full max-w-6xl mx-auto pointer-events-auto relative my-16 md:my-auto shrink-0">
               
               {/* Header / Close Button */}
               <div className="flex justify-between items-start mb-10 px-2 pb-6 border-b border-white/5">
