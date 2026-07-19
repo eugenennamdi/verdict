@@ -12,7 +12,7 @@ contract VerdictAttestation is ERC721URIStorage, Ownable {
 
     event AttestationMinted(address indexed to, uint256 indexed tokenId, string reportId);
 
-    constructor() ERC721("Verdict Attestation", "VRDCT") Ownable(msg.sender) {}
+    constructor() ERC721("Verdict Attestation", "VERDICT") Ownable(msg.sender) {}
 
     // Overriding the _update function to make the token Soulbound (OpenZeppelin v5 compatible)
     function _update(address to, uint256 tokenId, address auth) internal virtual override(ERC721) returns (address) {

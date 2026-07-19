@@ -31,7 +31,7 @@ export async function submitAttestation(reportId: string, url: string, score: nu
   const metadata = {
     name: "Verdict Growth Readiness Attestation",
     description: `Onchain attestation of growth readiness by Verdict for report ${reportId}.`,
-    image: "https://iili.io/CjhawSj.png",
+    image: "https://tryverdict.xyz/verdict-nft.png",
     external_url: `https://tryverdict.xyz/report/${reportId}`
   };
   
