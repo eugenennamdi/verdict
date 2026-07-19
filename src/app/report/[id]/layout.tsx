@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
           description,
         },
         twitter: {
-          card: 'summary',
+          card: 'summary_large_image',
           title,
           description,
         },
