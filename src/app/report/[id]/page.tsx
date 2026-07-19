@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, AlertTriangle, Target, TrendingUp, ArrowLeft, ArrowUpRight, AlertCircle, ImageDown, Share2, Link2, Check } from "lucide-react";
+import { Loader2, AlertTriangle, Target, TrendingUp, ArrowLeft, ArrowRight, ArrowUpRight, AlertCircle, ImageDown, Share2, Link2, Check } from "lucide-react";
 import { motion } from "framer-motion";
 
 const springTransition = { type: "spring" as const, stiffness: 200, damping: 20 };
