@@ -145,9 +145,24 @@ const handleRequest = async (req: Request) => {
       try {
         const body = await clonedReq.json();
         
-        // Check if this is an initialization request for stateful MCP clients
-        if (body.method === "initialize" || body.method === "notifications/initialized") {
-          return await transport.handleRequest(req);
+        // Mock initialization for stateless clients to avoid SSE negotiation errors
+        if (body.method === "initialize") {
+          return new Response(JSON.stringify({
+            jsonrpc: "2.0",
+            id: body.id || 1,
+            result: {
+              protocolVersion: "2024-11-05",
+              capabilities: {},
+              serverInfo: {
+                name: "verdict-mcp",
+                version: "1.0.0"
+              }
+            }
+          }), { status: 200, headers: { "Content-Type": "application/json" } });
+        }
+        
+        if (body.method === "notifications/initialized") {
+          return new Response("", { status: 202 });
         }
 
         // Handle stateless tools/list request
@@ -172,7 +187,7 @@ const handleRequest = async (req: Request) => {
         }
 
         // For stateless A2MCP agents (like Hermes), just extract the URL and run the audit directly
-        const hasUrl = body.target_url || body.url || body.params?.url || body.arguments?.url || body.params?.arguments?.url;
+        const hasUrl = body.target_url || body.url || body.params?.url || body.arguments?.url || body.params?.arguments?.url || body.params?.arguments?.target_url;
         
         if (hasUrl) {
           console.log(`Bypassing MCP SDK initialization to evaluate URL directly: ${hasUrl}`);
