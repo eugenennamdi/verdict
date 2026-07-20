@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og-banner-v2.png",
         width: 1200,
         height: 630,
         alt: "Verdict | Autonomous Growth Auditor",
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Verdict | Autonomous Growth Auditor",
     description: "An autonomous agent that strips away positivity bias to deliver brutally honest, YC-grade landing page teardowns.",
-    images: ["/og-image.png"],
+    images: ["/og-banner-v2.png"],
   },
 };
 

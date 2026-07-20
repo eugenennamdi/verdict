@@ -35,7 +35,7 @@ export default function ReportPage() {
   const [isCopied, setIsCopied] = useState(false);
 
   const handleShareX = () => {
-    const text = `Verdict (@tryverdict) just ran a brutal AI audit on ${report?.company_name || 'this startup'}.\n\nScore: ${report?.fdi_overall_score}/100 (Attested onchain via @XLayerOfficial)\n\nRead the full breakdown:`;
+    const text = `I just ran an autonomous growth audit on ${report?.company_name || 'this startup'} with @tryverdict.\n\nScore: ${report?.fdi_overall_score}/100\nAttested onchain via @XLayerOfficial\n\nRead the full breakdown:`;
     const url = window.location.href;
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
     window.open(twitterUrl, '_blank');
