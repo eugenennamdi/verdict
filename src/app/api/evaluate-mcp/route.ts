@@ -318,8 +318,11 @@ const routeConfig: any = {
     {
       scheme: "exact",
       network: "eip155:196",
-      price: "0.5",
+      asset: "0x779ded0c9e1022225f8e0630b35a9b54be713736",
+      amount: "500000",
       payTo: process.env.PAYMENT_ADDRESS || "0x8713783e9d8391c4bf54f705b355ba775184f906", // Hardcoded to User's Wallet
+      maxTimeoutSeconds: 300,
+      extra: { name: "USD₮0", version: "1" }
     }
   ],
   description: "Verdict MCP Evaluation Server",
