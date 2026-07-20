@@ -16,7 +16,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Verdict | Autonomous Growth Auditor",
-  description: "An autonomous agent that strips away positivity bias to deliver brutally honest, YC-grade landing page teardowns.",
+  description: "An autonomous agent that strips away positivity bias to deliver brutally honest, YC-grade landing page teardowns. We find the bottleneck killing your growth in 60 seconds.",
+  verification: {
+    google: "VJKxh7mmwYaLQq_Uq1--l1kopc3hJR9SCV7kgnH7Ovo",
+  },
   openGraph: {
     title: "Verdict | Autonomous Growth Auditor",
     description: "An autonomous agent that strips away positivity bias to deliver brutally honest, YC-grade landing page teardowns.",
