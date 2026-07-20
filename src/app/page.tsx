@@ -234,7 +234,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, filter: "blur(4px)" }}
                 transition={springTransition}
-                className="w-full max-w-2xl mx-auto relative"
+                className="w-full max-w-2xl mx-auto relative mt-24 sm:mt-0"
               >
                 <div className="w-full flex justify-center mb-8">
                   <a 
@@ -520,12 +520,12 @@ export default function Home() {
               <div className="w-full max-w-5xl bg-white/90 dark:bg-[#0B0F19]/90 backdrop-blur-2xl border border-white/20 dark:border-slate-800 rounded-[2rem] p-6 md:p-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] relative flex flex-col my-auto h-max">
                 <button 
                   onClick={() => setShowPaywall(false)}
-                  className="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors z-20"
+                  className="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors z-20"
                 >
                   <X className="w-5 h-5" />
                 </button>
 
-                <div className="text-center mb-10 mt-2 relative z-10">
+                <div className="text-center mb-10 mt-2 relative z-10 pr-10 md:pr-0">
                   <h3 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
                     Upgrade your plan
                   </h3>

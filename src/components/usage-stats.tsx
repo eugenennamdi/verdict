@@ -8,8 +8,9 @@ const XLayerLogo = ({ className }: { className?: string }) => (
   <img 
     src="https://static.okx.com/cdn/assets/imgs/243/230501A8E74482AB.png" 
     alt="X Layer" 
-    className={className} 
+    className={`${className} hidden sm:block`}
     crossOrigin="anonymous" 
+    data-export-ignore="true"
   />
 );
 
@@ -105,8 +106,8 @@ export function UsageStats({ isOpen, onClose }: UsageStatsProps) {
             <div className="w-full max-w-6xl mx-auto pointer-events-auto relative my-16 md:my-auto shrink-0">
               
               {/* Header / Close Button */}
-              <div className="flex justify-between items-start mb-10 px-2 pb-6 border-b border-white/5">
-                <div className="flex flex-col gap-1.5">
+              <div className="flex justify-between items-start mb-10 px-2 pb-6 border-b border-white/5 relative">
+                <div className="flex flex-col gap-1.5 pr-12">
                   <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">Real-time Platform Usage</h2>
                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Live metrics and onchain attestations</p>
                 </div>

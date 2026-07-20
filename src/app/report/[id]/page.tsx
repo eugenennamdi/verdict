@@ -16,8 +16,9 @@ const XLayerLogo = ({ className }: { className?: string }) => (
   <img 
     src="https://static.okx.com/cdn/assets/imgs/243/230501A8E74482AB.png" 
     alt="X Layer" 
-    className={className} 
+    className={`${className} hidden sm:block`}
     crossOrigin="anonymous" 
+    data-export-ignore="true"
   />
 );
 
@@ -64,7 +65,8 @@ export default function ReportPage() {
 
       const dataUrl = await toJpeg(element, { 
         quality: 0.95, 
-        pixelRatio: 1.2, // Keeps text crisp but prevents mobile/Safari canvas crash
+        pixelRatio: 1.0, // Reduced to 1.0 to prevent mobile/Safari canvas crash
+        cacheBust: true,
         style: {
           transform: 'none',
           margin: '0',
@@ -385,7 +387,7 @@ export default function ReportPage() {
                     {String(item.why)}
                   </p>
                 </div>
-                <div className="flex flex-row md:flex-col gap-3 shrink-0 bg-slate-50/50 dark:bg-slate-950/50 p-3 rounded-xl border border-slate-100/50 dark:border-slate-800/50">
+                <div className="flex flex-col sm:flex-row md:flex-col gap-3 shrink-0 bg-slate-50/50 dark:bg-slate-950/50 p-3 rounded-xl border border-slate-100/50 dark:border-slate-800/50">
                   <div className="flex items-center gap-3">
                     <span className="text-[10px] uppercase tracking-widest font-black text-slate-400 dark:text-slate-500 w-14 text-right">Impact</span>
                     <Badge variant="outline" className={`font-bold border-0 shadow-sm w-20 justify-center
