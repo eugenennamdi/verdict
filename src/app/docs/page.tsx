@@ -65,7 +65,7 @@ export default function DocsIntroPage() {
         ))}
       </div>
 
-      <h2>Verdict vs. Verdict Pro</h2>
+      <h2>Verdict vs. Verdict Pro (Bulk Screener)</h2>
       <p>
         Verdict burns through a lot of compute. Spinning up headless browsers (Firecrawl) and processing massive amounts of context means running this kind of deep analysis gets expensive fast.
       </p>
@@ -73,8 +73,8 @@ export default function DocsIntroPage() {
         Instead of forcing users into expensive monthly SaaS subscriptions, we engineered a hybrid model:
       </p>
       <ul className="space-y-4 mb-12">
-        <li><strong>Verdict:</strong> A free, rate-limited (1 audit per 12 hours) interface designed to let founders experience the brutality of the engine firsthand.</li>
-        <li><strong>Verdict Pro (ASP on OKX.AI):</strong> Our uncapped, autonomous auditor lives natively on the OKX.AI ecosystem. Here, VCs and heavy users can run unlimited audits on a strict pay-per-execution (0.5 USDT per audit) basis using Web3 rails.</li>
+        <li><strong>Verdict:</strong> A free, rate-limited (1 audit per 12 hours) web interface designed for founders to experience the autonomous engine firsthand.</li>
+        <li><strong>Verdict Pro (ASP on OKX.AI):</strong> Our uncapped, dual-endpoint autonomous auditor natively on the OKX.AI ecosystem. Single audits cost 0.5 USDT, while our enterprise Bulk Portfolio Screener processes up to 20 URLs concurrently for 10.0 USDT using Web3 rails.</li>
       </ul>
       <DocsPagination next={{ title: "Architecture & Pipeline", href: "/docs/architecture" }} />
     </>

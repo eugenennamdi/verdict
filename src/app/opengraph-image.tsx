@@ -2,7 +2,7 @@ import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
 
-export const alt = 'Verdict | Brutal Startup Growth Audit';
+export const alt = 'Verdict | Autonomous Growth Auditor';
 export const size = {
   width: 1200,
   height: 630,
@@ -38,7 +38,7 @@ export default async function Image() {
             lineHeight: 1.4,
           }}
         >
-          An autonomous agent that strips away positivity bias to deliver brutally honest, YC-grade landing page teardowns.
+          An autonomous growth auditor that strips away AI positivity bias to deliver YC-grade startup teardowns.
         </div>
       </div>
     ),

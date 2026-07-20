@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Terminal, Copy, Check, ChevronLeft, Bot, Shield, Database, Coins } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Terminal, Copy, Check, ChevronLeft, Shield, Database, Coins } from 'lucide-react';
 import { Footer } from '@/components/footer';
 
 const VerdictLogo = ({ className }: { className?: string }) => (
@@ -26,13 +26,14 @@ const VerdictLogo = ({ className }: { className?: string }) => (
 
 export default function AgentsPage() {
   const [copiedCurl, setCopiedCurl] = useState(false);
+  const [activeTab, setActiveTab] = useState<'single' | 'bulk'>('single');
 
-  const curlCommand = `curl -X POST https://tryverdict.xyz/api/v1/audit \\
+  const singleCurl = `curl -X POST https://tryverdict.xyz/api/v1/audit \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer <API_KEY>" \\
   -d '{"url": "https://startup.com"}'`;
 
-  const jsonResponse = `{
+  const singleJson = `{
   "success": true,
   "meta": {
     "url": "https://startup.com",
@@ -60,8 +61,51 @@ export default function AgentsPage() {
   }
 }`;
 
+  const bulkCurl = `curl -X POST https://tryverdict.xyz/api/bulk-evaluate-mcp \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer <API_KEY>" \\
+  -d '{
+    "urls": [
+      "https://startup1.com",
+      "https://startup2.com"
+    ]
+  }'`;
+
+  const bulkJson = `{
+  "success": true,
+  "meta": {
+    "urls_processed": 2,
+    "timestamp": "2024-03-20T10:00:00Z",
+    "engine": "OKX.AI",
+    "version": "v1"
+  },
+  "data": [
+    {
+      "url": "https://startup1.com",
+      "positioning_score": 9,
+      "messaging_clarity": 10,
+      "growth_bottlenecks": [
+        {
+          "issue": "Enterprise conversion friction",
+          "impact": "High",
+          "effort": "Medium"
+        }
+      ]
+    },
+    {
+      "url": "https://startup2.com",
+      "positioning_score": 4,
+      "messaging_clarity": 5,
+      "growth_bottlenecks": []
+    }
+  ]
+}`;
+
+  const currentCurl = activeTab === 'single' ? singleCurl : bulkCurl;
+  const currentJson = activeTab === 'single' ? singleJson : bulkJson;
+
   const copyToClipboard = async () => {
-    await navigator.clipboard.writeText(curlCommand);
+    await navigator.clipboard.writeText(currentCurl);
     setCopiedCurl(true);
     setTimeout(() => setCopiedCurl(false), 2000);
   };
@@ -81,9 +125,6 @@ export default function AgentsPage() {
         >
           <ChevronLeft className="w-5 h-5 text-slate-600 dark:text-slate-400 group-hover:-translate-x-1 transition-transform" />
         </Link>
-        <div className="flex items-center gap-4">
-          {/* Removed Developer API badge as it was redundant */}
-        </div>
       </header>
 
       <main className="flex-1 w-full max-w-6xl mx-auto px-4 pb-20 relative z-10">
@@ -94,38 +135,57 @@ export default function AgentsPage() {
           {/* Left Column: Context & Endpoint */}
           <div className="lg:col-span-5 flex flex-col gap-6">
             
-            {/* Overview Card */}
+            {/* Overview Card with Tabs */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/80 rounded-3xl p-8 shadow-sm relative overflow-hidden group"
+              className="bg-white dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/80 rounded-3xl p-8 shadow-sm relative overflow-hidden group flex flex-col"
             >
-              <div className="relative z-10">
+              <div className="relative z-10 mb-6">
                 <div className="flex items-center gap-2 mb-4">
                   <VerdictLogo className="w-5 h-5 text-orange-500" />
                   <a href="https://www.okx.ai/agents/4686" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-900 dark:text-white tracking-tight hover:text-orange-500 transition-colors">
-                    Verdict ASP
+                    Verdict
                   </a>
                 </div>
                 
                 <p className="text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                  Agents can call our API to run brutal, YC-grade audits on any URL autonomously.
+                  Autonomously run single growth audits or bulk screen entire deal-flows via OKX.AI.
                 </p>
+              </div>
+
+              {/* Tabs */}
+              <div className="relative z-10 flex p-1 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-200/50 dark:border-slate-700/50">
+                <button
+                  onClick={() => setActiveTab('single')}
+                  className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all ${activeTab === 'single' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
+                >
+                  Single Audit
+                </button>
+                <button
+                  onClick={() => setActiveTab('bulk')}
+                  className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all ${activeTab === 'bulk' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
+                >
+                  Bulk Screener
+                </button>
               </div>
             </motion.div>
 
             {/* Endpoint Card */}
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
+              transition={{ duration: 0.2 }}
               className="bg-white dark:bg-[#0D1117] border border-slate-200/50 dark:border-slate-800 rounded-3xl p-8 shadow-sm"
             >
                 <div className="flex items-center gap-3 mb-8">
                   <div className="px-3 py-1 rounded-md bg-green-100 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 flex items-center justify-center shadow-sm">
                     <span className="text-green-700 dark:text-green-400 font-black text-xs tracking-wider">POST</span>
                   </div>
-                  <h2 className="text-lg font-mono font-semibold text-slate-900 dark:text-white">/api/v1/audit</h2>
+                  <h2 className="text-lg font-mono font-semibold text-slate-900 dark:text-white">
+                    {activeTab === 'single' ? '/api/v1/audit' : '/api/bulk-evaluate-mcp'}
+                  </h2>
                 </div>
 
                 <div className="space-y-6">
@@ -135,7 +195,9 @@ export default function AgentsPage() {
                     </div>
                     <div>
                       <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-1">Pricing</h3>
-                      <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">0.5 USDT on X Layer per successful audit.</p>
+                      <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">
+                        {activeTab === 'single' ? '0.5 USDT on X Layer per successful audit.' : '10.0 USDT on X Layer per bulk execution.'}
+                      </p>
                     </div>
                   </div>
 
@@ -155,7 +217,9 @@ export default function AgentsPage() {
                     </div>
                     <div>
                       <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-1">Rate Limit</h3>
-                      <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">1 Request per 12 Hours per Agent.</p>
+                      <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">
+                        {activeTab === 'single' ? '1 Request per 12 Hours per Agent.' : 'No strict limit. Up to 20 URLs per request.'}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -166,11 +230,11 @@ export default function AgentsPage() {
           {/* Right Column: Code & JSON */}
           <div className="lg:col-span-7 flex flex-col gap-6">
             
-            {/* cURL Example */}
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+              key={`curl-${activeTab}`}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              transition={{ duration: 0.2 }}
               className="bg-[#0D1117] border border-slate-800 rounded-3xl overflow-hidden shadow-2xl relative group"
             >
               {/* macOS style header */}
@@ -190,19 +254,25 @@ export default function AgentsPage() {
               </div>
               <div className="p-6 overflow-x-auto">
                 <pre className="text-sm font-mono leading-relaxed">
-                  <span className="text-[#FF7B72]">curl</span> <span className="text-[#79C0FF]">-X</span> <span className="text-[#A5D6FF]">POST</span> <span className="text-[#C9D1D9]">https://tryverdict.xyz/api/v1/audit \</span><br/>
-                  <span className="text-[#79C0FF]">  -H</span> <span className="text-[#A5D6FF]">"Content-Type: application/json"</span> <span className="text-[#C9D1D9]">\</span><br/>
-                  <span className="text-[#79C0FF]">  -H</span> <span className="text-[#A5D6FF]">"Authorization: Bearer &lt;API_KEY&gt;"</span> <span className="text-[#C9D1D9]">\</span><br/>
-                  <span className="text-[#79C0FF]">  -d</span> <span className="text-[#A5D6FF]">{`'{"url": "https://startup.com"}'`}</span>
+                  <span className="text-[#FF7B72]">curl</span> <span className="text-[#79C0FF]">-X</span> <span className="text-[#A5D6FF]">POST</span> <span className="text-[#C9D1D9]">https://tryverdict.xyz{activeTab === 'single' ? '/api/v1/audit' : '/api/bulk-evaluate-mcp'} \\</span><br/>
+                  <span className="text-[#79C0FF]">  -H</span> <span className="text-[#A5D6FF]">"Content-Type: application/json"</span> <span className="text-[#C9D1D9]">\\</span><br/>
+                  <span className="text-[#79C0FF]">  -H</span> <span className="text-[#A5D6FF]">"Authorization: Bearer &lt;API_KEY&gt;"</span> <span className="text-[#C9D1D9]">\\</span><br/>
+                  <span className="text-[#79C0FF]">  -d</span> <span className="text-[#A5D6FF]">{activeTab === 'single' ? `'{"url": "https://startup.com"}'` : `'{
+    "urls": [
+      "https://startup1.com",
+      "https://startup2.com"
+    ]
+  }'`}</span>
                 </pre>
               </div>
             </motion.div>
 
             {/* JSON Response Schema */}
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+              key={`json-${activeTab}`}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+              transition={{ duration: 0.2, delay: 0.1 }}
               className="bg-[#0D1117] border border-slate-800 rounded-3xl overflow-hidden shadow-2xl relative"
             >
               <div className="flex items-center px-4 py-3 bg-[#161B22] border-b border-slate-800">
@@ -211,33 +281,69 @@ export default function AgentsPage() {
               </div>
               <div className="p-6 overflow-x-auto h-[400px] overflow-y-auto custom-scrollbar">
                 <pre className="text-sm font-mono leading-relaxed text-[#C9D1D9]">
-                  <span className="text-[#C9D1D9]">{`{`}</span><br/>
-                  <span className="text-[#7EE787]">  "success"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">true</span><span className="text-[#C9D1D9]">,</span><br/>
-                  <span className="text-[#7EE787]">  "meta"</span><span className="text-[#C9D1D9]">: {`{`}</span><br/>
-                  <span className="text-[#7EE787]">    "url"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"https://startup.com"</span><span className="text-[#C9D1D9]">,</span><br/>
-                  <span className="text-[#7EE787]">    "timestamp"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"2024-03-20T10:00:00Z"</span><span className="text-[#C9D1D9]">,</span><br/>
-                  <span className="text-[#7EE787]">    "engine"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"OKX.AI"</span><span className="text-[#C9D1D9]">,</span><br/>
-                  <span className="text-[#7EE787]">    "version"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"v1"</span><br/>
-                  <span className="text-[#C9D1D9]">  &#125;,</span><br/>
-                  <span className="text-[#7EE787]">  "data"</span><span className="text-[#C9D1D9]">: &#123;</span><br/>
-                  <span className="text-[#7EE787]">    "positioning_score"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">9</span><span className="text-[#C9D1D9]">,</span><br/>
-                  <span className="text-[#7EE787]">    "messaging_clarity"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">10</span><span className="text-[#C9D1D9]">,</span><br/>
-                  <span className="text-[#7EE787]">    "growth_bottlenecks"</span><span className="text-[#C9D1D9]">: [</span><br/>
-                  <span className="text-[#C9D1D9]">      &#123;</span><br/>
-                  <span className="text-[#7EE787]">        "issue"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"Enterprise conversion friction"</span><span className="text-[#C9D1D9]">,</span><br/>
-                  <span className="text-[#7EE787]">        "impact"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"High"</span><span className="text-[#C9D1D9]">,</span><br/>
-                  <span className="text-[#7EE787]">        "effort"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"Medium"</span><br/>
-                  <span className="text-[#C9D1D9]">      &#125;</span><br/>
-                  <span className="text-[#C9D1D9]">    ],</span><br/>
-                  <span className="text-[#7EE787]">    "execution_roadmap"</span><span className="text-[#C9D1D9]">: [</span><br/>
-                  <span className="text-[#C9D1D9]">      &#123;</span><br/>
-                  <span className="text-[#7EE787]">        "phase"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"30-Day"</span><span className="text-[#C9D1D9]">,</span><br/>
-                  <span className="text-[#7EE787]">        "task"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"Implement OKX Wallet SSO"</span><span className="text-[#C9D1D9]">,</span><br/>
-                  <span className="text-[#7EE787]">        "why"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"Reduces sign-up dropoff by 40%"</span><br/>
-                  <span className="text-[#C9D1D9]">      &#125;</span><br/>
-                  <span className="text-[#C9D1D9]">    ]</span><br/>
-                  <span className="text-[#C9D1D9]">  &#125;</span><br/>
-                  <span className="text-[#C9D1D9]">&#125;</span>
+                  {activeTab === 'single' ? (
+                    <>
+                      <span className="text-[#C9D1D9]">{"{"}</span><br/>
+                      <span className="text-[#7EE787]">  "success"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">true</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">  "meta"</span><span className="text-[#C9D1D9]">: {"{"}</span><br/>
+                      <span className="text-[#7EE787]">    "url"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"https://startup.com"</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">    "timestamp"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"2024-03-20T10:00:00Z"</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">    "engine"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"OKX.AI"</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">    "version"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"v1"</span><br/>
+                      <span className="text-[#C9D1D9]">  {"}"},</span><br/>
+                      <span className="text-[#7EE787]">  "data"</span><span className="text-[#C9D1D9]">: {"{"}</span><br/>
+                      <span className="text-[#7EE787]">    "positioning_score"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">9</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">    "messaging_clarity"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">10</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">    "growth_bottlenecks"</span><span className="text-[#C9D1D9]">: [</span><br/>
+                      <span className="text-[#C9D1D9]">      {"{"}</span><br/>
+                      <span className="text-[#7EE787]">        "issue"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"Enterprise conversion friction"</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">        "impact"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"High"</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">        "effort"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"Medium"</span><br/>
+                      <span className="text-[#C9D1D9]">      {"}"}</span><br/>
+                      <span className="text-[#C9D1D9]">    ],</span><br/>
+                      <span className="text-[#7EE787]">    "execution_roadmap"</span><span className="text-[#C9D1D9]">: [</span><br/>
+                      <span className="text-[#C9D1D9]">      {"{"}</span><br/>
+                      <span className="text-[#7EE787]">        "phase"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"30-Day"</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">        "task"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"Implement OKX Wallet SSO"</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">        "why"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"Reduces sign-up dropoff by 40%"</span><br/>
+                      <span className="text-[#C9D1D9]">      {"}"}</span><br/>
+                      <span className="text-[#C9D1D9]">    ]</span><br/>
+                      <span className="text-[#C9D1D9]">  {"}"}</span><br/>
+                      <span className="text-[#C9D1D9]">{"}"}</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-[#C9D1D9]">{"{"}</span><br/>
+                      <span className="text-[#7EE787]">  "success"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">true</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">  "meta"</span><span className="text-[#C9D1D9]">: {"{"}</span><br/>
+                      <span className="text-[#7EE787]">    "urls_processed"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">2</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">    "timestamp"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"2024-03-20T10:00:00Z"</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">    "engine"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"OKX.AI"</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">    "version"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"v1"</span><br/>
+                      <span className="text-[#C9D1D9]">  {"}"},</span><br/>
+                      <span className="text-[#7EE787]">  "data"</span><span className="text-[#C9D1D9]">: [</span><br/>
+                      <span className="text-[#C9D1D9]">    {"{"}</span><br/>
+                      <span className="text-[#7EE787]">      "url"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"https://startup1.com"</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">      "positioning_score"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">9</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">      "messaging_clarity"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">10</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">      "growth_bottlenecks"</span><span className="text-[#C9D1D9]">: [</span><br/>
+                      <span className="text-[#C9D1D9]">        {"{"}</span><br/>
+                      <span className="text-[#7EE787]">          "issue"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"Enterprise conversion friction"</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">          "impact"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"High"</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">          "effort"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"Medium"</span><br/>
+                      <span className="text-[#C9D1D9]">        {"}"}</span><br/>
+                      <span className="text-[#C9D1D9]">      ]</span><br/>
+                      <span className="text-[#C9D1D9]">    {"}"},</span><br/>
+                      <span className="text-[#C9D1D9]">    {"{"}</span><br/>
+                      <span className="text-[#7EE787]">      "url"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"https://startup2.com"</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">      "positioning_score"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">4</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">      "messaging_clarity"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">5</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">      "growth_bottlenecks"</span><span className="text-[#C9D1D9]">: []</span><br/>
+                      <span className="text-[#C9D1D9]">    {"}"}</span><br/>
+                      <span className="text-[#C9D1D9]">  ]</span><br/>
+                      <span className="text-[#C9D1D9]">{"}"}</span>
+                    </>
+                  )}
                 </pre>
               </div>
             </motion.div>

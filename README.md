@@ -1,6 +1,6 @@
 # Verdict
 
-> **Autonomous Growth Auditor for Startups**
+> **Autonomous Growth Auditor**
 
 <p align="center">
   <img src="./public/preview.png" alt="Verdict Preview" width="800">
@@ -14,6 +14,10 @@
 When founders ask for feedback, they usually get polite nods from friends or superficial critiques from basic AI wrappers ("Looks great! Maybe add a clearer CTA?"). 
 
 **Verdict is different.** It is an autonomous Agent Service Provider (ASP) that performs deep, aggressive, and highly actionable conversion audits. We run headless browsers to scrape the live DOM, process massive context windows using [Gemini 3.5 Flash](https://deepmind.google/technologies/gemini/flash/), and deliver a brutally honest teardown, a Growth Readiness Framework (GRF) score, and a clear execution plan with priority matrices.
+
+Verdict operates as a dual-sided platform:
+- **For Founders:** Single startup teardowns to harden go-to-market positioning.
+- **For VCs & Accelerators:** Automated, bulk deal-flow screening at scale.
 
 ---
 
@@ -50,7 +54,9 @@ Verdict is engineered as a robust, dual-track pipeline serving both human users 
 
 ### The Dual-Track Execution Rails
 - **Human Web App (Next.js):** A highly optimized, asynchronous Next.js 16 App Router application handling UI state, visual loading phases, and error interception. 
-- **A2MCP OKX.AI Agent (`/api/evaluate-mcp`):** A headless, machine-to-machine endpoint designed specifically for the OKX.AI Agent Ecosystem. It allows external autonomous agents to trigger complete audits natively, secured behind an **x402 Payment Challenge**.
+- **A2MCP OKX.AI Agent (Dual Endpoints):** Headless, machine-to-machine endpoints designed specifically for the OKX.AI Agent Ecosystem. 
+  - `/api/evaluate-mcp`: Single URL teardowns (0.5 USDT).
+  - `/api/bulk-evaluate-mcp`: Bulk portfolio screening up to 20 URLs (10.0 USDT).
 
 ### Context Normalization & Extraction
 Modern SaaS landing pages are heavily client-side rendered and protected by WAFs (Cloudflare/Datadome). 
@@ -66,11 +72,11 @@ The extracted markdown is passed through a multi-stage reasoning pipeline powere
 ### Rate Limiting & Financial Infrastructure
 Running headless browsers and large LLM context windows is compute-heavy.
 - **The Paywall (Human Path):** Protected by **Upstash Redis**, strictly limiting IPs to a single free audit to prevent abuse and compute drain. Upon limit exhaustion, a client-side paywall modal is rendered.
-- **Decentralized Payments (x402 Agent Path):** The OKX.AI API endpoint (`/api/evaluate-mcp`) enforces a strict **x402 payment challenge** for machine-to-machine monetization. 
-  1. **Request:** An external AI agent calls the endpoint to request an audit.
-  2. **Challenge:** The server intercepts and responds with an `HTTP 402 Payment Required` status, providing the payment amount (0.5 USDT), token address, and the X-Layer recipient address in the headers.
+- **Decentralized Payments (x402 Agent Path):** The OKX.AI API endpoints (`/api/evaluate-mcp` and `/api/bulk-evaluate-mcp`) enforce a strict **x402 payment challenge** for machine-to-machine monetization. 
+  1. **Request:** An external AI agent calls the endpoint to request a single or bulk audit.
+  2. **Challenge:** The server intercepts and responds with an `HTTP 402 Payment Required` status, providing the payment amount, token address, and the X-Layer recipient address in the headers.
   3. **Autonomous Settlement:** The agent autonomously signs and executes the transaction on the **X-Layer Blockchain** using the OKX Web3 SDK.
-  4. **Execution:** Once the payment is verified onchain, the server unlocks the compute and returns the finalized structured JSON audit to the agent.
+  4. **Execution:** Once the payment is verified onchain, the server unlocks the compute (using chunked concurrent processing for bulk requests) and returns the finalized structured JSON audits to the agent.
 
 ### Persistence, Delivery & Soulbound Attestations
 The final structured audit, complete with priority matrices and pillar scores, is persisted to a **Supabase PostgreSQL** database. 
@@ -105,10 +111,10 @@ flowchart LR
   end
 
   %% Agent Flow (A2MCP)
-  Agent -->|1. Request Audit| H
+  Agent -->|1. Request Audit(s)| H
   H <-->|2. x402 Payment Challenge| J
   H -->|3. Route to Engine| B
-  H -->|4. Return Final Report| Agent
+  H -->|4. Return Final Report(s)| Agent
 
   %% Human Flow
   A -->|1. Submit URL| B

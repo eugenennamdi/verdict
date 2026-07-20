@@ -62,7 +62,7 @@ export default function ArchitecturePage() {
       <div className="mt-12 bg-slate-100 dark:bg-slate-800/50 rounded-2xl p-8 border border-slate-200 dark:border-slate-800">
         <h2 className="mt-0 text-xl font-bold mb-4">Compute Costs & Rate Limiting</h2>
         <p className="text-slate-600 dark:text-slate-400 mb-0 leading-relaxed">
-          Running headless browsers on-demand, fetching assets, and reasoning over massive DOM context windows is extremely compute-heavy. To protect our infrastructure, the Web App strictly enforces an IP-based rate limit via <strong>Vercel KV (Redis)</strong>. If you require unlimited, scalable audits without rate limits, the Verdict pipeline can be executed autonomously via the <strong>OKX.AI Agent Ecosystem</strong>.
+          Running headless browsers on-demand, fetching assets, and reasoning over massive DOM context windows is extremely compute-heavy. To protect our infrastructure, the Web App strictly enforces an IP-based rate limit via <strong>Vercel KV (Redis)</strong>. If you require unlimited, scalable audits without rate limits, the Verdict pipeline can be executed autonomously via our dual endpoints on the <strong>OKX.AI Agent Ecosystem</strong>.
         </p>
       </div>
 

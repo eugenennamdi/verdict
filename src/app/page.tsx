@@ -515,9 +515,9 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed inset-0 z-[101] p-4 md:p-6 overflow-y-auto flex items-center justify-center"
+              className="fixed inset-0 z-[101] p-4 md:p-6 overflow-y-auto flex items-start md:items-center justify-center"
             >
-              <div className="w-full max-w-5xl bg-white/90 dark:bg-[#0B0F19]/90 backdrop-blur-2xl border border-white/20 dark:border-slate-800 rounded-[2rem] p-6 md:p-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] relative flex flex-col my-auto h-max">
+              <div className="w-full max-w-5xl bg-white/90 dark:bg-[#0B0F19]/90 backdrop-blur-2xl border border-white/20 dark:border-slate-800 rounded-[2rem] p-6 md:p-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] relative flex flex-col my-auto mt-4 md:mt-auto mb-4 h-max">
                 <button 
                   onClick={() => setShowPaywall(false)}
                   className="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors z-20"
@@ -527,9 +527,8 @@ export default function Home() {
 
                 <div className="text-center mb-10 mt-2 relative z-10 pr-10 md:pr-0">
                   <h3 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-                    Upgrade your plan
+                    Scale your audits
                   </h3>
-                  {/* Text removed as requested */}
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6 relative z-10">
@@ -539,7 +538,7 @@ export default function Home() {
                       <VerdictLogo className="w-5 h-5 text-slate-600 dark:text-slate-400" />
                     </div>
                     <h4 className="text-2xl font-black mb-1 shrink-0">Verdict</h4>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 text-sm shrink-0">For normal users & casual exploration.</p>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 text-sm shrink-0 min-h-[40px]">For normal users & casual exploration.</p>
                     <div className="mb-8 shrink-0">
                       <span className="text-4xl font-black text-slate-900 dark:text-white">Free</span>
                     </div>
@@ -579,7 +578,9 @@ export default function Home() {
                       <VerdictLogo className="w-5 h-5 text-white" />
                     </div>
                     <h4 className="text-2xl font-black mb-1 relative z-10 shrink-0">Verdict Pro</h4>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 relative z-10 text-sm shrink-0">For Founders, CMOs, VCs, Growth Marketers, Indie Hackers & high-volume usage.</p>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium mb-6 relative z-10 text-sm shrink-0 min-h-[40px]">
+                      For Founders, VCs, Startup Accelerators, Growth Marketers, Indie Hackers & high-volume usage.
+                    </p>
                     <div className="mb-8 relative z-10 shrink-0 flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-[#26A17B] flex items-center justify-center shrink-0 shadow-sm border border-[#26A17B]/20">
                         <svg viewBox="0 0 339.43 295.27" className="w-6 h-6 text-white" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -603,11 +604,11 @@ export default function Home() {
                       </li>
                       <li className="flex gap-3">
                         <Check className="w-5 h-5 text-orange-500 shrink-0" />
-                        <span className="text-slate-700 dark:text-slate-200 text-sm font-medium">Run autonomously via OKX Agent rails</span>
+                        <span className="text-slate-700 dark:text-slate-200 text-sm font-medium">Run autonomously via agentic rails</span>
                       </li>
                       <li className="flex gap-3">
                         <Check className="w-5 h-5 text-orange-500 shrink-0" />
-                        <span className="text-slate-700 dark:text-slate-200 text-sm font-medium">Bulk processing capabilities (Coming soon)</span>
+                        <span className="text-slate-700 dark:text-slate-200 text-sm font-medium">Bulk deal-flow screening available via OKX.AI</span>
                       </li>
                     </ul>
                     
@@ -617,7 +618,7 @@ export default function Home() {
                       rel="noopener noreferrer"
                       className="w-full py-3.5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 !text-white font-bold rounded-xl text-center transition-all hover:scale-[1.02] active:scale-[0.98] relative z-10 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] border border-orange-400/20 text-sm"
                     >
-                      Continue to OKX.AI
+                      Deploy Agent on OKX.AI
                     </a>
                   </div>
                 </div>
