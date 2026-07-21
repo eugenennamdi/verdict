@@ -517,7 +517,7 @@ export default function Home() {
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="fixed inset-0 z-[101] p-4 md:p-6 overflow-y-auto flex items-start md:items-center justify-center"
             >
-              <div className="w-full max-w-5xl bg-white/90 dark:bg-[#0B0F19]/90 backdrop-blur-2xl border border-white/20 dark:border-slate-800 rounded-[2rem] p-6 md:p-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] relative flex flex-col my-auto mt-4 md:mt-auto mb-4 h-max">
+              <div className="w-full max-w-5xl bg-white/90 dark:bg-[#0B0F19]/90 backdrop-blur-2xl border border-white/20 dark:border-slate-800 rounded-[2rem] p-6 md:p-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] relative flex flex-col my-auto md:my-0 h-max">
                 <button 
                   onClick={() => setShowPaywall(false)}
                   className="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors z-20"
