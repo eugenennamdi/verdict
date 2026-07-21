@@ -112,7 +112,7 @@ flowchart LR
 
   %% Agent Flow (A2MCP)
   Agent -->|1. Request Audit(s)| H
-  H <-->|2. x402 Payment Challenge| J
+  H -->|2. x402 Payment Challenge| J
   H -->|3. Route to Engine| B
   H -->|4. Return Final Report(s)| Agent
 
@@ -122,13 +122,13 @@ flowchart LR
   A -->|3. Fetch Report| I
   
   %% Internal Data Flow
-  I <-->|Read Data| G
-  B <-->|Scrape DOM| D
-  B <-->|Check Limit| F
+  I -->|Read Data| G
+  B -->|Scrape DOM| D
+  B -->|Check Limit| F
   B -->|Return Context| A
   
-  C <-->|Analyze Context| E
-  C <-->|Enforce Limit| F
+  C -->|Analyze Context| E
+  C -->|Enforce Limit| F
   C -->|Save Report| G
   C -->|Mint NFT Attestation| J
   C -->|Return ID| A
