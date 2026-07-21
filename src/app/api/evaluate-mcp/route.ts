@@ -316,7 +316,7 @@ const handleRequest = async (req: Request) => {
 
         return new Response(JSON.stringify({
           jsonrpc: "2.0",
-          id: body?.id || 1,
+          id: 1,
           result: isScrapingError ? {
             content: [
               {
