@@ -462,39 +462,27 @@ const verifyTransactionManually = async (txHash: string): Promise<boolean> => {
       return false;
     }
 
-    // 2. Check Transaction Payload (was it sent to us with the correct amount?)
-    const txRes = await fetch("https://xlayer.drpc.org", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        method: "eth_getTransactionByHash",
-        params: [txHash],
-        id: 2
-      })
-    });
-    const txData = await txRes.json();
-    const tx = txData?.result;
-    
-    if (!tx) return false;
-
+    // 2. Verify Transfer Event from the Receipt logs
+    // ERC20 Transfer event signature: 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
+    const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
     const USDT_CONTRACT = "0x779ded0c9e1022225f8e0630b35a9b54be713736".toLowerCase();
-    const PAYMENT_ADDRESS = (process.env.PAYMENT_ADDRESS || "0x8713783e9d8391c4bf54f705b355ba775184f906").toLowerCase();
-    
-    if (tx.to?.toLowerCase() !== USDT_CONTRACT) return false;
-
-    const input = tx.input || "";
-    if (!input.startsWith("0xa9059cbb") || input.length < 138) return false;
-
-    const paddedRecipient = "0x" + input.substring(10, 74).slice(-40).toLowerCase();
-    if (paddedRecipient !== PAYMENT_ADDRESS) return false;
-
-    const amountHex = "0x" + input.substring(74, 138);
-    const amount = BigInt(amountHex);
+    const PAYMENT_ADDRESS = (process.env.PAYMENT_ADDRESS || "0x8713783e9d8391c4bf54f705b355ba775184f906").toLowerCase().replace("0x", "");
     const REQUIRED_AMOUNT = BigInt(10000000); // 10.0 USDT (6 decimals)
 
-    if (amount < REQUIRED_AMOUNT) {
-      console.log(`[Hybrid Interceptor] Insufficient payment amount: ${amount.toString()}`);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const hasValidTransfer = receiptData.result.logs.some((log: any) => {
+      if (log.address?.toLowerCase() !== USDT_CONTRACT) return false;
+      if (log.topics?.[0]?.toLowerCase() !== TRANSFER_TOPIC) return false;
+      
+      // Topic 2 is the 'to' address
+      if (!log.topics?.[2]?.toLowerCase().includes(PAYMENT_ADDRESS)) return false;
+      
+      const amount = BigInt(log.data);
+      return amount >= REQUIRED_AMOUNT;
+    });
+
+    if (!hasValidTransfer) {
+      console.log(`[Hybrid Interceptor] Transaction does not contain a valid USDT transfer event to us.`);
       return false;
     }
 
