@@ -433,7 +433,8 @@ const verifyTransactionManually = async (txHash: string): Promise<boolean> => {
   try {
     console.log(`[Hybrid Interceptor] Verifying raw tx hash against X Layer RPC: ${txHash}`);
     
-    const receiptRes = await fetch("https://rpc.xlayer.tech", {
+    // 1. Check Receipt (did it succeed?)
+    const receiptRes = await fetch("https://xlayer.drpc.org", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -446,10 +447,12 @@ const verifyTransactionManually = async (txHash: string): Promise<boolean> => {
     const receiptData = await receiptRes.json();
     
     if (!receiptData?.result || receiptData.result.status !== "0x1") {
+      console.log(`[Hybrid Interceptor] Transaction ${txHash} failed or not found.`);
       return false;
     }
 
-    const txRes = await fetch("https://rpc.xlayer.tech", {
+    // 2. Check Transaction Payload (was it sent to us with the correct amount?)
+    const txRes = await fetch("https://xlayer.drpc.org", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
