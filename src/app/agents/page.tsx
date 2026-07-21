@@ -28,34 +28,29 @@ export default function AgentsPage() {
   const [copiedCurl, setCopiedCurl] = useState(false);
   const [activeTab, setActiveTab] = useState<'single' | 'bulk'>('single');
 
-  const singleCurl = `curl -X POST https://tryverdict.xyz/api/v1/audit \\
+  const singleCurl = `curl -X POST https://tryverdict.xyz/api/evaluate-mcp \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer <API_KEY>" \\
-  -d '{"url": "https://startup.com"}'`;
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "evaluate_startup",
+      "arguments": {
+        "url": "https://startup.com"
+      }
+    }
+  }'`;
 
   const singleJson = `{
-  "success": true,
-  "meta": {
-    "url": "https://startup.com",
-    "timestamp": "2024-03-20T10:00:00Z",
-    "engine": "OKX.AI",
-    "version": "v1"
-  },
-  "data": {
-    "positioning_score": 9,
-    "messaging_clarity": 10,
-    "growth_bottlenecks": [
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "content": [
       {
-        "issue": "Enterprise conversion friction",
-        "impact": "High",
-        "effort": "Medium"
-      }
-    ],
-    "execution_roadmap": [
-      {
-        "phase": "30-Day",
-        "task": "Implement OKX Wallet SSO",
-        "why": "Reduces sign-up dropoff by 40%"
+        "type": "text",
+        "text": "{\\n  \\"company_name\\": \\"Startup Inc\\",\\n  \\"growth_readiness_score\\": 92,\\n  \\"actionable_feedback\\": [...]\\n}"
       }
     ]
   }
@@ -65,40 +60,31 @@ export default function AgentsPage() {
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer <API_KEY>" \\
   -d '{
-    "urls": [
-      "https://startup1.com",
-      "https://startup2.com"
-    ]
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "bulk_evaluate_startups",
+      "arguments": {
+        "urls": [
+          "https://startup1.com",
+          "https://startup2.com"
+        ]
+      }
+    }
   }'`;
 
   const bulkJson = `{
-  "success": true,
-  "meta": {
-    "urls_processed": 2,
-    "timestamp": "2024-03-20T10:00:00Z",
-    "engine": "OKX.AI",
-    "version": "v1"
-  },
-  "data": [
-    {
-      "url": "https://startup1.com",
-      "positioning_score": 9,
-      "messaging_clarity": 10,
-      "growth_bottlenecks": [
-        {
-          "issue": "Enterprise conversion friction",
-          "impact": "High",
-          "effort": "Medium"
-        }
-      ]
-    },
-    {
-      "url": "https://startup2.com",
-      "positioning_score": 4,
-      "messaging_clarity": 5,
-      "growth_bottlenecks": []
-    }
-  ]
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "[\\n  { \\"url\\": \\"https://startup1.com\\", \\"growth_readiness_score\\": 92 },\\n  { \\"url\\": \\"https://startup2.com\\", \\"growth_readiness_score\\": 45 }\\n]"
+      }
+    ]
+  }
 }`;
 
   const currentCurl = activeTab === 'single' ? singleCurl : bulkCurl;
@@ -184,7 +170,7 @@ export default function AgentsPage() {
                     <span className="text-green-700 dark:text-green-400 font-black text-xs tracking-wider">POST</span>
                   </div>
                   <h2 className="text-lg font-mono font-semibold text-slate-900 dark:text-white">
-                    {activeTab === 'single' ? '/api/v1/audit' : '/api/bulk-evaluate-mcp'}
+                    {activeTab === 'single' ? '/api/evaluate-mcp' : '/api/bulk-evaluate-mcp'}
                   </h2>
                 </div>
 
@@ -218,7 +204,7 @@ export default function AgentsPage() {
                     <div>
                       <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-1">Rate Limit</h3>
                       <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">
-                        {activeTab === 'single' ? '1 Request per 12 Hours per Agent.' : 'No strict limit. Up to 20 URLs per request.'}
+                        {activeTab === 'single' ? 'Unlimited requests via x402 & Onchain OS.' : 'No strict limit. Up to 20 URLs per request.'}
                       </p>
                     </div>
                   </div>
@@ -254,14 +240,32 @@ export default function AgentsPage() {
               </div>
               <div className="p-6 overflow-x-auto">
                 <pre className="text-sm font-mono leading-relaxed">
-                  <span className="text-[#FF7B72]">curl</span> <span className="text-[#79C0FF]">-X</span> <span className="text-[#A5D6FF]">POST</span> <span className="text-[#C9D1D9]">https://tryverdict.xyz{activeTab === 'single' ? '/api/v1/audit' : '/api/bulk-evaluate-mcp'} \\</span><br/>
+                  <span className="text-[#FF7B72]">curl</span> <span className="text-[#79C0FF]">-X</span> <span className="text-[#A5D6FF]">POST</span> <span className="text-[#C9D1D9]">https://tryverdict.xyz{activeTab === 'single' ? '/api/evaluate-mcp' : '/api/bulk-evaluate-mcp'} \\</span><br/>
                   <span className="text-[#79C0FF]">  -H</span> <span className="text-[#A5D6FF]">"Content-Type: application/json"</span> <span className="text-[#C9D1D9]">\\</span><br/>
                   <span className="text-[#79C0FF]">  -H</span> <span className="text-[#A5D6FF]">"Authorization: Bearer &lt;API_KEY&gt;"</span> <span className="text-[#C9D1D9]">\\</span><br/>
-                  <span className="text-[#79C0FF]">  -d</span> <span className="text-[#A5D6FF]">{activeTab === 'single' ? `'{"url": "https://startup.com"}'` : `'{
-    "urls": [
-      "https://startup1.com",
-      "https://startup2.com"
-    ]
+                  <span className="text-[#79C0FF]">  -d</span> <span className="text-[#A5D6FF]">{activeTab === 'single' ? `'{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "evaluate_startup",
+      "arguments": {
+        "url": "https://startup.com"
+      }
+    }
+  }'` : `'{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "bulk_evaluate_startups",
+      "arguments": {
+        "urls": [
+          "https://startup1.com",
+          "https://startup2.com"
+        ]
+      }
+    }
   }'`}</span>
                 </pre>
               </div>
@@ -284,28 +288,13 @@ export default function AgentsPage() {
                   {activeTab === 'single' ? (
                     <>
                       <span className="text-[#C9D1D9]">{"{"}</span><br/>
-                      <span className="text-[#7EE787]">  "success"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">true</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">  "meta"</span><span className="text-[#C9D1D9]">: {"{"}</span><br/>
-                      <span className="text-[#7EE787]">    "url"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"https://startup.com"</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">    "timestamp"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"2024-03-20T10:00:00Z"</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">    "engine"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"OKX.AI"</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">    "version"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"v1"</span><br/>
-                      <span className="text-[#C9D1D9]">  {"}"},</span><br/>
-                      <span className="text-[#7EE787]">  "data"</span><span className="text-[#C9D1D9]">: {"{"}</span><br/>
-                      <span className="text-[#7EE787]">    "positioning_score"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">9</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">    "messaging_clarity"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">10</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">    "growth_bottlenecks"</span><span className="text-[#C9D1D9]">: [</span><br/>
+                      <span className="text-[#7EE787]">  "jsonrpc"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"2.0"</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">  "id"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">1</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">  "result"</span><span className="text-[#C9D1D9]">: {"{"}</span><br/>
+                      <span className="text-[#7EE787]">    "content"</span><span className="text-[#C9D1D9]">: [</span><br/>
                       <span className="text-[#C9D1D9]">      {"{"}</span><br/>
-                      <span className="text-[#7EE787]">        "issue"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"Enterprise conversion friction"</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">        "impact"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"High"</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">        "effort"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"Medium"</span><br/>
-                      <span className="text-[#C9D1D9]">      {"}"}</span><br/>
-                      <span className="text-[#C9D1D9]">    ],</span><br/>
-                      <span className="text-[#7EE787]">    "execution_roadmap"</span><span className="text-[#C9D1D9]">: [</span><br/>
-                      <span className="text-[#C9D1D9]">      {"{"}</span><br/>
-                      <span className="text-[#7EE787]">        "phase"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"30-Day"</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">        "task"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"Implement OKX Wallet SSO"</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">        "why"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"Reduces sign-up dropoff by 40%"</span><br/>
+                      <span className="text-[#7EE787]">        "type"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"text"</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">        "text"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"{\\n  \\"company_name\\": \\"Startup Inc\\",\\n  \\"growth_readiness_score\\": 92,\\n  \\"actionable_feedback\\": [...]\\n}"</span><br/>
                       <span className="text-[#C9D1D9]">      {"}"}</span><br/>
                       <span className="text-[#C9D1D9]">    ]</span><br/>
                       <span className="text-[#C9D1D9]">  {"}"}</span><br/>
@@ -314,33 +303,16 @@ export default function AgentsPage() {
                   ) : (
                     <>
                       <span className="text-[#C9D1D9]">{"{"}</span><br/>
-                      <span className="text-[#7EE787]">  "success"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">true</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">  "meta"</span><span className="text-[#C9D1D9]">: {"{"}</span><br/>
-                      <span className="text-[#7EE787]">    "urls_processed"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">2</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">    "timestamp"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"2024-03-20T10:00:00Z"</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">    "engine"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"OKX.AI"</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">    "version"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"v1"</span><br/>
-                      <span className="text-[#C9D1D9]">  {"}"},</span><br/>
-                      <span className="text-[#7EE787]">  "data"</span><span className="text-[#C9D1D9]">: [</span><br/>
-                      <span className="text-[#C9D1D9]">    {"{"}</span><br/>
-                      <span className="text-[#7EE787]">      "url"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"https://startup1.com"</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">      "positioning_score"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">9</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">      "messaging_clarity"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">10</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">      "growth_bottlenecks"</span><span className="text-[#C9D1D9]">: [</span><br/>
-                      <span className="text-[#C9D1D9]">        {"{"}</span><br/>
-                      <span className="text-[#7EE787]">          "issue"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"Enterprise conversion friction"</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">          "impact"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"High"</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">          "effort"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"Medium"</span><br/>
-                      <span className="text-[#C9D1D9]">        {"}"}</span><br/>
-                      <span className="text-[#C9D1D9]">      ]</span><br/>
-                      <span className="text-[#C9D1D9]">    {"}"},</span><br/>
-                      <span className="text-[#C9D1D9]">    {"{"}</span><br/>
-                      <span className="text-[#7EE787]">      "url"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"https://startup2.com"</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">      "positioning_score"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">4</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">      "messaging_clarity"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">5</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">      "growth_bottlenecks"</span><span className="text-[#C9D1D9]">: []</span><br/>
-                      <span className="text-[#C9D1D9]">    {"}"}</span><br/>
-                      <span className="text-[#C9D1D9]">  ]</span><br/>
+                      <span className="text-[#7EE787]">  "jsonrpc"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"2.0"</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">  "id"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#79C0FF]">1</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">  "result"</span><span className="text-[#C9D1D9]">: {"{"}</span><br/>
+                      <span className="text-[#7EE787]">    "content"</span><span className="text-[#C9D1D9]">: [</span><br/>
+                      <span className="text-[#C9D1D9]">      {"{"}</span><br/>
+                      <span className="text-[#7EE787]">        "type"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"text"</span><span className="text-[#C9D1D9]">,</span><br/>
+                      <span className="text-[#7EE787]">        "text"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"[\\n  { \\"url\\": \\"https://startup1.com\\", \\"growth_readiness_score\\": 92 },\\n  { \\"url\\": \\"https://startup2.com\\", \\"growth_readiness_score\\": 45 }\\n]"</span><br/>
+                      <span className="text-[#C9D1D9]">      {"}"}</span><br/>
+                      <span className="text-[#C9D1D9]">    ]</span><br/>
+                      <span className="text-[#C9D1D9]">  {"}"}</span><br/>
                       <span className="text-[#C9D1D9]">{"}"}</span>
                     </>
                   )}

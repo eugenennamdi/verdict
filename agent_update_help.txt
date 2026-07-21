@@ -1,0 +1,30 @@
+Update Agent identity and services
+
+Usage: onchainos agent update [OPTIONS]
+
+Options:
+      --agent-id <AGENT_ID>
+          REQUIRED. The target agent's id (becomes cardJson `agentId`). Missing → `missing required parameter: --agent-id`
+
+      --base-url <BASE_URL>
+          Backend service URL (overrides config)
+
+      --chain <CHAIN>
+          Chain: ethereum, solana, base, bsc, polygon, arbitrum, sui, etc
+
+      --name <NAME>
+          Optional. New agent name. Omitted / empty → name left unchanged
+
+      --description <DESCRIPTION>
+          Optional. New agent-level description. Omitted / empty → unchanged; an empty string does NOT clear an existing description
+
+      --picture <PICTURE>
+          Optional. New profile-picture URL. Omitted / empty → unchanged
+
+      --service <SERVICE>
+          Optional. Incremental service changes as a JSON array — only the services you want to add / modify / remove, NOT the full list. Element keys: `serviceName`, `serviceDescription`, `serviceType` (`A2A` | `A2MCP`), `fee` (A2MCP required — plain number, USDT implied, ≤6 decimals), `endpoint` (A2MCP only), plus `operation`: `create` (new service, no `id`) / `update` (modify, carry the existing service `id`) / `delete` (remove, carry the existing service `id`). Omitted → the `services` field is left out entirely (omission does NOT clear existing services).
+          
+          Example — add one A2MCP service and delete an existing one: --service '[{"operation":"create","serviceName":"Price feed","serviceDescription":"Realtime prices","serviceType":"A2MCP","fee":"0.5","endpoint":"https://api.example.com/mcp"},{"operation":"delete","id":"svc_123"}]'
+
+  -h, --help
+          Print help (see a summary with '-h')
