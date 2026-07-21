@@ -294,7 +294,7 @@ export default function AgentsPage() {
                       <span className="text-[#7EE787]">    "content"</span><span className="text-[#C9D1D9]">: [</span><br/>
                       <span className="text-[#C9D1D9]">      {"{"}</span><br/>
                       <span className="text-[#7EE787]">        "type"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"text"</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">        "text"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"{\\n  \\"company_name\\": \\"Startup Inc\\",\\n  \\"growth_readiness_score\\": 92,\\n  \\"actionable_feedback\\": [...]\\n}"</span><br/>
+                      <span className="text-[#7EE787]">        "text"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">{"\"{\\n  \\\"company_name\\\": \\\"Startup Inc\\\",\\n  \\\"growth_readiness_score\\\": 92,\\n  \\\"actionable_feedback\\\": [...]\\n}\""}</span><br/>
                       <span className="text-[#C9D1D9]">      {"}"}</span><br/>
                       <span className="text-[#C9D1D9]">    ]</span><br/>
                       <span className="text-[#C9D1D9]">  {"}"}</span><br/>
@@ -309,7 +309,7 @@ export default function AgentsPage() {
                       <span className="text-[#7EE787]">    "content"</span><span className="text-[#C9D1D9]">: [</span><br/>
                       <span className="text-[#C9D1D9]">      {"{"}</span><br/>
                       <span className="text-[#7EE787]">        "type"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"text"</span><span className="text-[#C9D1D9]">,</span><br/>
-                      <span className="text-[#7EE787]">        "text"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">"[\\n  { \\"url\\": \\"https://startup1.com\\", \\"growth_readiness_score\\": 92 },\\n  { \\"url\\": \\"https://startup2.com\\", \\"growth_readiness_score\\": 45 }\\n]"</span><br/>
+                      <span className="text-[#7EE787]">        "text"</span><span className="text-[#C9D1D9]">: </span><span className="text-[#A5D6FF]">{"\"[\\n  { \\\"url\\\": \\\"https://startup1.com\\\", \\\"growth_readiness_score\\\": 92 },\\n  { \\\"url\\\": \\\"https://startup2.com\\\", \\\"growth_readiness_score\\\": 45 }\\n]\""}</span><br/>
                       <span className="text-[#C9D1D9]">      {"}"}</span><br/>
                       <span className="text-[#C9D1D9]">    ]</span><br/>
                       <span className="text-[#C9D1D9]">  {"}"}</span><br/>
