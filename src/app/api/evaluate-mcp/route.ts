@@ -143,8 +143,10 @@ const handleRequest = async (req: Request) => {
 
     if (req.method === "POST") {
       const clonedReq = req.clone();
+      let reqId: string | number = 1;
       try {
         const body = await clonedReq.json();
+        reqId = body?.id || 1;
         
         // Mock initialization for stateless clients to avoid SSE negotiation errors
         if (body.method === "initialize") {
@@ -316,7 +318,7 @@ const handleRequest = async (req: Request) => {
 
         return new Response(JSON.stringify({
           jsonrpc: "2.0",
-          id: body?.id || 1,
+          id: reqId,
           result: isScrapingError ? {
             content: [
               {
