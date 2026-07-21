@@ -172,9 +172,9 @@ async function fetchContext(url: string, fallback_text?: string): Promise<string
         body: JSON.stringify({ 
           url, 
           formats: ['markdown'],
-          timeout: 10000 // fail faster to trigger fallback
+          timeout: 25000 // Increased timeout for heavy JS/Cloudflare sites
         }),
-        signal: AbortSignal.timeout(10000)
+        signal: AbortSignal.timeout(25000)
       });
 
       if (firecrawlRes.ok) {
@@ -191,7 +191,7 @@ async function fetchContext(url: string, fallback_text?: string): Promise<string
     try {
       const jinaRes = await fetch(`https://r.jina.ai/${url}`, {
         headers: { 'Accept': 'text/plain' },
-        signal: AbortSignal.timeout(8000)
+        signal: AbortSignal.timeout(15000)
       });
       if (jinaRes.ok) {
         markdownContext = await jinaRes.text();
@@ -210,7 +210,7 @@ async function fetchContext(url: string, fallback_text?: string): Promise<string
             'User-Agent': USER_AGENTS[attempt % USER_AGENTS.length],
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
           },
-          signal: AbortSignal.timeout(6000)
+          signal: AbortSignal.timeout(10000)
         });
         
         if (nativeRes.ok) {
@@ -221,9 +221,9 @@ async function fetchContext(url: string, fallback_text?: string): Promise<string
                                 .replace(/<[^>]+>/g, ' ')
                                 .replace(/\s+/g, ' ').trim();
           if (markdownContext.length > 50) break;
-        } else if (nativeRes.status === 403 || nativeRes.status === 429) {
+        } else if (nativeRes.status === 403 || nativeRes.status === 429 || nativeRes.status === 401 || nativeRes.status === 503) {
           // Add brief backoff if blocked
-          await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
+          await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
         }
       } catch (e) {
         console.warn(`Native fetch fallback failed on attempt ${attempt + 1}:`, e);

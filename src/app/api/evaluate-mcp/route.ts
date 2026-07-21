@@ -316,23 +316,27 @@ const handleRequest = async (req: Request) => {
         console.error("Direct evaluation error:", err);
         const isScrapingError = err.name === 'ScrapingError';
 
+        const usedHash = req.headers.get("x-payment-tx-hash");
+        if (usedHash) {
+          console.log(`[Hybrid Interceptor] Releasing transaction lock for ${usedHash} due to evaluation error: ${err.message}`);
+          await supabaseAdmin.from('used_transactions').delete().eq('tx_hash', usedHash);
+        }
+
         return new Response(JSON.stringify({
           jsonrpc: "2.0",
           id: reqId,
-          result: isScrapingError ? {
+          result: {
             content: [
               {
                 type: "text",
-                text: `SYSTEM ALERT: ${err.message} AGENT ACTION REQUIRED: You MUST immediately stop and ask the user to provide the raw text or HTML of the startup's website. Once they provide it, you must call this tool again and pass their text exactly into the \`fallback_text\` parameter. Do not hallucinate.`
+                text: isScrapingError 
+                  ? `SYSTEM ALERT: ${err.message} AGENT ACTION REQUIRED: You MUST immediately stop and ask the user to provide the raw text or HTML of the startup's website. Once they provide it, you must call this tool again and pass their text exactly into the \`fallback_text\` parameter. Do not hallucinate.`
+                  : `SYSTEM ALERT: Evaluation failed due to an internal error: ${err.message}. Your payment lock has been released. Please wait 5 seconds and retry the tool with the SAME transaction hash.`
               }
             ],
-            isError: false
-          } : undefined,
-          error: isScrapingError ? undefined : {
-            code: -32603,
-            message: err.message || "An error occurred during evaluation."
+            isError: true
           }
-        }), { status: isScrapingError ? 418 : 400, headers: { "Content-Type": "application/json" } });
+        }), { status: 200, headers: { "Content-Type": "application/json" } });
       }
     }
 
@@ -464,18 +468,30 @@ const verifyTransactionManually = async (txHash: string): Promise<boolean> => {
   try {
     console.log(`[Hybrid Interceptor] Verifying raw tx hash against X Layer RPC: ${txHash}`);
     
-    // 1. Check Receipt (did it succeed?)
-    const receiptRes = await fetch("https://xlayer.drpc.org", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        method: "eth_getTransactionReceipt",
-        params: [txHash],
-        id: 1
-      })
-    });
-    const receiptData = await receiptRes.json();
+    // 1. Check Receipt (did it succeed?) with retries for RPC sync delays
+    let receiptData = null;
+    let retries = 15;
+    while (retries > 0) {
+      const receiptRes = await fetch("https://xlayer.drpc.org", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          method: "eth_getTransactionReceipt",
+          params: [txHash],
+          id: 1
+        })
+      });
+      receiptData = await receiptRes.json();
+      
+      if (receiptData?.result) {
+        break; // Found the receipt
+      }
+      
+      console.log(`[Hybrid Interceptor] Receipt not found for ${txHash}. Retrying... (${retries} left)`);
+      await new Promise(resolve => setTimeout(resolve, 2000)); // wait 2 seconds
+      retries--;
+    }
     
     if (!receiptData?.result || receiptData.result.status !== "0x1") {
       console.log(`[Hybrid Interceptor] Transaction ${txHash} failed or not found.`);
@@ -537,9 +553,11 @@ export const POST = async (req: Request) => {
   
   let requiresPayment = true;
   let interceptedTxHash: string | null = null;
+  let reqId: string | number = 1;
   try {
     const cloned = cleanReq.clone();
     const body = await cloned.json();
+    reqId = body?.id || 1;
     if (body.method === "tools/list" || body.method === "initialize" || body.method === "notifications/initialized") {
       requiresPayment = false;
     }
@@ -615,6 +633,22 @@ export const POST = async (req: Request) => {
         }
       });
       return handleRequest(proxyReq);
+    } else {
+      // Transaction was invalid or not yet indexed. Do not fall through to SDK to avoid generic 400.
+      console.log("[Hybrid Interceptor] Transaction invalid or not yet indexed. Returning graceful MCP error.");
+      return new Response(JSON.stringify({
+        jsonrpc: "2.0",
+        id: reqId,
+        result: {
+          content: [
+            {
+              type: "text",
+              text: `SYSTEM ALERT: Payment transaction not found or not yet indexed. Please wait exactly 10 seconds and call this tool again with the SAME transaction hash. DO NOT initiate a new payment. TxHash: ${hashToVerify}`
+            }
+          ],
+          isError: true
+        }
+      }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
   }
   // --- END HYBRID INTERCEPTOR ---
