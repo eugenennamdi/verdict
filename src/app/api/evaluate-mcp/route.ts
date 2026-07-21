@@ -573,9 +573,21 @@ export const POST = async (req: Request) => {
     try {
       const decoded = Buffer.from(rawTxHash, "base64").toString("utf-8");
       const sigObj = JSON.parse(decoded);
-      if (sigObj.receipt && typeof sigObj.receipt === 'string' && sigObj.receipt.startsWith("0x") && sigObj.receipt.length === 66) {
-        hashToVerify = sigObj.receipt;
-      }
+      
+      // Aggressively search for any 66-character hex string in the signature object
+      const findTxHash = (obj: any): string | null => {
+        if (!obj) return null;
+        if (typeof obj === 'string' && obj.startsWith('0x') && obj.length === 66) return obj;
+        if (typeof obj === 'object') {
+          for (const key of Object.keys(obj)) {
+            const res = findTxHash(obj[key]);
+            if (res) return res;
+          }
+        }
+        return null;
+      };
+      
+      hashToVerify = findTxHash(sigObj);
     } catch {
       // Ignore
     }
