@@ -28,7 +28,8 @@ const createMCPServer = () => {
           type: "object",
           properties: {
             url: { type: "string", description: "The exact URL of the startup to evaluate. Do NOT guess this. If the user hasn't provided one, ask them." },
-            fallback_text: { type: "string", description: "Optional. If a URL fails to scrape due to bot protection, ask the user to paste the raw HTML or text of the landing page here." }
+            fallback_text: { type: "string", description: "Optional. If a URL fails to scrape due to bot protection, ask the user to paste the raw HTML or text of the landing page here." },
+            txHash: { type: "string", description: "Optional. If this tool previously returned a 402 Payment Required error, you MUST call this tool again and pass the resulting payment transaction hash here." }
           },
           required: ["url"]
         }
@@ -464,7 +465,7 @@ const createCleanReq = async (req: Request) => {
 };
 
 // --- HYBRID INTERCEPTOR HELPER ---
-const verifyTransactionManually = async (txHash: string): Promise<boolean> => {
+const verifyTransactionManually = async (txHash: string): Promise<{ valid: boolean; reason?: string }> => {
   try {
     console.log(`[Hybrid Interceptor] Verifying raw tx hash against X Layer RPC: ${txHash}`);
     
@@ -495,7 +496,7 @@ const verifyTransactionManually = async (txHash: string): Promise<boolean> => {
     
     if (!receiptData?.result || receiptData.result.status !== "0x1") {
       console.log(`[Hybrid Interceptor] Transaction ${txHash} failed or not found.`);
-      return false;
+      return { valid: false, reason: "Transaction failed on-chain or could not be found." };
     }
 
     // 2. Verify Transfer Event from the Receipt logs
@@ -519,7 +520,7 @@ const verifyTransactionManually = async (txHash: string): Promise<boolean> => {
 
     if (!hasValidTransfer) {
       console.log(`[Hybrid Interceptor] Transaction does not contain a valid USDT transfer event to us.`);
-      return false;
+      return { valid: false, reason: "Transaction is confirmed but does not contain a 0.5 USDT transfer to the correct payment address." };
     }
 
     // 3. Double-Spend Prevention
@@ -530,17 +531,18 @@ const verifyTransactionManually = async (txHash: string): Promise<boolean> => {
     if (error) {
       if (error.code === '23505' || error.message.includes('duplicate key')) { // Postgres Unique Violation
         console.log(`[Hybrid Interceptor] REPLAY ATTACK BLOCKED. Transaction ${txHash} was already used.`);
+        return { valid: false, reason: "This transaction hash has already been used for a previous successful evaluation (Replay Attack)." };
       } else {
         console.error(`[Hybrid Interceptor] Supabase error verifying double-spend:`, error);
+        return { valid: false, reason: "Database error while verifying transaction uniqueness." };
       }
-      return false;
     }
 
     console.log(`[Hybrid Interceptor] Transaction ${txHash} successfully verified on-chain and marked as used.`);
-    return true;
+    return { valid: true };
   } catch (error) {
     console.error("[Hybrid Interceptor] RPC verification error:", error);
-    return false;
+    return { valid: false, reason: "RPC network error while verifying transaction." };
   }
 };
 // --- END HYBRID INTERCEPTOR HELPER ---
@@ -614,8 +616,8 @@ export const POST = async (req: Request) => {
   }
 
   if (hashToVerify) {
-    const isValid = await verifyTransactionManually(hashToVerify);
-    if (isValid) {
+    const verification = await verifyTransactionManually(hashToVerify);
+    if (verification.valid) {
       console.log("[Hybrid Interceptor] Bypassing withX402 SDK due to valid transaction hash:", hashToVerify);
       
       // Inject the transaction hash into a header so the downstream code knows it's paid
@@ -643,7 +645,7 @@ export const POST = async (req: Request) => {
           content: [
             {
               type: "text",
-              text: `SYSTEM ALERT: Payment transaction not found or not yet indexed. Please wait exactly 10 seconds and call this tool again with the SAME transaction hash. DO NOT initiate a new payment. TxHash: ${hashToVerify}`
+              text: `SYSTEM ALERT: ${verification.reason || "Payment transaction not found or not yet indexed."} Please wait exactly 10 seconds and call this tool again with the SAME transaction hash. DO NOT initiate a new payment. TxHash: ${hashToVerify}`
             }
           ],
           isError: true
