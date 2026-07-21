@@ -15,6 +15,13 @@ const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
   ]);
 };
 
+export class ScrapingError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ScrapingError';
+  }
+}
+
 async function generateWithFallback(prompt: string, schema: unknown) {
   try {
     return await withTimeout(ai.models.generateContent({
@@ -139,32 +146,44 @@ const fullAuditSchema = {
   required: ["is_valid_startup", "invalid_reason", "company_name", "score_interpretation", "pillars", "the_verdict", "priority_matrix"]
 };
 
-export async function extractContext(url: string) {
+const USER_AGENTS = [
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
+  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
+];
+
+async function fetchContext(url: string, fallback_text?: string): Promise<string> {
+  if (fallback_text && fallback_text.trim().length > 10) {
+    return fallback_text;
+  }
+
   let markdownContext = '';
 
   // 1. Scrape with Firecrawl
   const firecrawlKey = process.env.FIRECRAWL_API_KEY;
-  try {
-    const firecrawlRes = await fetch('https://api.firecrawl.dev/v1/scrape', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${firecrawlKey}`,
-      },
-      body: JSON.stringify({ 
-        url, 
-        formats: ['markdown'],
-        timeout: 10000 // fail faster to trigger fallback
-      }),
-      signal: AbortSignal.timeout(10000)
-    });
+  if (firecrawlKey) {
+    try {
+      const firecrawlRes = await fetch('https://api.firecrawl.dev/v1/scrape', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${firecrawlKey}`,
+        },
+        body: JSON.stringify({ 
+          url, 
+          formats: ['markdown'],
+          timeout: 10000 // fail faster to trigger fallback
+        }),
+        signal: AbortSignal.timeout(10000)
+      });
 
-    if (firecrawlRes.ok) {
-      const scrapedData = await firecrawlRes.json();
-      markdownContext = scrapedData.data?.markdown || '';
+      if (firecrawlRes.ok) {
+        const scrapedData = await firecrawlRes.json();
+        markdownContext = scrapedData.data?.markdown || '';
+      }
+    } catch (e) {
+      console.warn("Firecrawl scraping failed or timed out:", e);
     }
-  } catch (e) {
-    console.warn("Firecrawl scraping failed or timed out:", e);
   }
 
   // 2. Fallback to Jina AI if Firecrawl fails or gets blocked
@@ -182,32 +201,46 @@ export async function extractContext(url: string) {
     }
   }
 
-  // 3. Last Resort Fallback to Native Fetch (Raw HTML)
+  // 3. Last Resort Fallback to Native Fetch with Retry and UA Rotation
   if (!markdownContext || markdownContext.length < 50) {
-    try {
-      const nativeRes = await fetch(url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-        },
-        signal: AbortSignal.timeout(5000)
-      });
-      if (nativeRes.ok) {
-        const html = await nativeRes.text();
-        // Extremely crude strip of scripts and styles to avoid massive token count
-        markdownContext = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-                              .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
-                              .replace(/<[^>]+>/g, ' ')
-                              .replace(/\s+/g, ' ').trim();
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const nativeRes = await fetch(url, {
+          headers: {
+            'User-Agent': USER_AGENTS[attempt % USER_AGENTS.length],
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+          },
+          signal: AbortSignal.timeout(6000)
+        });
+        
+        if (nativeRes.ok) {
+          const html = await nativeRes.text();
+          // Extremely crude strip of scripts and styles to avoid massive token count
+          markdownContext = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                                .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+                                .replace(/<[^>]+>/g, ' ')
+                                .replace(/\s+/g, ' ').trim();
+          if (markdownContext.length > 50) break;
+        } else if (nativeRes.status === 403 || nativeRes.status === 429) {
+          // Add brief backoff if blocked
+          await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
+        }
+      } catch (e) {
+        console.warn(`Native fetch fallback failed on attempt ${attempt + 1}:`, e);
       }
-    } catch (e) {
-      console.warn("Native fetch fallback failed:", e);
     }
   }
 
   if (!markdownContext || markdownContext.length < 50) {
-    throw new Error('This website took too long to load or is actively blocking our scraper. Please try another URL.');
+    console.error(`[UNREACHABLE_URL]: ${url}`);
+    throw new ScrapingError('This website took too long to load or is actively blocking our scraper. Please provide the raw website text manually.');
   }
+
+  return markdownContext;
+}
+
+export async function extractContext(url: string, fallback_text?: string) {
+  const markdownContext = await fetchContext(url, fallback_text);
 
   // 2. Extract with Gemini
   const prompt = `
@@ -320,50 +353,8 @@ Target Audience: ${target_audience}
   };
 }
 
-export async function performFullAudit(url: string) {
-  let markdownContext = '';
-
-  try {
-    const firecrawlRes = await fetch('https://api.firecrawl.dev/v1/scrape', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.FIRECRAWL_API_KEY}`
-      },
-      body: JSON.stringify({ 
-        url, 
-        formats: ['markdown'],
-        timeout: 10000 // fail faster to save time
-      }),
-      signal: AbortSignal.timeout(10000)
-    });
-
-    if (firecrawlRes.ok) {
-      const scrapedData = await firecrawlRes.json();
-      markdownContext = scrapedData.data?.markdown || '';
-    }
-  } catch (e) {
-    console.warn("Firecrawl scraping failed or timed out:", e);
-  }
-
-  // Fallback to Jina AI if Firecrawl fails
-  if (!markdownContext || markdownContext.length < 50) {
-    try {
-      const jinaRes = await fetch(`https://r.jina.ai/${url}`, {
-        headers: { 'Accept': 'text/plain' },
-        signal: AbortSignal.timeout(8000)
-      });
-      if (jinaRes.ok) {
-        markdownContext = await jinaRes.text();
-      }
-    } catch (e) {
-      console.warn("Jina AI fallback failed or timed out:", e);
-    }
-  }
-
-  if (!markdownContext || markdownContext.length < 50) {
-    throw new Error('This website took too long to load or is actively blocking our scraper. Please try another URL.');
-  }
+export async function performFullAudit(url: string, fallback_text?: string) {
+  const markdownContext = await fetchContext(url, fallback_text);
 
   const prompt = `
 # ROLE & PERSONA

@@ -1,7 +1,7 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
-import { performFullAudit } from "@/lib/engine";
+import { performFullAudit, ScrapingError } from "@/lib/engine";
 import { withX402 } from "@okxweb3/app-x402-next";
 import { getPaymentServer } from "@/lib/payment";
 import { supabaseAdmin } from "@/lib/supabase";
@@ -304,14 +304,25 @@ const handleRequest = async (req: Request) => {
         }
       } catch (err: any) {
         console.error("Direct evaluation error:", err);
+        const isScrapingError = err.name === 'ScrapingError';
+
         return new Response(JSON.stringify({
           jsonrpc: "2.0",
           id: 1,
-          error: {
+          result: isScrapingError ? {
+            content: [
+              {
+                type: "text",
+                text: err.message
+              }
+            ],
+            isError: true
+          } : undefined,
+          error: isScrapingError ? undefined : {
             code: -32603,
             message: err.message || "An error occurred during evaluation."
           }
-        }), { status: 400, headers: { "Content-Type": "application/json" } });
+        }), { status: isScrapingError ? 418 : 400, headers: { "Content-Type": "application/json" } });
       }
     }
 
@@ -560,7 +571,16 @@ export const POST = async (req: Request) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const protectedHandler = withX402(handleRequest as any, routeConfig, paymentServer as any);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return withBodyIf402(cleanReq, protectedHandler as any);
+  const finalRes = await withBodyIf402(cleanReq, protectedHandler as any);
+
+  if (finalRes.status === 418) {
+    return new Response(finalRes.body, {
+      status: 200,
+      headers: finalRes.headers
+    });
+  }
+
+  return finalRes;
 };
 
 export const GET = async (req: Request) => {

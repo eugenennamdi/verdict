@@ -1,7 +1,7 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
-import { performFullAudit } from "@/lib/engine";
+import { performFullAudit, ScrapingError } from "@/lib/engine";
 import { withX402 } from "@okxweb3/app-x402-next";
 import { getPaymentServer } from "@/lib/payment";
 import { supabaseAdmin } from "@/lib/supabase";
@@ -27,7 +27,8 @@ const createMCPServer = () => {
         inputSchema: {
           type: "object",
           properties: {
-            url: { type: "string", description: "The exact URL of the startup to evaluate. Do NOT guess this. If the user hasn't provided one, ask them." }
+            url: { type: "string", description: "The exact URL of the startup to evaluate. Do NOT guess this. If the user hasn't provided one, ask them." },
+            fallback_text: { type: "string", description: "Optional. If a URL fails to scrape due to bot protection, ask the user to paste the raw HTML or text of the landing page here." }
           },
           required: ["url"]
         }
@@ -37,7 +38,7 @@ const createMCPServer = () => {
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     if (request.params.name === "evaluate_startup") {
-      const { url } = request.params.arguments as { url?: string };
+      const { url, fallback_text } = request.params.arguments as { url?: string, fallback_text?: string };
       if (!url || typeof url !== 'string') {
         throw new Error("URL is required");
       }
@@ -46,7 +47,7 @@ const createMCPServer = () => {
         console.log(`Evaluating URL: ${url}`);
         
         // Single optimized LLM call to fit within Vercel's 60s limit for Hobby plans
-        const audit = await performFullAudit(url);
+        const audit = await performFullAudit(url, fallback_text);
         if (!audit) {
           throw new Error("Failed to generate audit");
         }
@@ -177,7 +178,8 @@ const handleRequest = async (req: Request) => {
                 inputSchema: {
                   type: "object",
                   properties: {
-                    url: { type: "string", description: "The exact URL of the startup to evaluate. Do NOT guess this. If the user hasn't provided one, ask them." }
+                    url: { type: "string", description: "The exact URL of the startup to evaluate. Do NOT guess this. If the user hasn't provided one, ask them." },
+                    fallback_text: { type: "string", description: "Optional. If a URL fails to scrape due to bot protection, ask the user to paste the raw HTML or text of the landing page here." }
                   },
                   required: ["url"]
                 }
@@ -188,10 +190,11 @@ const handleRequest = async (req: Request) => {
 
         // For stateless A2MCP agents (like Hermes), just extract the URL and run the audit directly
         const hasUrl = body.target_url || body.url || body.params?.url || body.arguments?.url || body.params?.arguments?.url || body.params?.arguments?.target_url;
+        const fallbackText = body.fallback_text || body.params?.fallback_text || body.arguments?.fallback_text || body.params?.arguments?.fallback_text;
         
         if (hasUrl) {
           console.log(`Bypassing MCP SDK initialization to evaluate URL directly: ${hasUrl}`);
-          const audit = await performFullAudit(hasUrl);
+          const audit = await performFullAudit(hasUrl, fallbackText);
           
           if (!audit) {
             throw new Error("Failed to generate audit");
@@ -309,14 +312,25 @@ const handleRequest = async (req: Request) => {
         }
       } catch (err: any) {
         console.error("Direct evaluation error:", err);
+        const isScrapingError = err.name === 'ScrapingError';
+
         return new Response(JSON.stringify({
           jsonrpc: "2.0",
-          id: 1,
-          error: {
+          id: body?.id || 1,
+          result: isScrapingError ? {
+            content: [
+              {
+                type: "text",
+                text: err.message
+              }
+            ],
+            isError: true
+          } : undefined,
+          error: isScrapingError ? undefined : {
             code: -32603,
             message: err.message || "An error occurred during evaluation."
           }
-        }), { status: 400, headers: { "Content-Type": "application/json" } });
+        }), { status: isScrapingError ? 418 : 400, headers: { "Content-Type": "application/json" } });
       }
     }
 
@@ -613,7 +627,18 @@ export const POST = async (req: Request) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const protectedHandler = withX402(handleRequest as any, routeConfig, paymentServer as any);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return withBodyIf402(cleanReq, protectedHandler as any);
+  const finalRes = await withBodyIf402(cleanReq, protectedHandler as any);
+
+  // If the LLM threw a ScrapingError, we returned 418 to explicitly prevent withX402 from settling the payment.
+  // Now we rewrite it back to 200 so the agent receives the graceful error and can ask for fallback text.
+  if (finalRes.status === 418) {
+    return new Response(finalRes.body, {
+      status: 200,
+      headers: finalRes.headers
+    });
+  }
+
+  return finalRes;
 };
 
 export const GET = async (req: Request) => {
