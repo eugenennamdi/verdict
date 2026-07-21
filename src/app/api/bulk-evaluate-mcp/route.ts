@@ -314,7 +314,7 @@ const handleRequest = async (req: Request) => {
 
         return new Response(JSON.stringify({
           jsonrpc: "2.0",
-          id: reqId,
+          id: body?.id || 1,
           result: {
             content: [
               {
