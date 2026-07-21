@@ -71,7 +71,7 @@ export default function PricingPage() {
             <tr>
               <td className="py-4 px-6 font-medium">Bulk Processing</td>
               <td className="py-4 px-6 text-slate-500">No</td>
-              <td className="py-4 px-6 text-slate-500">Coming soon</td>
+              <td className="py-4 px-6 font-bold text-[#26A17B]">Yes (Up to 20 URLs)</td>
             </tr>
           </tbody>
         </table>

@@ -39,7 +39,7 @@ export default function ScoringPage() {
 
       <h2>The Overall Score (0-100)</h2>
       <p>
-        The final <strong>Growth Readiness Score</strong> is a calculated weighted aggregate of the 7 pillars, mapped to a 0-100 scale. It represents the company&apos;s overall readiness to scale and deploy capital into growth channels.
+        The final <strong>Growth Readiness Score</strong>{` `}is a calculated weighted aggregate of the 7 pillars, mapped to a 0-100 scale. It represents the company&apos;s overall readiness to scale and deploy capital into growth channels.
       </p>
 
       <DocsPagination 
