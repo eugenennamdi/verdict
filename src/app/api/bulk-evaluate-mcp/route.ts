@@ -545,6 +545,16 @@ export const POST = async (req: Request) => {
     hashToVerify = rawTxHash;
   } else if (interceptedTxHash && interceptedTxHash.startsWith("0x") && interceptedTxHash.length === 66) {
     hashToVerify = interceptedTxHash;
+  } else if (rawTxHash) {
+    try {
+      const decoded = Buffer.from(rawTxHash, "base64").toString("utf-8");
+      const sigObj = JSON.parse(decoded);
+      if (sigObj.receipt && typeof sigObj.receipt === 'string' && sigObj.receipt.startsWith("0x") && sigObj.receipt.length === 66) {
+        hashToVerify = sigObj.receipt;
+      }
+    } catch {
+      // Ignore
+    }
   }
 
   if (hashToVerify) {
