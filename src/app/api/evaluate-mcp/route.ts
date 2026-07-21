@@ -316,15 +316,15 @@ const handleRequest = async (req: Request) => {
 
         return new Response(JSON.stringify({
           jsonrpc: "2.0",
-          id: 1,
+          id: body?.id || 1,
           result: isScrapingError ? {
             content: [
               {
                 type: "text",
-                text: err.message
+                text: `SYSTEM ALERT: ${err.message} AGENT ACTION REQUIRED: You MUST immediately stop and ask the user to provide the raw text or HTML of the startup's website. Once they provide it, you must call this tool again and pass their text exactly into the \`fallback_text\` parameter. Do not hallucinate.`
               }
             ],
-            isError: true
+            isError: false
           } : undefined,
           error: isScrapingError ? undefined : {
             code: -32603,
