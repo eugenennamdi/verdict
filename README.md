@@ -110,11 +110,11 @@ flowchart LR
     J[(X-Layer Blockchain<br/>OKX Web3 SDK)]
   end
 
-  %% Agent Flow (A2MCP)
-  Agent -->|1. Request Audit(s)| H
-  H -->|2. x402 Payment Challenge| J
+  %% Agent Flow A2MCP
+  Agent -->|1. Request Audits| H
+  H -->|2. x402 Challenge| J
   H -->|3. Route to Engine| B
-  H -->|4. Return Final Report(s)| Agent
+  H -->|4. Return Final Reports| Agent
 
   %% Human Flow
   A -->|1. Submit URL| B
