@@ -458,7 +458,7 @@ const verifyTransactionManually = async (txHash: string): Promise<{ valid: boole
     let receiptData = null;
     let retries = 3; // Reduced from 15 so we don't block for 30s and hit client timeout. 
     while (retries > 0) {
-      const receiptRes = await fetch("https://xlayer.drpc.org", {
+      const receiptRes = await fetch("https://rpc.xlayer.tech", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -611,7 +611,7 @@ export const POST = async (req: Request) => {
               text: `SYSTEM ALERT: ${verification.reason || "Payment transaction not found or not yet indexed."} Please wait exactly 10 seconds and call this tool again with the SAME transaction hash. DO NOT initiate a new payment. TxHash: ${hashToVerify}`
             }
           ],
-          isError: true
+          isError: false
         }
       }), { status: 200, headers: { "Content-Type": "application/json" } });
     }
