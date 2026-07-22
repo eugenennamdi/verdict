@@ -431,19 +431,18 @@ export const POST = async (req: Request) => {
   console.log("Raw PAYMENT-SIGNATURE from Hermes:", req.headers.get("payment-signature"));
   console.log("Cleaned PAYMENT-SIGNATURE:", cleanReq.headers.get("payment-signature"));
   
-  let requiresPayment = true;
+  let requiresPayment = false;
   let interceptedTxHash: string | null = null;
   let reqId: string | number = 1;
   try {
     const cloned = cleanReq.clone();
     const body = await cloned.json();
     reqId = body?.id || 1;
-    if (body.method === "tools/list" || body.method === "initialize" || body.method === "notifications/initialized") {
-      requiresPayment = false;
-    } else if (body.method === "tools/call") {
+    
+    if (body.method === "tools/call" && body.params?.name === "evaluate_startup") {
       const url = body?.params?.arguments?.url;
-      if (!url || typeof url !== 'string' || url.trim() === '') {
-        requiresPayment = false;
+      if (url && typeof url === 'string' && url.trim() !== '') {
+        requiresPayment = true;
       }
     }
     interceptedTxHash = body?.txHash || body?.payment_tx || 

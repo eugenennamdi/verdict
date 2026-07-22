@@ -421,19 +421,18 @@ async function getProtectedHandler() {
 export const POST = async (req: Request) => {
   const cleanReq = await createCleanReq(req);
   
-  let requiresPayment = true;
+  let requiresPayment = false;
   let interceptedTxHash: string | null = null;
   let reqId: string | number = 1;
   try {
     const cloned = cleanReq.clone();
     const body = await cloned.json();
     reqId = body?.id || 1;
-    if (body.method === "tools/list" || body.method === "initialize" || body.method === "notifications/initialized") {
-      requiresPayment = false;
-    } else if (body.method === "tools/call") {
+    
+    if (body.method === "tools/call" && body.params?.name === "bulk_evaluate_startups") {
       const urls = body?.params?.arguments?.urls;
-      if (!urls || !Array.isArray(urls) || urls.length === 0) {
-        requiresPayment = false;
+      if (urls && Array.isArray(urls) && urls.length > 0) {
+        requiresPayment = true;
       }
     }
     interceptedTxHash = body?.txHash || body?.payment_tx || 
