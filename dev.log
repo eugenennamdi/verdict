@@ -1,0 +1,96 @@
+
+> verdict@0.1.0 dev
+> next dev
+
+Warning: Ignoring extra certs from `/var/folders/sc/pvrz6qp54px9pl1w7q5_r2qc0000gn/T/agy-cert-508656025.crt`, load failed: error:80000002:system library::No such file or directory
+Warning: Ignoring extra certs from `/var/folders/sc/pvrz6qp54px9pl1w7q5_r2qc0000gn/T/agy-cert-508656025.crt`, load failed: error:80000002:system library::No such file or directory
+▲ Next.js 16.2.10 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://127.0.2.2:3000
+- Environments: .env.local
+✓ Ready in 725ms
+
+POST request initiated. ALL HEADERS: {
+  accept: '*/*',
+  'content-length': '65',
+  'content-type': 'application/json',
+  host: 'localhost:3000',
+  'user-agent': 'curl/8.7.1',
+  'x-forwarded-for': '::1',
+  'x-forwarded-host': 'localhost:3000',
+  'x-forwarded-port': '3000',
+  'x-forwarded-proto': 'http'
+}
+Raw PAYMENT-SIGNATURE from Hermes: null
+Cleaned PAYMENT-SIGNATURE: null
+ POST /api/evaluate-mcp 200 in 2.2s (next.js: 2.1s, application-code: 59ms)
+POST request initiated. ALL HEADERS: {
+  accept: '*/*',
+  'content-length': '138',
+  'content-type': 'application/json',
+  host: 'localhost:3000',
+  'user-agent': 'curl/8.7.1',
+  'x-forwarded-for': '::1',
+  'x-forwarded-host': 'localhost:3000',
+  'x-forwarded-port': '3000',
+  'x-forwarded-proto': 'http'
+}
+Raw PAYMENT-SIGNATURE from Hermes: null
+Cleaned PAYMENT-SIGNATURE: null
+Failed to fetch supported kinds from facilitator: TypeError: fetch failed
+⨯ Error: Failed to initialize: no supported payment kinds loaded from any facilitator.
+    at async getPaymentServer (src/lib/payment.ts:53:3)
+    at async POST (src/app/api/evaluate-mcp/route.ts:500:25)
+  51 |
+  52 |   // MUST run after server starts, before any request is handled
+> 53 |   await resourceServerInstance.initialize();
+     |   ^
+  54 |
+  55 |   return resourceServerInstance;
+  56 | } {
+  [cause]: [TypeError: fetch failed] {
+    [cause]: Error: getaddrinfo ENOTFOUND web3.okx.com
+        at ignore-listed frames {
+      errno: -3008,
+      code: 'ENOTFOUND',
+      syscall: 'getaddrinfo',
+      hostname: 'web3.okx.com'
+    }
+  }
+}
+ POST /api/evaluate-mcp 500 in 277ms (next.js: 7ms, application-code: 270ms)
+POST request initiated. ALL HEADERS: {
+  accept: '*/*',
+  'content-length': '138',
+  'content-type': 'application/json',
+  host: 'localhost:3000',
+  'user-agent': 'curl/8.7.1',
+  'x-forwarded-for': '::1',
+  'x-forwarded-host': 'localhost:3000',
+  'x-forwarded-port': '3000',
+  'x-forwarded-proto': 'http'
+}
+Raw PAYMENT-SIGNATURE from Hermes: null
+Cleaned PAYMENT-SIGNATURE: null
+Failed to fetch supported kinds from facilitator: TypeError: fetch failed
+⨯ Error: Failed to initialize: no supported payment kinds loaded from any facilitator.
+    at async withBodyIf402 (src/app/api/evaluate-mcp/route.ts:366:15)
+    at async POST (src/app/api/evaluate-mcp/route.ts:504:20)
+  364 |
+  365 | const withBodyIf402 = async (req: Request, handler: (req: Request) => Promise<Response>) ...
+> 366 |   const res = await handler(req);
+      |               ^
+  367 |   if (res.status === 402) {
+  368 |     const prHeader = res.headers.get("payment-required");
+  369 |     if (prHeader) { {
+  [cause]: [TypeError: fetch failed] {
+    [cause]: Error: getaddrinfo ENOTFOUND web3.okx.com
+        at ignore-listed frames {
+      errno: -3008,
+      code: 'ENOTFOUND',
+      syscall: 'getaddrinfo',
+      hostname: 'web3.okx.com'
+    }
+  }
+}
+ POST /api/evaluate-mcp 500 in 175ms (next.js: 6ms, application-code: 169ms)

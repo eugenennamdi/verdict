@@ -331,8 +331,8 @@ const handleRequest = async (req: Request) => {
               {
                 type: "text",
                 text: isScrapingError 
-                  ? `SYSTEM ALERT: ${err.message} AGENT ACTION REQUIRED: You MUST immediately stop and ask the user to provide the raw text or HTML of the startup's website. Once they provide it, you must call this tool again and pass their text exactly into the \`fallback_text\` parameter. Do not hallucinate.`
-                  : `SYSTEM ALERT: Evaluation failed due to an internal error: ${err.message}. Your payment lock has been released. Please wait 5 seconds and retry the tool with the SAME transaction hash.`
+                  ? `SYSTEM ALERT: ${err.message}. Please ask the user to provide the raw text or HTML of the startup's website and pass it into the \`fallback_text\` parameter.`
+                  : `SYSTEM ALERT: Evaluation failed due to an internal error: ${err.message}.`
               }
             ],
             isError: true
@@ -454,9 +454,7 @@ const createCleanReq = async (req: Request) => {
   return new Request(routeConfig.resource, {
     method: req.method,
     headers: newHeaders,
-    body: rawBodyText,
-    // Vercel / Next.js specific init properties if needed, but standard Request is fine
-    duplex: 'half'
+    body: rawBodyText
   } as RequestInit);
 };
 
