@@ -416,6 +416,15 @@ const createCleanReq = async (req: Request) => {
   });
 };
 
+let cachedProtectedHandler: ((req: NextRequest) => Promise<Response>) | null = null;
+async function getProtectedHandler() {
+  if (cachedProtectedHandler) return cachedProtectedHandler;
+  const paymentServer = await getPaymentServer();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  cachedProtectedHandler = withX402(handleRequest as any, routeConfig, paymentServer as any);
+  return cachedProtectedHandler;
+}
+
 export const POST = async (req: Request) => {
   const cleanReq = await createCleanReq(req);
   console.log("POST request initiated. ALL HEADERS:", Object.fromEntries(req.headers.entries()));
@@ -458,9 +467,7 @@ export const POST = async (req: Request) => {
 
   // Hand off to the official OKX SDK for robust payment verification
 
-  const paymentServer = await getPaymentServer();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const protectedHandler = withX402(handleRequest as any, routeConfig, paymentServer as any);
+  const protectedHandler = await getProtectedHandler();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const finalRes = await withBodyIf402(cleanReq, protectedHandler as any);
 
