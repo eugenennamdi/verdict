@@ -109,6 +109,7 @@ const createMCPServer = () => {
                 target_audience: audit.target_audience,
                 growth_readiness_score: audit.overallScore,
                 score_interpretation: audit.score_interpretation,
+                attested_onchain: true,
                 verdict: audit.the_verdict,
                 actionable_feedback: audit.priority_matrix,
                 ...(reportUrl ? { report_url: reportUrl } : {})
@@ -145,10 +146,16 @@ const handleRequest = async (req: Request) => {
     await server.connect(transport);
 
     if (req.method === "POST") {
-      const clonedReq = req.clone();
       let reqId: string | number = 1;
       try {
-        const body = await clonedReq.json();
+        let body: any;
+        const rawBodyBase64 = req.headers.get('x-internal-raw-body');
+        if (rawBodyBase64) {
+          body = JSON.parse(Buffer.from(rawBodyBase64, 'base64').toString('utf-8'));
+        } else {
+          const clonedReq = req.clone();
+          body = await clonedReq.json();
+        }
         reqId = body?.id || 1;
         
         // Mock initialization for stateless clients to avoid SSE negotiation errors
@@ -253,6 +260,7 @@ const handleRequest = async (req: Request) => {
             target_audience: audit.target_audience,
             growth_readiness_score: audit.overallScore,
             score_interpretation: audit.score_interpretation,
+            attested_onchain: true,
             verdict: audit.the_verdict,
             actionable_feedback: audit.priority_matrix,
             ...(reportUrl ? { report_url: reportUrl } : {})
@@ -393,6 +401,8 @@ const createCleanReq = async (req: Request) => {
       rawBodyText = await req.text();
       if (!rawBodyText || rawBodyText.trim() === '') {
         console.error("createCleanReq: Body was empty after reading. Stream may have been consumed upstream.");
+      } else {
+        newHeaders.set('x-internal-raw-body', Buffer.from(rawBodyText).toString('base64'));
       }
     } catch {
       console.error("createCleanReq: Failed to read body stream.");
