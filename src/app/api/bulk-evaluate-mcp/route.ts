@@ -352,7 +352,7 @@ const routeConfig: any = {
     {
       scheme: "exact",
       network: "eip155:196",
-      asset: "0x779ded8c9e1822225f8e8630b35a9b54be713736",
+      asset: "0x779ded0c9e1022225f8e0630b35a9b54be713736",
       price: "10.0", // 10 USDT for Bulk Audits
       payTo: process.env.PAYMENT_ADDRESS || "0x8713783e9d8391c4bf54f705b355ba775184f906",
       maxTimeoutSeconds: 300,
@@ -421,7 +421,7 @@ async function getProtectedHandler() {
 export const POST = async (req: Request) => {
   const cleanReq = await createCleanReq(req);
   
-  let requiresPayment = false;
+  let requiresPayment = true;
   let interceptedTxHash: string | null = null;
   let reqId: string | number = 1;
   try {
@@ -429,14 +429,8 @@ export const POST = async (req: Request) => {
     const body = await cloned.json();
     reqId = body?.id || 1;
     
-    if (body.method === "tools/call" && body.params?.name === "bulk_evaluate_startups") {
-      const urls = body?.params?.arguments?.urls;
-      if (urls && Array.isArray(urls) && urls.length > 0) {
-        requiresPayment = true;
-      }
-    } else if (body.urls && Array.isArray(body.urls)) {
-      // Intercept OKX validator generic POST probe with business body
-      requiresPayment = true;
+    if (body.method === "tools/list" || body.method === "initialize" || body.method === "notifications/initialized") {
+      requiresPayment = false;
     }
     interceptedTxHash = body?.txHash || body?.payment_tx || 
                         body?.params?.txHash || body?.params?.payment_tx || 
@@ -476,11 +470,9 @@ export const GET = async (req: Request) => {
   
   const acceptHeader = cleanReq.headers.get("accept") || "";
   if (!acceptHeader.includes("text/event-stream")) {
-    const paymentServer = await getPaymentServer();
+    const protectedHandler = await getProtectedHandler();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const probeHandler = withX402(async () => new Response("OK"), routeConfig, paymentServer as any);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return withBodyIf402(cleanReq, probeHandler as any);
+    return withBodyIf402(cleanReq, protectedHandler as any);
   }
 
   return handleRequest(cleanReq);
