@@ -478,6 +478,8 @@ export const POST = async (req: Request) => {
   // The hybrid interceptor will gracefully return a SYSTEM ALERT if it's not indexed yet.
   if (requiresPayment && cleanReq.headers.get("payment-signature")) {
     console.log("Payment signature detected. Skipping manual wait to avoid client timeout...");
+  }
+  
   if (!requiresPayment) {
     return handleRequest(cleanReq);
   }
