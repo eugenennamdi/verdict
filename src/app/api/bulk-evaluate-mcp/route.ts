@@ -423,6 +423,11 @@ export const POST = async (req: Request) => {
     reqId = body?.id || 1;
     if (body.method === "tools/list" || body.method === "initialize" || body.method === "notifications/initialized") {
       requiresPayment = false;
+    } else if (body.method === "tools/call") {
+      const urls = body?.params?.arguments?.urls;
+      if (!urls || !Array.isArray(urls) || urls.length === 0) {
+        requiresPayment = false;
+      }
     }
     interceptedTxHash = body?.txHash || body?.payment_tx || 
                         body?.params?.txHash || body?.params?.payment_tx || 

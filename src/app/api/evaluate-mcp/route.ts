@@ -431,6 +431,11 @@ export const POST = async (req: Request) => {
     reqId = body?.id || 1;
     if (body.method === "tools/list" || body.method === "initialize" || body.method === "notifications/initialized") {
       requiresPayment = false;
+    } else if (body.method === "tools/call") {
+      const url = body?.params?.arguments?.url;
+      if (!url || typeof url !== 'string' || url.trim() === '') {
+        requiresPayment = false;
+      }
     }
     interceptedTxHash = body?.txHash || body?.payment_tx || 
                         body?.params?.txHash || body?.params?.payment_tx || 
