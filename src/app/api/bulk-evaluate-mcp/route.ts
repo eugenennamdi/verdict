@@ -352,7 +352,7 @@ const routeConfig: any = {
     {
       scheme: "exact",
       network: "eip155:196",
-      asset: "0x779ded0c9e1022225f8e0630b35a9b54be713736",
+      asset: "0x779ded8c9e1822225f8e8630b35a9b54be713736",
       price: "10.0", // 10 USDT for Bulk Audits
       payTo: process.env.PAYMENT_ADDRESS || "0x8713783e9d8391c4bf54f705b355ba775184f906",
       maxTimeoutSeconds: 300,
@@ -434,6 +434,9 @@ export const POST = async (req: Request) => {
       if (urls && Array.isArray(urls) && urls.length > 0) {
         requiresPayment = true;
       }
+    } else if (body.urls && Array.isArray(body.urls)) {
+      // Intercept OKX validator generic POST probe with business body
+      requiresPayment = true;
     }
     interceptedTxHash = body?.txHash || body?.payment_tx || 
                         body?.params?.txHash || body?.params?.payment_tx || 
@@ -473,14 +476,11 @@ export const GET = async (req: Request) => {
   
   const acceptHeader = cleanReq.headers.get("accept") || "";
   if (!acceptHeader.includes("text/event-stream")) {
-    return new Response(JSON.stringify({ 
-      status: "online", 
-      message: "Verdict Bulk A2MCP Endpoint is active.",
-      x402: routeConfig 
-    }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" }
-    });
+    const paymentServer = await getPaymentServer();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const probeHandler = withX402(async () => new Response("OK"), routeConfig, paymentServer as any);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return withBodyIf402(cleanReq, probeHandler as any);
   }
 
   return handleRequest(cleanReq);

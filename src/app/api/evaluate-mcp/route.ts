@@ -359,7 +359,7 @@ const routeConfig: any = {
     {
       scheme: "exact",
       network: "eip155:196",
-      asset: "0x779ded0c9e1022225f8e0630b35a9b54be713736",
+      asset: "0x779ded8c9e1822225f8e8630b35a9b54be713736",
       price: "0.5",
       payTo: process.env.PAYMENT_ADDRESS || "0x8713783e9d8391c4bf54f705b355ba775184f906", // Hardcoded to User's Wallet
       maxTimeoutSeconds: 300,
@@ -444,6 +444,9 @@ export const POST = async (req: Request) => {
       if (url && typeof url === 'string' && url.trim() !== '') {
         requiresPayment = true;
       }
+    } else if (body.url && typeof body.url === 'string') {
+      // Intercept OKX validator generic POST probe with business body
+      requiresPayment = true;
     }
     interceptedTxHash = body?.txHash || body?.payment_tx || 
                         body?.params?.txHash || body?.params?.payment_tx || 
@@ -492,18 +495,14 @@ export const GET = async (req: Request) => {
   // We need to return 200 OK for standard health checks from the platform.
   const acceptHeader = cleanReq.headers.get("accept") || "";
   if (!acceptHeader.includes("text/event-stream")) {
-    console.log("Bypassing MCP SSE initialization for non-SSE GET request. Returning 200 OK.");
-    return new Response(JSON.stringify({ 
-      status: "online", 
-      message: "Verdict A2MCP Endpoint is active.",
-      x402: routeConfig 
-    }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" }
-    });
+    console.log("Intercepting non-SSE GET request for OKX validator probe. Returning 402 challenge.");
+    const paymentServer = await getPaymentServer();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const probeHandler = withX402(async () => new Response("OK"), routeConfig, paymentServer as any);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return withBodyIf402(cleanReq, probeHandler as any);
   }
 
-  // GET is only used for SSE initialization in MCP, should be free
+  // SSE logic
   return handleRequest(cleanReq);
 };
-
