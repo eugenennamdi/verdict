@@ -4,8 +4,8 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY || ''
 });
 
-// We keep the models exact to what the user explicitly tested and proved fast
-const PRIMARY_MODEL = 'gemini-3.5-flash';
+// We temporarily use flash-lite as primary since 3.5-flash is timing out
+const PRIMARY_MODEL = 'gemini-3.1-flash-lite';
 const FALLBACK_MODEL = 'gemini-3.1-flash-lite';
 
 const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {

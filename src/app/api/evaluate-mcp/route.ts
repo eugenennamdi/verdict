@@ -471,7 +471,7 @@ const verifyTransactionManually = async (txHash: string): Promise<{ valid: boole
     
     // 1. Check Receipt (did it succeed?) with retries for RPC sync delays
     let receiptData = null;
-    let retries = 15;
+    let retries = 3; // Reduced from 15 so we don't block for 30s and hit client timeout. 
     while (retries > 0) {
       const receiptRes = await fetch("https://xlayer.drpc.org", {
         method: "POST",
