@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { PostHogProvider } from "@/providers/PostHogProvider";
 
-const inter = Inter({
+const geistSans = Geist({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-geist-sans",
 });
 
 export const metadata: Metadata = {
@@ -47,7 +47,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`antialiased bg-slate-50 dark:bg-slate-950 ${inter.variable}`}
+      className={`antialiased bg-slate-50 dark:bg-slate-950 ${geistSans.variable}`}
     >
       <body className="min-h-screen flex flex-col font-sans text-slate-900 dark:text-slate-50">
         <PostHogProvider>
