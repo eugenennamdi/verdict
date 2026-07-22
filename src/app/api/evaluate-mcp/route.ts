@@ -393,18 +393,25 @@ const extractToken = (headerVal: string | null) => {
   }
   return { prefix: '', token: trimmed.replace(/\s+/g, '').replace(/-/g, '+').replace(/_/g, '/') };
 };
-
 const createCleanReq = async (req: Request) => {
   const newHeaders = new Headers(req.headers);
   const rawSig = newHeaders.get("payment-signature") || newHeaders.get("PAYMENT-SIGNATURE");
   const rawAuth = newHeaders.get("authorization") || newHeaders.get("Authorization");
-  
+
+  let rawBodyText: string | null = null;
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    try {
+      rawBodyText = await req.text();
+    } catch {
+      // Ignore
+    }
+  }
+
   // Aggressively extract payment_tx or txHash from anywhere in the body
   let paymentTx: string | null = null;
-  if (req.method === "POST" && req.body) {
+  if (rawBodyText) {
     try {
-      const cloned = req.clone();
-      const body = await cloned.json();
+      const body = JSON.parse(rawBodyText);
       paymentTx = body?.txHash || body?.payment_tx || 
                   body?.params?.txHash || body?.params?.payment_tx || 
                   body?.arguments?.txHash || body?.arguments?.payment_tx || 
@@ -431,37 +438,26 @@ const createCleanReq = async (req: Request) => {
       }
     }
     
-    // The OKX SDK strictly expects the raw base64 string in the header without any prefixes
-    // because it runs JSON.parse(safeBase64Decode(header)). 
-    // If we include 'L402 ', it will crash.
     newHeaders.set(headerName, token);
   };
 
   processHeader(rawSig, "payment-signature");
   processHeader(rawAuth, "authorization");
   
-  // Ensure that OKX Next.js SDK can find the payment signature.
   const finalAuthToken = newHeaders.get("authorization");
   if (finalAuthToken && !newHeaders.get("payment-signature")) {
     newHeaders.set("payment-signature", finalAuthToken);
   }
 
-  // Return a proxy that overrides the headers and url properties
-  return new Proxy(req, {
-    get(target, prop) {
-      if (prop === 'headers') return newHeaders;
-      // Vercel sometimes forwards internal URLs (e.g. localhost) which causes signature verification to fail 
-      // because the signature was signed exactly for the public resource URL.
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      if (prop === 'url') return routeConfig.resource;
-      
-      const value = (target as unknown as Record<string, unknown>)[prop as string];
-            if (typeof value === 'function') {
-        return value.bind(target);
-      }
-      return value;
-    }
-  });
+  // Create a completely fresh Request object with the buffered body
+  // This guarantees that the stream is never accidentally drained by middleware
+  return new Request(routeConfig.resource, {
+    method: req.method,
+    headers: newHeaders,
+    body: rawBodyText,
+    // Vercel / Next.js specific init properties if needed, but standard Request is fine
+    duplex: 'half'
+  } as RequestInit);
 };
 
 export const POST = async (req: Request) => {

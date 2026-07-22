@@ -394,11 +394,19 @@ const createCleanReq = async (req: Request) => {
   const rawSig = newHeaders.get("payment-signature") || newHeaders.get("PAYMENT-SIGNATURE");
   const rawAuth = newHeaders.get("authorization") || newHeaders.get("Authorization");
   
-  let paymentTx: string | null = null;
-  if (req.method === "POST" && req.body) {
+  let rawBodyText: string | null = null;
+  if (req.method !== "GET" && req.method !== "HEAD") {
     try {
-      const cloned = req.clone();
-      const body = await cloned.json();
+      rawBodyText = await req.text();
+    } catch {
+      // Ignore
+    }
+  }
+
+  let paymentTx: string | null = null;
+  if (rawBodyText) {
+    try {
+      const body = JSON.parse(rawBodyText);
       paymentTx = body?.txHash || body?.payment_tx || 
                   body?.params?.txHash || body?.params?.payment_tx || 
                   body?.arguments?.txHash || body?.arguments?.payment_tx || 
@@ -436,18 +444,12 @@ const createCleanReq = async (req: Request) => {
     newHeaders.set("payment-signature", finalAuthToken);
   }
 
-  return new Proxy(req, {
-    get(target, prop) {
-      if (prop === 'headers') return newHeaders;
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      if (prop === 'url') return routeConfig.resource;
-      const value = (target as unknown as Record<string, unknown>)[prop as string];
-      if (typeof value === 'function') {
-        return value.bind(target);
-      }
-      return value;
-    }
-  });
+  return new Request(routeConfig.resource, {
+    method: req.method,
+    headers: newHeaders,
+    body: rawBodyText,
+    duplex: 'half'
+  } as RequestInit);
 };
 
 
