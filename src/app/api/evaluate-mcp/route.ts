@@ -456,96 +456,13 @@ const createCleanReq = async (req: Request) => {
       if (prop === 'url') return routeConfig.resource;
       
       const value = (target as unknown as Record<string, unknown>)[prop as string];
-      if (typeof value === 'function') {
+            if (typeof value === 'function') {
         return value.bind(target);
       }
       return value;
     }
   });
 };
-
-// --- HYBRID INTERCEPTOR HELPER ---
-const verifyTransactionManually = async (txHash: string): Promise<{ valid: boolean; reason?: string }> => {
-  try {
-    console.log(`[Hybrid Interceptor] Verifying raw tx hash against X Layer RPC: ${txHash}`);
-    
-    // 1. Check Receipt (did it succeed?) with retries for RPC sync delays
-    let receiptData = null;
-    let retries = 3; // Reduced from 15 so we don't block for 30s and hit client timeout. 
-    while (retries > 0) {
-      const receiptRes = await fetch("https://rpc.xlayer.tech", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          method: "eth_getTransactionReceipt",
-          params: [txHash],
-          id: 1
-        })
-      });
-      receiptData = await receiptRes.json();
-      
-      if (receiptData?.result) {
-        break; // Found the receipt
-      }
-      
-      console.log(`[Hybrid Interceptor] Receipt not found for ${txHash}. Retrying... (${retries} left)`);
-      await new Promise(resolve => setTimeout(resolve, 2000)); // wait 2 seconds
-      retries--;
-    }
-    
-    if (!receiptData?.result || receiptData.result.status !== "0x1") {
-      console.log(`[Hybrid Interceptor] Transaction ${txHash} failed or not found.`);
-      return { valid: false, reason: "Transaction failed on-chain or could not be found." };
-    }
-
-    // 2. Verify Transfer Event from the Receipt logs
-    // ERC20 Transfer event signature: 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
-    const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
-    const USDT_CONTRACT = "0x779ded0c9e1022225f8e0630b35a9b54be713736".toLowerCase();
-    const PAYMENT_ADDRESS = (process.env.PAYMENT_ADDRESS || "0x8713783e9d8391c4bf54f705b355ba775184f906").toLowerCase().replace("0x", "");
-    const REQUIRED_AMOUNT = BigInt(500000); // 0.5 USDT (6 decimals)
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const hasValidTransfer = receiptData.result.logs.some((log: any) => {
-      if (log.address?.toLowerCase() !== USDT_CONTRACT) return false;
-      if (log.topics?.[0]?.toLowerCase() !== TRANSFER_TOPIC) return false;
-      
-      // Topic 2 is the 'to' address
-      if (!log.topics?.[2]?.toLowerCase().includes(PAYMENT_ADDRESS)) return false;
-      
-      const amount = BigInt(log.data);
-      return amount >= REQUIRED_AMOUNT;
-    });
-
-    if (!hasValidTransfer) {
-      console.log(`[Hybrid Interceptor] Transaction does not contain a valid USDT transfer event to us.`);
-      return { valid: false, reason: "Transaction is confirmed but does not contain a 0.5 USDT transfer to the correct payment address." };
-    }
-
-    // 3. Double-Spend Prevention
-    const { error } = await supabaseAdmin
-      .from('used_transactions')
-      .insert([{ tx_hash: txHash }]);
-      
-    if (error) {
-      if (error.code === '23505' || error.message.includes('duplicate key')) { // Postgres Unique Violation
-        console.log(`[Hybrid Interceptor] REPLAY ATTACK BLOCKED. Transaction ${txHash} was already used.`);
-        return { valid: false, reason: "This transaction hash has already been used for a previous successful evaluation (Replay Attack)." };
-      } else {
-        console.error(`[Hybrid Interceptor] Supabase error verifying double-spend:`, error);
-        return { valid: false, reason: "Database error while verifying transaction uniqueness." };
-      }
-    }
-
-    console.log(`[Hybrid Interceptor] Transaction ${txHash} successfully verified on-chain and marked as used.`);
-    return { valid: true };
-  } catch (error) {
-    console.error("[Hybrid Interceptor] RPC verification error:", error);
-    return { valid: false, reason: "RPC network error while verifying transaction." };
-  }
-};
-// --- END HYBRID INTERCEPTOR HELPER ---
 
 export const POST = async (req: Request) => {
   const cleanReq = await createCleanReq(req);
@@ -582,79 +499,7 @@ export const POST = async (req: Request) => {
     return handleRequest(cleanReq);
   }
 
-  // --- HYBRID INTERCEPTOR ---
-  // If the payment signature is a raw transaction hash OR if the agent passed txHash/payment_tx in the body.
-  // We manually verify it against the X Layer RPC to gracefully allow them to use the service.
-  const rawTxHash = (cleanReq.headers.get("payment-signature") || "").trim();
-  let hashToVerify: string | null = null;
-
-  if (rawTxHash.startsWith("0x") && rawTxHash.length === 66) {
-    hashToVerify = rawTxHash;
-  } else if (interceptedTxHash && interceptedTxHash.startsWith("0x") && interceptedTxHash.length === 66) {
-    hashToVerify = interceptedTxHash;
-  } else if (rawTxHash) {
-    try {
-      const decoded = Buffer.from(rawTxHash, "base64").toString("utf-8");
-      const sigObj = JSON.parse(decoded);
-      
-      // Aggressively search for any 66-character hex string in the signature object
-      const findTxHash = (obj: any): string | null => {
-        if (!obj) return null;
-        if (typeof obj === 'string' && obj.startsWith('0x') && obj.length === 66) return obj;
-        if (typeof obj === 'object') {
-          for (const key of Object.keys(obj)) {
-            const res = findTxHash(obj[key]);
-            if (res) return res;
-          }
-        }
-        return null;
-      };
-      
-      hashToVerify = findTxHash(sigObj);
-    } catch {
-      // Ignore
-    }
-  }
-
-  if (hashToVerify) {
-    const verification = await verifyTransactionManually(hashToVerify);
-    if (verification.valid) {
-      console.log("[Hybrid Interceptor] Bypassing withX402 SDK due to valid transaction hash:", hashToVerify);
-      
-      // Inject the transaction hash into a header so the downstream code knows it's paid
-      const proxyReq = new Proxy(cleanReq, {
-        get(target, prop) {
-          if (prop === 'headers') {
-            const h = new Headers(cleanReq.headers);
-            h.set("x-payment-tx-hash", hashToVerify as string);
-            return h;
-          }
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const value = (target as any)[prop as string];
-          if (typeof value === 'function') return value.bind(target);
-          return value;
-        }
-      });
-      return handleRequest(proxyReq);
-    } else {
-      // Transaction was invalid or not yet indexed. Do not fall through to SDK to avoid generic 400.
-      console.log("[Hybrid Interceptor] Transaction invalid or not yet indexed. Returning graceful MCP error.");
-      return new Response(JSON.stringify({
-        jsonrpc: "2.0",
-        id: reqId,
-        result: {
-          content: [
-            {
-              type: "text",
-              text: `SYSTEM ALERT: ${verification.reason || "Payment transaction not found or not yet indexed."} Please wait exactly 10 seconds and call this tool again with the SAME transaction hash. DO NOT initiate a new payment. TxHash: ${hashToVerify}`
-            }
-          ],
-          isError: false
-        }
-      }), { status: 200, headers: { "Content-Type": "application/json" } });
-    }
-  }
-  // --- END HYBRID INTERCEPTOR ---
+  // Hand off to the official OKX SDK for robust payment verification
 
   const paymentServer = await getPaymentServer();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
