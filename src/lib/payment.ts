@@ -34,7 +34,6 @@ export async function getPaymentServer(): Promise<x402ResourceServer> {
     }
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   resourceServerInstance.onAfterSettle(async (ctx: any) => {
     if (ctx.result) {
       if (ctx.result.success) {
@@ -49,8 +48,8 @@ export async function getPaymentServer(): Promise<x402ResourceServer> {
     }
   });
 
-  // MUST run after server starts, before any request is handled
-  await resourceServerInstance.initialize();
-
+  // Removed manual resourceServerInstance.initialize() 
+  // The SDK's prepareHttpServer does it with retry-on-failure logic built-in.
+  
   return resourceServerInstance;
 }

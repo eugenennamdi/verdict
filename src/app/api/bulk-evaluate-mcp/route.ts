@@ -1,3 +1,4 @@
+import { NextRequest } from "next/server";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
@@ -58,10 +59,11 @@ const processSingleUrl = async (url: string, txHash?: string | null) => {
         reportUrl = `https://tryverdict.xyz/report/${data.id}`;
         try {
           const statusStr = audit.overallScore >= 70 ? 'Pass' : 'Review Needed';
-          const hash = await submitAttestation(data.id, url, audit.overallScore, statusStr);
-          await supabaseAdmin.from('reports').update({ attestation_hash: hash }).eq('id', data.id);
-        } catch (onchainError) {
-          console.error('Onchain Attestation Error in MCP:', onchainError);
+          submitAttestation(data.id, url, audit.overallScore, statusStr)
+            .then(hash => supabaseAdmin.from('reports').update({ attestation_hash: hash }).eq('id', data.id))
+            .catch(onchainError => console.error('Onchain Attestation Error in MCP:', onchainError));
+        } catch (err) {
+          console.error('Unexpected Error during Attestation launch in MCP:', err);
         }
       }
     } catch (err) {
@@ -312,12 +314,6 @@ const handleRequest = async (req: Request) => {
         console.error("Direct evaluation error:", err);
         const isScrapingError = err.name === 'ScrapingError';
 
-        const usedHash = req.headers.get("x-payment-tx-hash");
-        if (usedHash) {
-          console.log(`[Hybrid Interceptor] Releasing transaction lock for ${usedHash} due to evaluation error: ${err.message}`);
-          await supabaseAdmin.from('used_transactions').delete().eq('tx_hash', usedHash);
-        }
-
         return new Response(JSON.stringify({
           jsonrpc: "2.0",
           id: reqId,
@@ -332,7 +328,7 @@ const handleRequest = async (req: Request) => {
             ],
             isError: true
           }
-        }), { status: 200, headers: { "Content-Type": "application/json" } });
+        }), { status: 422, headers: { "Content-Type": "application/json" } });
       }
     }
 
@@ -349,8 +345,11 @@ const routeConfig: any = {
     {
       scheme: "exact",
       network: "eip155:196",
+      asset: "0x779ded0c9e1022225f8e0630b35a9b54be713736",
       price: "10.0", // 10 USDT for Bulk Audits
       payTo: process.env.PAYMENT_ADDRESS || "0x8713783e9d8391c4bf54f705b355ba775184f906",
+      maxTimeoutSeconds: 300,
+      extra: { name: "USD₮0", version: "1" },
     }
   ],
   description: "Verdict Bulk Evaluation Server",
@@ -379,76 +378,26 @@ const withBodyIf402 = async (req: Request, handler: (req: Request) => Promise<Re
   return res;
 };
 
-const extractToken = (headerVal: string | null) => {
-  if (!headerVal) return { prefix: '', token: '' };
-  const trimmed = headerVal.trim();
-  const match = trimmed.match(/^(Bearer|L402|L402-MAC)\s+(.+)$/i);
-  if (match) {
-    return { prefix: match[1] + ' ', token: match[2].replace(/\s+/g, '').replace(/-/g, '+').replace(/_/g, '/') };
-  }
-  return { prefix: '', token: trimmed.replace(/\s+/g, '').replace(/-/g, '+').replace(/_/g, '/') };
-};
-
 const createCleanReq = async (req: Request) => {
   const newHeaders = new Headers(req.headers);
-  const rawSig = newHeaders.get("payment-signature") || newHeaders.get("PAYMENT-SIGNATURE");
-  const rawAuth = newHeaders.get("authorization") || newHeaders.get("Authorization");
   
   let rawBodyText: string | null = null;
   if (req.method !== "GET" && req.method !== "HEAD") {
     try {
       rawBodyText = await req.text();
-    } catch {
-      // Ignore
-    }
-  }
-
-  let paymentTx: string | null = null;
-  if (rawBodyText) {
-    try {
-      const body = JSON.parse(rawBodyText);
-      paymentTx = body?.txHash || body?.payment_tx || 
-                  body?.params?.txHash || body?.params?.payment_tx || 
-                  body?.arguments?.txHash || body?.arguments?.payment_tx || 
-                  body?.params?.arguments?.txHash || body?.params?.arguments?.payment_tx || null;
-    } catch {
-      // Ignore
-    }
-  }
-
-  const processHeader = (rawVal: string | null, headerName: string) => {
-    if (!rawVal) return;
-    let { prefix, token } = extractToken(rawVal);
-    
-    if (paymentTx) {
-      try {
-        const decoded = Buffer.from(token, "base64").toString("utf-8");
-        const sigObj = JSON.parse(decoded);
-        if (!sigObj.receipt) {
-          sigObj.receipt = paymentTx;
-          token = Buffer.from(JSON.stringify(sigObj)).toString("base64");
-        }
-      } catch {
-        // Ignore parsing errors
+      if (!rawBodyText || rawBodyText.trim() === '') {
+        console.error("createCleanReq: Body was empty after reading. Stream may have been consumed upstream.");
       }
+    } catch {
+      console.error("createCleanReq: Failed to read body stream.");
     }
-    
-    newHeaders.set(headerName, token);
-  };
-
-  processHeader(rawSig, "payment-signature");
-  processHeader(rawAuth, "authorization");
-  
-  const finalAuthToken = newHeaders.get("authorization");
-  if (finalAuthToken && !newHeaders.get("payment-signature")) {
-    newHeaders.set("payment-signature", finalAuthToken);
   }
 
-  return new Request(routeConfig.resource, {
+  return new NextRequest(routeConfig.resource, {
     method: req.method,
     headers: newHeaders,
     body: rawBodyText
-  } as RequestInit);
+  });
 };
 
 
@@ -491,7 +440,7 @@ export const POST = async (req: Request) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const finalRes = await withBodyIf402(cleanReq, protectedHandler as any);
 
-  if (finalRes.status === 418) {
+  if (finalRes.status === 422) {
     return new Response(finalRes.body, {
       status: 200,
       headers: finalRes.headers

@@ -45,9 +45,8 @@ export async function submitAttestation(reportId: string, url: string, score: nu
   
   // We can wait for it to be mined, but since this might block the API response,
   // returning the hash immediately is often better for user experience. 
-  // However, wait for 1 confirmation to ensure it's logged successfully.
-  await tx.wait(1);
+  // We removed `await tx.wait(1);` because Vercel Serverless/Edge functions 
+  // can terminate early. It is safer to resolve as soon as the mempool accepts it.
   
-  console.log(`Transaction confirmed on X Layer: ${tx.hash}`);
   return tx.hash;
 }
