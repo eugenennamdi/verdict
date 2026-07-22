@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# debug files
+*.log
+gitlog.txt
+gitstatus.txt
+test-402.js
