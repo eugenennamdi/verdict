@@ -571,10 +571,11 @@ export const POST = async (req: Request) => {
     // Ignore
   }
 
-  // If there's a payment signature, add a 5 second delay to allow X Layer to confirm and index the transaction
+  // If there's a payment signature, we used to wait 5 seconds. We removed it because
+  // OpenClaw and other clients have a 60s timeout, and the LLM + scraper can take up to 55s.
+  // The hybrid interceptor will gracefully return a SYSTEM ALERT if it's not indexed yet.
   if (requiresPayment && cleanReq.headers.get("payment-signature")) {
-    console.log("Payment signature detected. Waiting 5 seconds for X Layer RPC confirmation...");
-    await new Promise(r => setTimeout(r, 5000));
+    console.log("Payment signature detected. Skipping manual wait to avoid client timeout...");
   }
 
   if (!requiresPayment) {

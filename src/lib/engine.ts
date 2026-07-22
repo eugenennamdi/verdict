@@ -32,7 +32,7 @@ async function generateWithFallback(prompt: string, schema: unknown) {
         responseMimeType: 'application/json',
         responseSchema: schema,
       }
-    }), 35000);
+    }), 20000);
   } catch (e: unknown) {
     const errorMsg = e instanceof Error ? e.message : String(e);
     const isHighDemand = errorMsg.includes('503') || errorMsg.includes('high demand') || errorMsg.includes('UNAVAILABLE') || errorMsg.includes('429') || errorMsg.includes('TIMEOUT_ERROR');
@@ -48,7 +48,7 @@ async function generateWithFallback(prompt: string, schema: unknown) {
             responseMimeType: 'application/json',
             responseSchema: schema,
           }
-        }), 35000);
+        }), 20000);
       } catch (fallbackError: unknown) {
         const fallbackMsg = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
         if (fallbackMsg.includes('503') || fallbackMsg.includes('high demand') || fallbackMsg.includes('UNAVAILABLE') || fallbackMsg.includes('429') || fallbackMsg.includes('TIMEOUT_ERROR')) {
