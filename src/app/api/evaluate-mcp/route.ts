@@ -147,6 +147,16 @@ const handleRequest = async (req: Request) => {
     });
     await server.connect(transport);
 
+    if (req.method === "GET") {
+      const acceptHeader = req.headers.get("accept") || "";
+      if (!acceptHeader.includes("text/event-stream")) {
+        return new Response(JSON.stringify({ status: "OK", message: "Validator probe successful" }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+        });
+      }
+    }
+
     if (req.method === "POST") {
       let reqId: string | number = 1;
       try {
