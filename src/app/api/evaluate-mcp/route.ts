@@ -90,7 +90,7 @@ const createMCPServer = () => {
             try {
               const statusStr = audit.overallScore >= 70 ? 'Pass' : 'Review Needed';
               after(() => {
-                submitAttestation(data.id, url, audit.overallScore, statusStr)
+                return submitAttestation(data.id, url, audit.overallScore, statusStr)
                   .then(hash => supabaseAdmin.from('reports').update({ attestation_hash: hash }).eq('id', data.id))
                   .catch(onchainError => console.error('Onchain Attestation Error in MCP:', onchainError));
               });
