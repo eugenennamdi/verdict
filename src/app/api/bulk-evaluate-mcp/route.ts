@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, after } from "next/server";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
@@ -59,9 +59,11 @@ const processSingleUrl = async (url: string, txHash?: string | null) => {
         reportUrl = `https://tryverdict.xyz/report/${data.id}`;
         try {
           const statusStr = audit.overallScore >= 70 ? 'Pass' : 'Review Needed';
-          submitAttestation(data.id, url, audit.overallScore, statusStr)
-            .then(hash => supabaseAdmin.from('reports').update({ attestation_hash: hash }).eq('id', data.id))
-            .catch(onchainError => console.error('Onchain Attestation Error in MCP:', onchainError));
+          after(() => {
+            submitAttestation(data.id, url, audit.overallScore, statusStr)
+              .then(hash => supabaseAdmin.from('reports').update({ attestation_hash: hash }).eq('id', data.id))
+              .catch(onchainError => console.error('Onchain Attestation Error in MCP:', onchainError));
+          });
         } catch (err) {
           console.error('Unexpected Error during Attestation launch in MCP:', err);
         }
