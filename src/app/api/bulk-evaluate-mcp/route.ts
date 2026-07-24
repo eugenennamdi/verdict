@@ -214,7 +214,7 @@ const handleRequest = async (req: Request) => {
         }
         
         if (body.method === "notifications/initialized") {
-          return new Response("", { status: 202 });
+          return new Response("{}", { status: 202, headers: { "Content-Type": "application/json" } });
         }
 
         // Handle stateless tools/list request

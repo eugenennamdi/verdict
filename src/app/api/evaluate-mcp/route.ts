@@ -177,7 +177,7 @@ const handleRequest = async (req: Request) => {
         }
         
         if (body.method === "notifications/initialized") {
-          return new Response("", { status: 202 });
+          return new Response("{}", { status: 202, headers: { "Content-Type": "application/json" } });
         }
 
         // Handle stateless tools/list request
@@ -246,9 +246,11 @@ const handleRequest = async (req: Request) => {
               
               try {
                 const statusStr = audit.overallScore >= 70 ? 'Pass' : 'Review Needed';
-                submitAttestation(data.id, hasUrl, audit.overallScore, statusStr)
-                  .then(hash => supabaseAdmin.from('reports').update({ attestation_hash: hash }).eq('id', data.id))
-                  .catch(onchainError => console.error('Onchain Attestation Error in MCP:', onchainError));
+                after(() => {
+                  return submitAttestation(data.id, hasUrl, audit.overallScore, statusStr)
+                    .then(hash => supabaseAdmin.from('reports').update({ attestation_hash: hash }).eq('id', data.id))
+                    .catch(onchainError => console.error('Onchain Attestation Error in MCP:', onchainError));
+                });
               } catch (err) {
                 console.error('Unexpected Error during Attestation launch in MCP:', err);
               }
